@@ -1,0 +1,7 @@
+./autogen.sh
+./configure
+make
+
+cp .libs/libgumbo.1.dylib libgumbo.dylib
+
+install_name_tool -id @executable_path/libgumbo.dylib libgumbo.dylib

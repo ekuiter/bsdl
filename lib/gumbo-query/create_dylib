@@ -1,0 +1,8 @@
+cd build
+cmake -DGumbo_INCLUDE_DIR=../../gumbo-parser/src -DGumbo_LIBRARY=../../gumbo-parser/libgumbo.dylib -DGumbo_static_LIBRARY= ..
+make
+cd ..
+
+cp lib/libgq.dylib libgq.dylib
+
+install_name_tool -id @executable_path/libgq.dylib libgq.dylib

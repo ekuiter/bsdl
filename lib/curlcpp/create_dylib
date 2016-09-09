@@ -1,0 +1,7 @@
+cd build
+cmake .. -DBUILD_SHARED_LIBS=1
+make
+
+cp build/src/libcurlcpp.dylib libcurlcpp.dylib
+
+install_name_tool -id @executable_path/libcurlcpp.dylib libcurlcpp.dylib
