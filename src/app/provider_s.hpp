@@ -5,7 +5,6 @@
 #include "platform.hpp"
 #include <iostream>
 #include <regex>
-#include <thread>
 #include <Node.h>
 
 using namespace std;

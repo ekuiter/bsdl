@@ -15,15 +15,15 @@ namespace curses {
 
 		static int getmouse(MEVENT* event) {
 #ifdef __MINGW32__
-			nc_getmouse(event);
+			return nc_getmouse(event);
 #else
-			getmouse(event);
+			return getmouse(event);
 #endif
 		}
 
 		static int set_escdelay(int size) {
 #ifndef __MINGW32__
-			TODO //return ::set_escdelay(size); //ESCDELAY = size;
+			return ::set_escdelay(size);
 #else
 			return 0;
 #endif

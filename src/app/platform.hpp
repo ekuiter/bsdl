@@ -2,6 +2,7 @@
 #define PLATFORM_HPP
 
 #include <map>
+#include <thread>
 #include <boost/filesystem.hpp>
 
 #ifdef __MINGW32__
