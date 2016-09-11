@@ -4,9 +4,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-#ifndef __MINGW32__
     setlocale(LC_ALL, "");
-#endif
 
     curses::terminal::instance().run([argc, argv](curses::terminal& terminal) {
         settings::instance().read(vector<string>(argv, argv + argc));

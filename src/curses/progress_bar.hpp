@@ -27,7 +27,7 @@ namespace curses {
             int highlight_length = percentage * text.length();
 
             point p;
-            stream << highlight_color << "[" << stream::get(p) << text << "]" << stream::move(p) <<
+            stream << highlight_color << "[" << stream::get(p), stream << text << "]" << stream::move(p) <<
                     stream::write_attribute(A_REVERSE, highlight_color, highlight_length) <<
                     stream::back(1) << color::previous;
         }

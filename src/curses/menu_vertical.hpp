@@ -1,6 +1,6 @@
 #pragma once
 
-#include "menu.hpp"
+#include "menu_base.hpp"
 #include <set>
 
 using namespace std;
@@ -84,43 +84,46 @@ namespace curses {
                 this->_stream << stream::refresh();
             }
 
-            class multi : public vertical<T> {
-                set<int> marked_items;
-
-                string prefix_for_item(int item, bool selected = false) {
-                    return marked_items.find(item) == marked_items.end() ? "[ ] " : "[*] ";
-                }
-
-            public:
-                multi(window& window, T& items, const typename base<T>::object_type* selected_object = nullptr,
-                      const color& highlight_color = color::get_accent_color()):
-                        vertical<T>(window, items, selected_object, highlight_color) {
-                    refresh();
-                }
-
-                void toggle_marked_object(const typename base<T>::object_type& obj) {
-                    int item = this->item_from(obj);
-                    if (item == -1)
-                        throw exception("marked object is not in the collection");
-                    if (marked_items.find(item) == marked_items.end())
-                        marked_items.insert(item);
-                    else
-                        marked_items.erase(item);
-                    refresh();
-                }
-
-                void toggle_all() {
-                    for (auto& obj : this->items)
-                        toggle_marked_object(obj);
-                }
-
-                vector<typename base<T>::object_type*> get_marked_objects() {
-                    vector<typename base<T>::object_type*> objects;
-                    for (auto item : marked_items)
-                        objects.push_back(this->object_from(item));
-                    return objects;
-                }
-            };
+			class multi;
         };
+
+		template <typename T>
+		class vertical<T>::multi : public vertical<T> {
+			set<int> marked_items;
+
+			string prefix_for_item(int item, bool selected = false) {
+				return marked_items.find(item) == marked_items.end() ? "[ ] " : "[*] ";
+			}
+
+		public:
+			multi(window& window, T& items, const typename base<T>::object_type* selected_object = nullptr,
+				const color& highlight_color = color::get_accent_color()) :
+				vertical<T>(window, items, selected_object, highlight_color) {
+				refresh();
+			}
+
+			void toggle_marked_object(const typename base<T>::object_type& obj) {
+				int item = this->item_from(obj);
+				if (item == -1)
+					throw exception("marked object is not in the collection");
+				if (marked_items.find(item) == marked_items.end())
+					marked_items.insert(item);
+				else
+					marked_items.erase(item);
+				refresh();
+			}
+
+			void toggle_all() {
+				for (auto& obj : this->items)
+					toggle_marked_object(obj);
+			}
+
+			vector<typename base<T>::object_type*> get_marked_objects() {
+				vector<typename base<T>::object_type*> objects;
+				for (auto item : marked_items)
+					objects.push_back(this->object_from(item));
+				return objects;
+			}
+		};
     }
 }

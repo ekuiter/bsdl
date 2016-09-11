@@ -1,6 +1,6 @@
 ## Build instructions
 
-- place Boost in lib/boost folder, compile all its required static libraries
+- place Boost in lib/boost folder, compile all its required static libraries (see below)
 
 ### Mac OS
 
@@ -12,8 +12,13 @@
 - Install CMake, add C:\Program Files\CMake\bin to PATH.
 - Install MinGW. (mingw-developer-toolkit, mingw32-base, mingw32-gcc-g++, msys-base, both mingw32-libpdcurses)
 - Start MSYS, goto root folder.
-- If all libraries are set up ==> cmake -G "MSYS Makefiles" .
+- If all libraries are set up ==> cmake -G "MSYS Makefiles".
 - compile the following libs in a fresh directory (no cmake cache etc.)!
+- compile Boost with (in cmd.exe with C:\MinGW\bin in PATH):
+```
+bootstrap gcc
+b2 toolset=gcc --with-filesystem --with-system
+```
 - compile curl with:
 ```
 ./configure --with-winssl

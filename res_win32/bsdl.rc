@@ -1,0 +1,25 @@
+bsdl ICON bsdl.ico
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "ekuiter"
+      VALUE "FileDescription", "bsdl"
+      VALUE "FileVersion", "1.0.0"
+      VALUE "InternalName", "bsdl"
+      VALUE "LegalCopyright", "ekuiter"
+      VALUE "OriginalFilename", "bsdl.exe"
+      VALUE "ProductName", "bsdl"
+      VALUE "ProductVersion", "1.0.0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

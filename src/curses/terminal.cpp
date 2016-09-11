@@ -9,10 +9,10 @@ namespace curses {
         noecho();
         keypad(stdscr, true);
         scrollok(stdscr, true);
-        curs_set(0);
+        platform::curs_set(0);
         mousemask(ALL_MOUSE_EVENTS, 0);
         mouseinterval(0);
-        ESCDELAY = 0;
+		platform::set_escdelay(0);
         refresh();
     }
 

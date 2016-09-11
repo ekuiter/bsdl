@@ -25,13 +25,15 @@ set(SOURCE_FILES main.cpp http/client.cpp http/headers.cpp http/response.cpp htt
 		bs/download_selector.cpp bs/download_selection.cpp app/settings.cpp)
 
 prepend(SOURCE_FILES src/ ${SOURCE_FILES})
+if(WIN32)
+	set(SOURCE_FILES ${SOURCE_FILES} res_win32/bsdl.o)
+endif(WIN32)
 add_executable(bsdl ${SOURCE_FILES})
 
 set(BOOST_ROOT lib/boost)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 include_directories(${Boost_INCLUDE_DIR})
-target_link_libraries(bsdl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
@@ -42,6 +44,10 @@ include_directories(lib/gumbo-parser/src)
 include_directories(lib/gumbo-query/src)
 
 if(WIN32)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686")
+	target_link_libraries(bsdl ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_system-mgw49-mt-1_61.a)
+	target_link_libraries(bsdl ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_filesystem-mgw49-mt-1_61.a)
+
 	find_file(CURLDLL libcurl-4.dll)
 	file(COPY ${CURLDLL} DESTINATION ${EXECUTABLE_PATH})
 
@@ -66,7 +72,9 @@ if(WIN32)
 	find_file(GCCDLL libgcc_s_dw2-1.dll)
 	file(COPY ${GCCDLL} DESTINATION ${EXECUTABLE_PATH})
 	
-else(WIN32) # Mac OS X
+else(WIN32) # Mac OS
+    target_link_libraries(bsdl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+
 	find_package(CURSES REQUIRED)
 	include_directories(${CURSES_INCLUDE_DIR})
 	target_link_libraries(bsdl ${CURSES_LIBRARIES})

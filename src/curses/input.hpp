@@ -5,6 +5,7 @@
 #include <functional>
 #include <curses.h>
 #include "exception.hpp"
+#include "platform.hpp"
 
 using namespace std;
 
@@ -60,6 +61,8 @@ namespace curses {
         }
 
         keyboard_callback keyboard_event(int _ch, function<bool ()> callback = []() { return false; }) {
+			_ch = _ch == '\n' ? platform::get_newline() : _ch;
+
             return [_ch, callback](int ch) {
                 return ch == _ch ? callback() : true;
             };

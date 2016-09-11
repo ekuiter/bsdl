@@ -2,14 +2,11 @@
 
 #include "provider.hpp"
 #include "settings.hpp"
+#include "platform.hpp"
 #include <iostream>
 #include <regex>
 #include <thread>
 #include <Node.h>
-
-#ifdef __MINGW32__
-#include <windows.h>
-#endif
 
 using namespace std;
 using namespace http;
@@ -55,12 +52,8 @@ public:
             try {
                 return try_to_fetch(_request);
             } catch (retry) {
-                cerr << "could not fetch file, retrying in " << cooldown.count() << " seconds ...";
-#ifdef __MINGW32__
-                Sleep(chrono::duration_cast<chrono::milliseconds>(cooldown).count());
-#else
-                this_thread::sleep_for(cooldown);
-#endif
+                cerr << "Waiting " << cooldown.count() << " seconds ...";
+				::platform::sleep(cooldown);
                 cerr << " retry." << endl;
             }
         }

@@ -1,48 +1,9 @@
 #include "settings.hpp"
 #include "app.hpp"
+#include "platform.hpp"
 #include <fstream>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
-using namespace boost::filesystem;
-
-static path executable_path_fallback(const string& argv0) {
-    if (argv0 == "")
-        return "";
-    boost::system::error_code ec;
-    boost::filesystem::path p(
-            boost::filesystem::canonical(
-                    argv0, boost::filesystem::current_path(), ec));
-    return p.make_preferred();
-}
-
-#ifdef __MINGW32__
-#include <Windows.h>
-
-static path executable_path(const string& argv0) {
-    char buf[1024] = {0};
-    DWORD ret = GetModuleFileNameA(NULL, buf, sizeof(buf));
-    if (ret == 0 || ret == sizeof(buf))
-        return executable_path_fallback(argv0);
-    return path(buf);
-}
-
-#else
-#include <mach-o/dyld.h>
-
-static path executable_path(const string& argv0) {
-    char buf[1024] = {0};
-    uint32_t size = sizeof(buf);
-    int ret = _NSGetExecutablePath(buf, &size);
-    if (ret)
-        return executable_path_fallback(argv0);
-    boost::system::error_code ec;
-    boost::filesystem::path p(
-        boost::filesystem::canonical(buf, boost::filesystem::current_path(), ec));
-    return p.make_preferred();
-}
-
-#endif
+#include <boost/filesystem.hpp>
 
 ostream& operator<<(ostream& stream, settings& _settings) {
     stream << "download_selection = " << _settings.get_download_selection() << endl;
@@ -92,10 +53,10 @@ void settings::read(const vector<string>& args) {
     }
 
     if (!is_set("config_file"))
-        (*this)["config_file"] = (executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
+        (*this)["config_file"] = (::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
 
     string config_file_name = (*this)["config_file"];
-    if (!exists(config_file_name))
+    if (!boost::filesystem::exists(config_file_name))
         throw runtime_error(string("config file \"") + config_file_name + "\" does not exist");
     std::ifstream config_file;
     config_file.open(config_file_name);

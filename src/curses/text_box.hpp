@@ -4,6 +4,7 @@
 #include "stream.hpp"
 #include "stream_modifier.hpp"
 #include "window.hpp"
+#include "platform.hpp"
 #include <iostream>
 
 using namespace std;
@@ -17,12 +18,12 @@ namespace curses {
         int cursor;
 
         void refresh() {
-            curs_set(0);
+			platform::curs_set(0);
             point p;
             _stream << stream::move(point(0, 0)) << text <<
-                    stream::get(p) << stream::write(" ", _window.get_bounds().width - p.x) <<
+                    stream::get(p), _stream << stream::write(" ", _window.get_bounds().width - p.x) <<
                     stream::move(point(cursor, 0)) << stream::refresh();
-            curs_set(1);
+			platform::curs_set(1);
         }
 
     public:
@@ -31,7 +32,7 @@ namespace curses {
             window.set_keyboard_callback([this](int ch) {
                 if (ch >= 0x20 && ch <= 0x7e && text.length() < _window.get_bounds().width - 1) // printable ASCII
                     text.insert(cursor++, 1, ch);
-                if (ch == 0x7f && cursor > 0) // backspace
+                if ((platform::is_backspace(ch) && cursor > 0)) // backspace
                     text.erase(--cursor, 1);
                 if (ch == KEY_LEFT && cursor > 0)
                     cursor--;
@@ -53,7 +54,7 @@ namespace curses {
         }
 
         ~text_box() {
-            curs_set(0);
+			platform::curs_set(0);
         }
 
         const string& get_text() {

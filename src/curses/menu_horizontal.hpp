@@ -1,8 +1,9 @@
 #pragma once
 
-#include "menu.hpp"
+#include "menu_base.hpp"
 #include "window_plain.hpp"
 #include "window_sub.hpp"
+#include "platform.hpp"
 #include <vector>
 #include <unordered_map>
 #include <memory>
@@ -42,9 +43,9 @@ namespace curses {
                 for (auto& pair : tab_content_windows)
                     pair.second->hide();
 
-                if (tab_content_windows[item]) {
+                if (tab_content_windows[item])
                     tab_content_windows[item]->show();
-                } else {
+                else {
                     point p;
                     this->_stream << content_window << stream::get(p, stream::get::coord::BEG);
                     unique_ptr<window::plain> tab_content_window(
@@ -69,15 +70,19 @@ namespace curses {
                     return "";
                 };
 
-                this->_stream << tab << this->toggle_highlight(tab, sel) <<
-                        stream::move(point(1, 0))          << stream::write(stream::ext_char(ts), max.x - 1) <<
-                        stream::move(point(1, max.y))      << stream::write(stream::ext_char(bs), max.x - 1) <<
-                        stream::move(point(max.x, 0))      << stream::ext_char(tr) <<
-                        stream::move(point(max.x, max.y))  << stream::ext_char(br) << vertical_line(max.x, rs) <<
-                        this->toggle_highlight(tab, neigh) << vertical_line(0, ls) <<
-                        stream::move(point(0, 0))          << stream::ext_char(tl) <<
-                        stream::move(point(0, max.y))      << stream::ext_char(bl) <<
-                        this->toggle_highlight(tab, neigh) << this->toggle_highlight(tab, sel);
+				this->_stream << tab;
+				this->toggle_highlight(tab, sel);
+				this->_stream <<
+					stream::move(point(1, 0)) << stream::write(stream::ext_char(ts), max.x - 1) <<
+					stream::move(point(1, max.y)) << stream::write(stream::ext_char(bs), max.x - 1) <<
+					stream::move(point(max.x, 0)) << stream::ext_char(tr) <<
+					stream::move(point(max.x, max.y)) << stream::ext_char(br) << vertical_line(max.x, rs);
+				this->toggle_highlight(tab, neigh);
+				this->_stream << vertical_line(0, ls) <<
+					stream::move(point(0, 0)) << stream::ext_char(tl) <<
+					stream::move(point(0, max.y)) << stream::ext_char(bl);
+				this->toggle_highlight(tab, neigh);
+				this->toggle_highlight(tab, sel);
             }
 
             void refresh_border(window& tab, int entry, bool sel = false, bool neigh = false) {

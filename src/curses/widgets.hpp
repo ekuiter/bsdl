@@ -2,7 +2,7 @@
 
 #include "spinner.hpp"
 #include "progress_bar.hpp"
-#include "menu.hpp"
+#include "menu_base.hpp"
 #include "menu_vertical.hpp"
 #include "menu_horizontal.hpp"
 #include "text_box.hpp"

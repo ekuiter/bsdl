@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 #include "../http/client.hpp"
 #include "../app/provider.hpp"
+#include "../app/platform.hpp"
 #include "video_file.hpp"
 #include "exception.hpp"
 
@@ -32,6 +33,8 @@ namespace bs {
                 title_en(_title_en), video_files(_video_files), error_logged(false) {
             boost::trim(title_de);
             boost::trim(title_en);
+			title_de = ::platform::encode(title_de);
+			title_en = ::platform::encode(title_en);
         }
 
         string get_series_title() const noexcept {

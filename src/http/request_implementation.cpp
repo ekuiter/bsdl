@@ -47,8 +47,8 @@ namespace http {
             download_request(_download_request), file_name(_file_name),
             writer(file), curl(writer), performed(false), success(false) {
         if (file_name == "")
-            throw exception(string("no file name set for ") + download_request.get_url());
-        file.open(file_name);
+			throw exception(string("no file name set for ") + download_request.get_url());
+        file.open(file_name, ios::binary);
         client::instance().prepare(download_request, *this);
     }
 

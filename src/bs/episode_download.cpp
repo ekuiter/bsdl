@@ -3,6 +3,7 @@
 #include "../curses/terminal.hpp"
 #include "../curses/widgets.hpp"
 #include "../app/settings.hpp"
+#include "../app/provider.hpp"
 #include <cmath>
 #include <boost/filesystem.hpp>
 
@@ -65,7 +66,7 @@ namespace bs {
         percentage = isnan(percentage) ? 0 : percentage;
         string message = episode_download.get_message();
 
-        string file_name = episode_download.get_file_name(),
+        string file_name = ::platform::strip_chars(episode_download.get_file_name()),
                 now = boost::str(boost::format("%.2f") % ((double) episode_download.get_now_bytes() / 1024 / 1024)),
                 percentage_string = boost::str(boost::format("%.0f") % (percentage * 100));
 

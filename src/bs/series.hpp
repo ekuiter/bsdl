@@ -6,6 +6,7 @@
 #include "../http/client.hpp"
 #include "season.hpp"
 #include "exception.hpp"
+#include "../app/platform.hpp"
 
 using namespace std;
 
@@ -25,9 +26,12 @@ namespace bs {
         }
 
     public:
-        series(const string& _title, const http::request& _request): title(_title), request(_request), loaded(false) { }
+		series(const string& _title, const http::request& _request): title(_title), request(_request), loaded(false) {
+			title = ::platform::encode(title);
+		}
 
         series(const string& _title, const http::response& response): title(_title) {
+			title = ::platform::encode(title);
             load(response);
         }
 

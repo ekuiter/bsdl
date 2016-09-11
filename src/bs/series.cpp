@@ -29,6 +29,6 @@ namespace bs {
     }
 
     ostream& operator<<(ostream& stream, const series& series) {
-        return stream << series.get_title();
+        return stream << ::platform::strip_chars(series.get_title());
     }
 }

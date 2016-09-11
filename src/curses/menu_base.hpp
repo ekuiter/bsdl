@@ -25,8 +25,10 @@ namespace curses {
             int postfix_length, max_entries, top_item, selected_item, item_number;
             color highlight_color;
 
-            typedef typename remove_reference<decltype(*items.begin())>::type object_type;
+		public:
+			typedef typename remove_reference<decltype(*items.begin())>::type object_type;
 
+		protected:
             int get_entries() {
                 return min<int>(item_number - top_item, max_entries);
             }
@@ -83,7 +85,7 @@ namespace curses {
             void refresh_item(window& window, const string& prefix, const object_type& obj,
                               int max_length, function<void (int, int)> fn = nullptr) {
                 point p_before, p_after;
-                _stream << stream::get(p_before) << stream::write(" ", max_length) <<
+                _stream << stream::get(p_before), _stream << stream::write(" ", max_length) <<
                         stream::move(p_before) << prefix << obj << stream::get(p_after);
 
                 if (p_after.y > p_before.y ||
@@ -101,7 +103,7 @@ namespace curses {
                     fn(selected_item - top_item);
             }
 
-            string toggle_highlight(window& window, bool sel = true) {
+            void toggle_highlight(window& window, bool sel = true) {
                 static int i;
                 if (sel) {
                     if (i % 2 == 0)
@@ -110,7 +112,6 @@ namespace curses {
                         wattroff(window.get(), highlight_color.get());
                     i++;
                 }
-                return "";
             }
 
         public:

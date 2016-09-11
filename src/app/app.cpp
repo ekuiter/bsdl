@@ -1,5 +1,7 @@
 #include "app.hpp"
+#include "platform.hpp"
 #include "../bs/episode_download.hpp"
+#include "../curses/platform.hpp"
 #include "download_dialog.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
@@ -53,7 +55,8 @@ app::app():
                 _stream.set_wrap(true);
                 _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
                         " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser)." << endl <<
-                        "Compiled on " << __DATE__ << " " << __TIME__ << ".";
+						"Compiled for " << color::get_accent_color() << ::platform::get_name() <<
+						color::previous << " on " << color::get_accent_color() << __DATE__ << " " << __TIME__ << color::previous << ".";
             }, "Exit");
         }
         exit(EXIT_SUCCESS);
@@ -66,7 +69,7 @@ void app::set_title(const string& title) {
     clog << endl << title << endl << stream::write("-", title.length()) << endl;
     stream stream(title_window);
     stream << stream::clear() << title << endl <<
-    stream::write(stream::ext_char(ACS_HLINE), title_window.get_bounds().width) << stream::refresh();
+		stream::write(stream::ext_char(ACS_HLINE), title_window.get_bounds().width) << stream::refresh();
 }
 
 bool app::keyboard_callback(int ch) {

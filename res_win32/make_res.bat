@@ -1,0 +1,1 @@
+windres bsdl.rc bsdl.o

@@ -63,7 +63,8 @@ namespace bs {
                         title_de == "" ? title_en :
                         title_en == "" ? title_de : title_de + " (" + title_en + ")",
                 file_name = _episode->get_series_title() + " " + get_id() + " " + title + "." + file_format;
-        replace(file_name.begin(), file_name.end(), '/', '_');
+		for (auto special_char : { '/', ':' })
+			replace(file_name.begin(), file_name.end(), special_char, '_');
         return file_name;
     }
 

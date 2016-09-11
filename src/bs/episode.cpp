@@ -19,10 +19,11 @@ namespace bs {
         stream << episode.get_id() << curses::stream::move(max_id_width);
 
         if (episode.get_german_title() == "" || episode.get_english_title() == "")
-            return stream << (episode.get_german_title() == "" ? episode.get_english_title() : episode.get_german_title());
+            return stream << ::platform::strip_chars(
+				episode.get_german_title() == "" ? episode.get_english_title() : episode.get_german_title());
 
         return stream <<
-               curses::stream::write_truncated(episode.get_german_title(), (width - max_id_width) / 2) <<
-               " " << episode.get_english_title();
+               curses::stream::write_truncated(::platform::strip_chars(episode.get_german_title()),
+				   (width - max_id_width) / 2) << " " << ::platform::strip_chars(episode.get_english_title());
     }
 }
