@@ -80,12 +80,29 @@ void settings::read(const vector<string>& args) {
     if (first_arg == 2)
         (*this)["series_search"] = args[1];
 
+    vector<string> parts;
     for (i = first_arg; i < args.size(); i++) {
-        if (is_arg("--download", 2) || is_arg("-d", 2))
-            _download_selection.add(new bs::download_selector::episode(stoi(next_arg()), stoi(next_arg())));
-        else if (is_arg("--download", 1) || is_arg("-d", 1))
-            _download_selection.add(new bs::download_selector::season(stoi(next_arg())));
-        else if (is_arg("--download") || is_arg("-d"))
+        if (is_arg("--download", 2) || is_arg("-d", 2)) {
+            string season_number = next_arg(), number = next_arg();
+            boost::split(parts, number, boost::is_any_of("-"));
+            if (parts.size() == 1)
+                _download_selection.add(new bs::download_selector::episode(stoi(season_number), stoi(number)));
+            else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
+                for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
+                    _download_selection.add(new bs::download_selector::episode(stoi(season_number), i));
+            else
+                throw runtime_error("illegal option, see bsdl --help");
+        } else if (is_arg("--download", 1) || is_arg("-d", 1)) {
+            string season_number = next_arg();
+            boost::split(parts, season_number, boost::is_any_of("-"));
+            if (parts.size() == 1)
+                _download_selection.add(new bs::download_selector::season(stoi(season_number)));
+            else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
+                for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
+                    _download_selection.add(new bs::download_selector::season(i));
+            else
+                throw runtime_error("illegal option, see bsdl --help");
+        } else if (is_arg("--download") || is_arg("-d"))
             _download_selection.add(new bs::download_selector::series);
         else if (is_arg("--provider", 1) || is_arg("-p", 1))
             preferred_providers.push_back(&provider::instance(next_arg(), true));
