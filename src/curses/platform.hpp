@@ -17,7 +17,7 @@ namespace curses {
 #ifdef __MINGW32__
 			return nc_getmouse(event);
 #else
-			return getmouse(event);
+			return ::getmouse(event);
 #endif
 		}
 
