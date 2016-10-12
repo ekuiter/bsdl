@@ -95,9 +95,12 @@ void settings::read(const vector<string>& args) {
         } else if (is_arg("--download", 1) || is_arg("-d", 1)) {
             string season_number = next_arg();
             boost::split(parts, season_number, boost::is_any_of("-"));
-            if (parts.size() == 1)
-                _download_selection.add(new bs::download_selector::season(stoi(season_number)));
-            else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
+            if (parts.size() == 1) {
+                if (season_number == "latest")
+                    _download_selection.add(new bs::download_selector::latest_episode);
+                else
+                    _download_selection.add(new bs::download_selector::season(stoi(season_number)));
+            } else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
                 for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
                     _download_selection.add(new bs::download_selector::season(i));
             else

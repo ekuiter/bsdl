@@ -29,6 +29,7 @@ namespace bs {
         class series;
         class season;
         class episode;
+        class latest_episode;
     };
 
     class download_selector::series : public download_selector {
@@ -79,6 +80,20 @@ namespace bs {
 
         operator string() const override {
             return string("episode(") + to_string(season_number) + ", " + to_string(number) + ")";
+        }
+    };
+
+    class download_selector::latest_episode : public download_selector {
+    public:
+        latest_episode() {}
+
+        episode_set get_episodes(bs::series& _series) const override {
+            bs::season& _season = _series[_series.season_number() - 1];
+            return { &_season[_season.episode_number() - 1] };
+        }
+
+        operator string() const override {
+            return "latest_episode";
         }
     };
 
