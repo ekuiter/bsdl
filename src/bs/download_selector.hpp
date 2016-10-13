@@ -88,8 +88,13 @@ namespace bs {
         latest_episode() {}
 
         episode_set get_episodes(bs::series& _series) const override {
-            bs::season& _season = _series[_series.season_number() - 1];
-            return { &_season[_season.episode_number() - 1] };
+            bs::season* last_season;
+            for (auto& season : _series)
+                last_season = &season;
+            bs::episode* last_episode;
+            for (auto& episode : *last_season)
+                last_episode = &episode;
+            return { last_episode };
         }
 
         operator string() const override {
