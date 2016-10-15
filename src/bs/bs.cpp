@@ -79,10 +79,14 @@ namespace bs {
             if (boost::contains(current_series_title, series_search) ||
                     get_string_similarity(current_series_title, series_search) > 0.5) {
                 CNode series_node = sel.nodeAt(i).find("a").assertNum(1).nodeAt(0);
+                if (series_search == current_series_title)
+                    search_results.reset(new vector<series>());
                 search_results->push_back(series(
                         series_node.text(),
                         root().get_relative(series_node.attribute("href"))
                 ));
+                if (series_search == current_series_title)
+                    break;
             }
         }
 
