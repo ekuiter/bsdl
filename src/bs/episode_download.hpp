@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include "episode.hpp"
+#include "episode_file.hpp"
 #include "../http/client.hpp"
 
 using namespace std;
@@ -19,11 +20,12 @@ namespace bs {
         bool loaded, abort;
         string message;
         refresh_callback _refresh_callback;
+        file _file;
 
     public:
         download(const episode& episode, refresh_callback refresh_callback = [](download&) {}):
                 _episode(episode), now_bytes(0), total_bytes(0), loaded(false), abort(false), message("Queued"),
-                _refresh_callback(refresh_callback) {}
+                _refresh_callback(refresh_callback), _file(episode) {}
 
         const episode& get_episode() const {
             return _episode;

@@ -1,5 +1,4 @@
 #include "episode_download.hpp"
-#include "episode_file.hpp"
 #include "../curses/terminal.hpp"
 #include "../curses/widgets.hpp"
 #include "../app/settings.hpp"
@@ -34,7 +33,7 @@ namespace bs {
     }
 
     string episode::download::get_file_name() const {
-        return file(_episode).get_file_name();
+        return _file.get_file_name();
     }
 
     string episode::download::get_file_path(string directory_name) const {

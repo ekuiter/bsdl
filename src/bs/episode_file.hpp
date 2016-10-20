@@ -12,6 +12,7 @@ using namespace std;
 namespace bs {
     class episode::file {
         string old_file_name;
+        mutable string file_name;
         const episode* _episode;
 
         int get_season_digits() const {
