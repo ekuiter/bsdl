@@ -10,8 +10,7 @@ class settings {
     settings(): allowed_settings({"series_search", "output_files_directory", "rename_files_directory",
           "rename_files_pattern", "show_info", "log_file", "config_file", "root_url", "search_path", "series_sel",
           "season_sel", "episode_sel", "video_file_sel", "movies_text", "providers", "provider_v",
-          "provider_v_file_format", "provider_v_hash_sel", "provider_v_timestamp_sel", "provider_v_player_sel",
-          "provider_s", "provider_s_file_format", "provider_s_op", "provider_s_player_sel", "provider_s_file_pattern"}) {
+          "provider_v_file_format", "provider_s", "provider_s_file_format"}) {
         for (auto& setting : allowed_settings)
             settings_map[setting];
     }
