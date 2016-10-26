@@ -1,7 +1,7 @@
 #include "series.hpp"
 #include "bs.hpp"
 #include "../curses/terminal.hpp"
-#include "../app/settings.hpp"
+#include "../settings.hpp"
 #include <Node.h>
 
 namespace bs {
@@ -29,6 +29,6 @@ namespace bs {
     }
 
     ostream& operator<<(ostream& stream, const series& series) {
-        return stream << ::platform::strip_chars(series.get_title());
+        return stream << util::platform::strip_chars(series.get_title());
     }
 }

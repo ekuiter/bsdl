@@ -1,6 +1,6 @@
 #include "season_view.hpp"
 #include "season.hpp"
-#include "../app/app.hpp"
+#include "../app.hpp"
 #include <sstream>
 
 using namespace curses;

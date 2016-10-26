@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "../bs/bs.hpp"
+#include "bs/bs.hpp"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ class settings {
     }
 
     bs::download_selection _download_selection;
-    vector<provider*> preferred_providers;
+    vector<providers::provider*> preferred_providers;
     map<string, string> settings_map;
     set<string> allowed_settings;
 
@@ -47,7 +47,7 @@ public:
         return _download_selection;
     }
 
-    vector<provider*> get_preferred_providers() {
+    vector<providers::provider*> get_preferred_providers() {
         return preferred_providers;
     }
 

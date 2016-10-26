@@ -19,6 +19,10 @@ namespace bs {
 
     class season {
         typedef map<int, episode> episode_map;
+        typedef boost::iterators::transform_iterator<
+            boost::range_detail::select_second_mutable<episode_map>, episode_map::iterator> episode_iterator;
+        typedef boost::iterators::transform_iterator<
+            boost::range_detail::select_second_const<episode_map>, episode_map::const_iterator> episode_const_iterator;
 
         string series_title;
         int number;
@@ -68,22 +72,22 @@ namespace bs {
             }
         }
 
-        decltype(boost::adaptors::values(const_cast<const episode_map&>(episodes)).begin()) begin() const {
+        episode_const_iterator begin() const {
             load();
             return boost::adaptors::values(const_cast<const episode_map&>(episodes)).begin();
         }
 
-        decltype(boost::adaptors::values(const_cast<const episode_map&>(episodes)).end()) end() const {
+        episode_const_iterator end() const {
             load();
             return boost::adaptors::values(const_cast<const episode_map&>(episodes)).end();
         }
 
-        decltype(boost::adaptors::values(episodes).begin()) begin() {
+        episode_iterator begin() {
             load();
             return boost::adaptors::values(episodes).begin();
         }
 
-        decltype(boost::adaptors::values(episodes).end()) end() {
+        episode_iterator end() {
             load();
             return boost::adaptors::values(episodes).end();
         }

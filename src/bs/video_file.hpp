@@ -3,13 +3,13 @@
 #include <iostream>
 #include <Node.h>
 #include "../http/client.hpp"
-#include "../app/provider.hpp"
+#include "../providers/provider.hpp"
 
 using namespace std;
 
 namespace bs {
     class video_file {
-        const provider& _provider;
+        const providers::provider& _provider;
         http::request request;
         mutable http::request::download download_request;
         mutable bool loaded;
@@ -17,10 +17,10 @@ namespace bs {
     public:
         static video_file unavailable_video_file;
 
-        video_file(const provider& provider, const http::request& _request):
+        video_file(const providers::provider& provider, const http::request& _request):
                 _provider(provider), request(_request), loaded(false) {}
 
-        const provider& get_provider() const {
+        const providers::provider& get_provider() const {
             return _provider;
         }
 

@@ -5,8 +5,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include "../http/client.hpp"
-#include "../app/provider.hpp"
-#include "../app/platform.hpp"
+#include "../providers/provider.hpp"
+#include "../util/platform.hpp"
 #include "video_file.hpp"
 #include "exception.hpp"
 
@@ -15,7 +15,7 @@ using namespace std;
 namespace bs {
     class episode {
     public:
-        typedef unordered_map<provider*, video_file> video_file_map;
+        typedef unordered_map<providers::provider*, video_file> video_file_map;
         class download;
         class file;
 
@@ -33,8 +33,8 @@ namespace bs {
                 title_en(_title_en), video_files(_video_files), error_logged(false) {
             boost::trim(title_de);
             boost::trim(title_en);
-			title_de = ::platform::encode(title_de);
-			title_en = ::platform::encode(title_en);
+            title_de = util::platform::encode(title_de);
+            title_en = util::platform::encode(title_en);
         }
 
         string get_series_title() const noexcept {
@@ -62,7 +62,7 @@ namespace bs {
         }
 
         const video_file& get_preferred_video_file() const {
-            const vector<provider*>& preferred_providers = provider::get_preferred_providers();
+            const vector<providers::provider*>& preferred_providers = providers::provider::get_preferred_providers();
             for (auto& preferred_provider : preferred_providers)
                 if (video_files.find(preferred_provider) != video_files.end())
                     return video_files.at(preferred_provider);

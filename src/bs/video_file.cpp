@@ -1,8 +1,8 @@
 #include "video_file.hpp"
-#include "../app/settings.hpp"
+#include "../settings.hpp"
 
 namespace bs {
-    video_file video_file::unavailable_video_file(provider::instance("Unavailable"), http::request());
+    video_file video_file::unavailable_video_file(providers::provider::instance("Unavailable"), http::request());
 
     void video_file::load() const  {
         if (!loaded) {

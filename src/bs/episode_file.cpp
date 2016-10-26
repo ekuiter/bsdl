@@ -1,5 +1,5 @@
 #include "episode_file.hpp"
-#include "../app/app.hpp"
+#include "../app.hpp"
 #include <boost/filesystem.hpp>
 
 using namespace boost::filesystem;

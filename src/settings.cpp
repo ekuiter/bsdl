@@ -1,6 +1,6 @@
 #include "settings.hpp"
 #include "app.hpp"
-#include "platform.hpp"
+#include "util/platform.hpp"
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -53,7 +53,7 @@ void settings::read(const vector<string>& args) {
     }
 
     if (!is_set("config_file"))
-        (*this)["config_file"] = (::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
+        (*this)["config_file"] = (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
 
     string config_file_name = (*this)["config_file"];
     if (!boost::filesystem::exists(config_file_name))
@@ -108,7 +108,7 @@ void settings::read(const vector<string>& args) {
         } else if (is_arg("--download") || is_arg("-d"))
             _download_selection.add(new bs::download_selector::series);
         else if (is_arg("--provider", 1) || is_arg("-p", 1))
-            preferred_providers.push_back(&provider::instance(next_arg(), true));
+            preferred_providers.push_back(&providers::provider::instance(next_arg(), true));
         else if (is_arg("--output-files", 1) || is_arg("-o", 1))
             (*this)["output_files_directory"] = next_arg();
         else if (is_arg("--rename-files", 2) || is_arg("-r", 2))
@@ -134,7 +134,7 @@ void settings::read(const vector<string>& args) {
         boost::split(providers, get("providers"), boost::is_any_of(","));
         for (auto& provider : providers) {
             boost::trim(provider);
-            preferred_providers.push_back(&provider::instance(provider, true));
+            preferred_providers.push_back(&providers::provider::instance(provider, true));
         }
     }
 

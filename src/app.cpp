@@ -1,8 +1,8 @@
 #include "app.hpp"
-#include "platform.hpp"
-#include "../bs/episode_download.hpp"
-#include "../curses/platform.hpp"
-#include "download_dialog.hpp"
+#include "util/platform.hpp"
+#include "bs/episode_download.hpp"
+#include "curses/platform.hpp"
+#include "util/download_dialog.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <fstream>
@@ -55,14 +55,15 @@ app::app():
                 _stream.set_wrap(true);
                 _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
                         " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser)." << endl <<
-						"Compiled for " << color::get_accent_color() << ::platform::get_name() <<
-						color::previous << " on " << color::get_accent_color() << __DATE__ << " " << __TIME__ << color::previous << ".";
+						"Compiled for " << color::get_accent_color() << util::platform::get_name() <<
+						color::previous << " on " << color::get_accent_color() <<
+                                                __DATE__ << " " << __TIME__ << color::previous << ".";
             }, "Exit");
         }
         exit(EXIT_SUCCESS);
     }
 
-    provider::set_preferred_providers(settings.get_preferred_providers());
+    providers::provider::set_preferred_providers(settings.get_preferred_providers());
 }
 
 void app::set_title(const string& title) {
@@ -186,6 +187,6 @@ void app::download_episodes(bs::download_selection& download_selection) {
         throw runtime_error("there is no current series");
 
     window::framed download_window(get_centered_bounds());
-    download_dialog::run<bs::episode, bs::episode::download>(download_window, download_selection.get_episodes(*current_series));
+    util::download_dialog::run<bs::episode, bs::episode::download>(download_window, download_selection.get_episodes(*current_series));
     download_selection.clear();
 }

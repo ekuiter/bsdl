@@ -2,8 +2,8 @@
 #include "bs.hpp"
 #include "video_file.hpp"
 #include "season_view.hpp"
-#include "../app/provider.hpp"
-#include "../app/settings.hpp"
+#include "../providers/provider.hpp"
+#include "../settings.hpp"
 #include "../curses/terminal.hpp"
 #include <unordered_map>
 #include <Node.h>
@@ -34,7 +34,7 @@ namespace bs {
             for (auto& video_file_node : video_file_nodes) {
                 string video_file_title = CNode(video_file_node).text(),
                         video_file_url = CNode(video_file_node).attribute("href");
-                provider& provider = provider::instance(video_file_title);
+                providers::provider& provider = providers::provider::instance(video_file_title);
                 video_files.insert({&provider, video_file(provider, bs::root().get_relative(video_file_url))});
             }
 

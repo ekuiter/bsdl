@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 #include "settings.hpp"
-#include "../bs/bs.hpp"
-#include "../curses/terminal.hpp"
-#include "../curses/widgets.hpp"
+#include "bs/bs.hpp"
+#include "curses/terminal.hpp"
+#include "curses/widgets.hpp"
 
 using namespace std;
 using namespace curses;

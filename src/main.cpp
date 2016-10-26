@@ -1,5 +1,5 @@
 #include <iostream>
-#include "app/app.hpp"
+#include "app.hpp"
 
 using namespace std;
 
