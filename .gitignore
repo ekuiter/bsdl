@@ -3,8 +3,7 @@
 bin_macos/
 bin_win32/
 lib/boost/
-src/http_asio/
-src/ranges.cpp
+src/tests/
 CMakeFiles/
 cmake_install.cmake
 CMakeCache.txt

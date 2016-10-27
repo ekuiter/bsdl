@@ -21,7 +21,7 @@ namespace curses {
         protected:
             window& _window;
             stream _stream;
-            T pointers;
+            T& pointers;
             int postfix_length, max_entries, top_item, selected_item, item_number;
             color highlight_color;
 
@@ -115,7 +115,7 @@ namespace curses {
             }
 
         public:
-            base(window& window, const T& _pointers, const typename base<T>::pointer_type selected_ptr,
+            base(window& window, T& _pointers, const typename base<T>::pointer_type selected_ptr,
                  int default_selected_item, int _max_entries, const color& _highlight_color):
                     _window(window), _stream(window), pointers(_pointers), postfix_length(3), max_entries(_max_entries),
                     top_item(0), selected_item(-1), item_number(0), highlight_color(_highlight_color) {

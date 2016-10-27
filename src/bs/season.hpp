@@ -20,7 +20,7 @@ namespace bs {
 
     class season_base {
     protected:
-        typedef map<int, episode> map_type;
+        typedef map<int, episode*> map_type;
         
     private:
         string series_title;
@@ -32,8 +32,8 @@ namespace bs {
 
         void load(const http::response& response) const;
 
-        void add_episode(const episode& episode) const {
-            episodes.insert({episode.get_number(), episode});
+        void add_episode(episode* episode) const {
+            episodes.insert({episode->get_number(), episode});
         }
         
     protected:
@@ -63,11 +63,11 @@ namespace bs {
             return episodes.size();
         }
 
-        const episode& operator[](int number) const {
+        const episode* operator[](int number) const {
             return (*const_cast<season_base*>(this))[number];
         }
 
-        episode& operator[](int number) {
+        episode* operator[](int number) {
             load();
             try {
                 return episodes.at(number);

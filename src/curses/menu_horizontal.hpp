@@ -39,7 +39,7 @@ namespace curses {
                 }
             }
 
-            void refresh_tab_content_window(int item) {
+            void refresh_tab_content_window(int item) {                
                 for (auto& pair : tab_content_windows)
                     pair.second->hide();
 
@@ -102,7 +102,7 @@ namespace curses {
             }
 
         public:
-            horizontal(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
+            horizontal(window& window, T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
                        int _tab_width = 20, const color& highlight_color = color::get_accent_color()):
                     base<T>(window, pointers, selected_ptr, 0, window.get_bounds().width / _tab_width, highlight_color),
                     tab_width(_tab_width), tab_height(3),

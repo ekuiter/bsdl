@@ -1,5 +1,6 @@
 #include "episode_file.hpp"
 #include "../app.hpp"
+#include "../util/addressed.hpp"
 #include <boost/filesystem.hpp>
 
 using namespace boost::filesystem;
@@ -18,7 +19,7 @@ namespace bs {
             throw exception(string("could not recognize \"") + old_file_name + "\"");
 
         int season_number = stoi(results[1]), number = stoi(results[2]);
-        _episode = &_series[season_number][number];
+        _episode = _series[season_number][number];
     }
 
     static vector<string> rename_files(series& _series, string directory_name, string pattern_str, bool do_rename) {
@@ -51,7 +52,9 @@ namespace bs {
             cerr << "No renameable files could be found in \"" << directory_name << "\"." << endl;
         else {
             window::framed menu_window(app::instance().get_centered_bounds());
-            menu_dialog::run(menu_window, "These files will be renamed:", changes, &changes[0], "Rename all");
+            auto changes_addressed = changes | util::addressed<string>();
+            menu_dialog::run(menu_window, "These files will be renamed:",
+                    changes_addressed, *changes_addressed.begin(), "Rename all");
             ::bs::rename_files(_series, directory_name, pattern_str, true);
         }
     }

@@ -14,10 +14,10 @@ namespace util {
                         const color& highlight_color = color::get_accent_color()) {
 
             http::download_queue<T2> download_queue;
-            menu::vertical<http::download_queue<T2>>* menu_ptr = nullptr;
+            menu::vertical<typename http::download_queue<T2>::addressed_type>* menu_ptr = nullptr;
 
             auto refresh_callback = [&menu_ptr](T2& download) {
-                menu_ptr->refresh_object(download);
+                menu_ptr->refresh_pointer(&download);
             };
 
             for (auto& downloadable : downloadables)
@@ -36,7 +36,9 @@ namespace util {
             window::sub abort_selected_wrapper(window, rectangle(abort_selected_pos, abort_selected_width, button_height));
             button abort_all(abort_all_wrapper, abort_all_action);
             button abort_selected(abort_selected_wrapper, abort_selected_action);
-            menu::vertical<http::download_queue<T2>> menu(menu_wrapper, download_queue, nullptr, highlight_color);
+            auto download_queue_addressed = download_queue.addressed();
+            menu::vertical<typename http::download_queue<T2>::addressed_type>
+                menu(menu_wrapper, download_queue_addressed, nullptr, highlight_color);
             menu_ptr = &menu;
 
             abort_all_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&download_queue]() {
@@ -46,7 +48,7 @@ namespace util {
             }));
 
             abort_selected_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&menu, &download_queue]() {
-                T2* selected_download = menu.get_selected_object();
+                T2* selected_download = menu.get_selected_pointer();
                 if (selected_download)
                     download_queue.abort(*selected_download);
                 return true;

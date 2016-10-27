@@ -38,7 +38,7 @@ namespace bs {
                 video_files.insert({&provider, video_file(provider, bs::root().get_relative(video_file_url))});
             }
 
-            add_episode(episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
+            add_episode(new episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
         }
 
         loaded = true;

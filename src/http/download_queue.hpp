@@ -5,6 +5,7 @@
 #include <set>
 #include <algorithm>
 #include "multi_request.hpp"
+#include "../util/addressed.hpp"
 
 using namespace std;
 
@@ -18,6 +19,10 @@ namespace http {
 
     public:
         download_queue(int _parallel_transfers = 3): parallel_transfers(_parallel_transfers) {}
+        
+        typedef typename vector<T>::const_iterator const_iterator;
+        typedef typename vector<T>::iterator iterator;
+        typedef typename util::addressed<T>::template inside<download_queue<T>>::type addressed_type;
 
         void push(const T& download) {
             downloads.push_back(download);
@@ -50,20 +55,24 @@ namespace http {
                 }
         }
 
-        typename vector<T>::const_iterator begin() const {
+        const_iterator begin() const {
             return downloads.begin();
         }
 
-        typename vector<T>::const_iterator end() const {
+        const_iterator end() const {
             return downloads.end();
         }
 
-        typename vector<T>::iterator begin() {
+        iterator begin() {
             return downloads.begin();
         }
 
-        typename vector<T>::iterator end() {
+        iterator end() {
             return downloads.end();
+        }
+        
+        addressed_type addressed() {
+            return *this | util::addressed<T>();
         }
     };
 }

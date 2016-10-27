@@ -22,7 +22,8 @@ namespace bs {
             int season_number = season_text == settings::get("movies_text") ? 0 : stoi(season_text);
             string season_url = CNode(season_node).attribute("href");
             http::request season_request(bs::root().get_relative(season_url));
-            add_season(season_number == 1 ? season(title, 1, response) : season(title, season_number, season_request));
+            seasons.emplace(season_number,
+                    season_number == 1 ? move(season(title, 1, response)) : move(season(title, season_number, season_request)));
         }
 
         loaded = true;

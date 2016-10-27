@@ -17,7 +17,7 @@ namespace curses {
     class menu_dialog {
     public:
         template <typename T>
-        static auto run(window& window, const string& prompt, const T& pointers,
+        static auto run(window& window, const string& prompt, T& pointers,
                         typename remove_reference<decltype(*pointers.begin())>::type selected_ptr = nullptr,
                         const string& action = "Continue", const color& highlight_color = color::get_accent_color())
                         -> typename remove_reference<decltype(*pointers.begin())>::type {

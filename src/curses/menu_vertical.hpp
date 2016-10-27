@@ -33,7 +33,7 @@ namespace curses {
             }
 
         public:
-            vertical(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
+            vertical(window& window, T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
                      const color& highlight_color = color::get_accent_color()):
                     base<T>(window, pointers, selected_ptr, -1, window.get_bounds().height, highlight_color),
                     max_length(window.get_bounds().width) {
@@ -96,7 +96,7 @@ namespace curses {
                 }
 
         public:
-                multi(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
+                multi(window& window, T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
                     const color& highlight_color = color::get_accent_color()) :
                     vertical<T>(window, pointers, selected_ptr, highlight_color) {
                     refresh();
@@ -115,7 +115,7 @@ namespace curses {
 
                 void toggle_all() {
                     for (auto ptr : this->pointers)
-                            toggle_marked_object(ptr);
+                            toggle_marked_pointer(ptr);
                 }
 
                 vector<typename base<T>::pointer_type> get_marked_pointers() {

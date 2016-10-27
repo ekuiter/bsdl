@@ -3,6 +3,7 @@
 #include "bs/episode_download.hpp"
 #include "curses/platform.hpp"
 #include "util/download_dialog.hpp"
+#include "util/addressed.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <fstream>
@@ -158,9 +159,10 @@ bs::series& app::choose_series(vector<bs::series>& search_results) {
     if (search_results.size() == 1)
         current_series = &search_results[0];
     else {
+        auto search_results_addressed = search_results | util::addressed<bs::series>();
         window::framed results_window(get_centered_bounds());
         current_series = menu_dialog::run(results_window, "The following series were found:",
-                                          search_results, &search_results[0], "Choose");
+                                          search_results_addressed, *search_results_addressed.begin(), "Choose");
     }
     return *current_series;
 }
@@ -174,7 +176,9 @@ void app::display_series(bs::series& series) {
 
     _stream << stream::clear();
     set_title(series.get_title());
-    menu::horizontal<bs::series> series_menu(series_window, series, &series[1]);
+    auto series_addressed = series | util::addressed<bs::season>();
+    menu::horizontal<util::addressed<bs::season>::inside<bs::series>::type>
+        series_menu(series_window, series_addressed, *series_addressed.begin());
     if (settings.is_set("rename_files_directory"))
         bs::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)
@@ -187,6 +191,7 @@ void app::download_episodes(bs::download_selection& download_selection) {
         throw runtime_error("there is no current series");
 
     window::framed download_window(get_centered_bounds());
-    util::download_dialog::run<bs::episode, bs::episode::download>(download_window, download_selection.get_episodes(*current_series));
+    util::download_dialog::run<bs::episode, bs::episode::download>(
+        download_window, download_selection.get_episodes(*current_series));
     download_selection.clear();
 }

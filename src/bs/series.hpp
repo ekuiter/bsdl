@@ -23,10 +23,6 @@ namespace bs {
         mutable map_type seasons;
 
         void load(const http::response& response) const;
-
-        void add_season(const season& season) const {
-            seasons.insert({season.get_number(), season});
-        }
         
     protected:
         map_type& get_map() const {

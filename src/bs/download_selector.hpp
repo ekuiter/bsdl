@@ -39,8 +39,8 @@ namespace bs {
         episode_set get_episodes(bs::series& _series) const override {
             episode_set episodes;
             for (auto& season : _series)
-                for (auto& episode : season)
-                    episodes.insert(&episode);
+                for (auto episode : season)
+                    episodes.insert(episode);
             return episodes;
         }
 
@@ -57,8 +57,8 @@ namespace bs {
 
         episode_set get_episodes(bs::series& _series) const override {
             episode_set episodes;
-            for (auto& episode : _series[season_number])
-                episodes.insert(&episode);
+            for (auto episode : _series[season_number])
+                episodes.insert(episode);
             return episodes;
         }
 
@@ -75,7 +75,7 @@ namespace bs {
         episode(int _season_number, int _number): season_number(_season_number), number(_number) {}
 
         episode_set get_episodes(bs::series& _series) const override {
-            return { &_series[season_number][number] };
+            return { _series[season_number][number] };
         }
 
         operator string() const override {
@@ -92,8 +92,8 @@ namespace bs {
             for (auto& season : _series)
                 last_season = &season;
             bs::episode* last_episode;
-            for (auto& episode : *last_season)
-                last_episode = &episode;
+            for (auto episode : *last_season)
+                last_episode = episode;
             return { last_episode };
         }
 
