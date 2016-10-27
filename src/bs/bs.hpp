@@ -13,6 +13,6 @@ namespace bs {
     class bs {
     public:
         static http::request root();
-        static unique_ptr<vector<series>> search(string series_search);
+        static vector<series*> search(string series_search);
     };
 }

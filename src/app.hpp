@@ -44,8 +44,8 @@ public:
                   height == -1 ? LINES * thirds / 3 : height).center(rectangle::get_screen(), status_width);
     }
 
-    unique_ptr<vector<bs::series>> search_series();
-    bs::series& choose_series(vector<bs::series>& search_results);
+    vector<bs::series*> search_series();
+    bs::series& choose_series(vector<bs::series*>& search_results);
     void display_series(bs::series& series);
     void download_episodes(bs::download_selection& download_selection);
 };

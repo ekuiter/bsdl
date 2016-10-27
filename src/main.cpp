@@ -9,8 +9,8 @@ int main(int argc, char* argv[]) {
     curses::terminal::instance().run([argc, argv](curses::terminal& terminal) {
         settings::instance().read(vector<string>(argv, argv + argc));
         app& app = app::instance();
-        unique_ptr<vector<bs::series>> search_results = app.search_series();
-        bs::series& series = app.choose_series(*search_results);
+        vector<bs::series*> search_results = app.search_series();
+        bs::series& series = app.choose_series(search_results);
         app.display_series(series);
     });
 

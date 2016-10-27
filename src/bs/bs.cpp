@@ -13,10 +13,10 @@ namespace bs {
         return http::request(settings::get("root_url"));
     }
 
-    unique_ptr<vector<series>> bs::search(string series_search) {
+    vector<series*> bs::search(string series_search) {
         cout << "Searching for series " << curses::color::get_accent_color() <<
                 series_search << curses::color::previous << "." << endl;
-        unique_ptr<vector<series>> search_results(new vector<series>());
+        vector<series*> search_results;
         boost::to_lower(series_search);
 
         unique_ptr<CDocument> document = root().get_relative(settings::get("search_path"))().parse();
@@ -29,8 +29,8 @@ namespace bs {
                     util::get_string_similarity(current_series_title, series_search) > 0.5) {
                 CNode series_node = sel.nodeAt(i).find("a").assertNum(1).nodeAt(0);
                 if (series_search == current_series_title)
-                    search_results.reset(new vector<series>());
-                search_results->push_back(series(
+                    search_results.clear();
+                search_results.push_back(new series(
                         series_node.text(),
                         root().get_relative(series_node.attribute("href"))
                 ));

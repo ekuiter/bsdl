@@ -117,9 +117,9 @@ int app::http_callback(http::request::status status, const http::request& reques
     return 0;
 }
 
-unique_ptr<vector<bs::series>> app::search_series() {
+vector<bs::series*> app::search_series() {
     set_title("Search series");
-    unique_ptr<vector<bs::series>> search_results;
+    vector<bs::series*> search_results;
     rectangle centered_bounds = get_centered_bounds(-1, 7);
     string series_search = settings["series_search"];
 
@@ -141,7 +141,7 @@ unique_ptr<vector<bs::series>> app::search_series() {
             search_results = bs::bs::search(series_search);
         }
 
-        if (search_results->size() == 0) {
+        if (search_results.size() == 0) {
             window::framed message_window(centered_bounds);
             message_dialog::run(message_window, [&series_search](stream& _stream) {
                 _stream << "Nothing was found for " << color::get_accent_color() <<
@@ -149,20 +149,19 @@ unique_ptr<vector<bs::series>> app::search_series() {
             }, "Try again");
             series_search = "";
         }
-    } while (search_results->size() == 0);
+    } while (search_results.size() == 0);
 
     return search_results;
 }
 
-bs::series& app::choose_series(vector<bs::series>& search_results) {
+bs::series& app::choose_series(vector<bs::series*>& search_results) {
     set_title("Choose series");
     if (search_results.size() == 1)
-        current_series = &search_results[0];
+        current_series = search_results[0];
     else {
-        auto search_results_addressed = search_results | util::addressed<bs::series>();
         window::framed results_window(get_centered_bounds());
         current_series = menu_dialog::run(results_window, "The following series were found:",
-                                          search_results_addressed, *search_results_addressed.begin(), "Choose");
+                                          search_results, *search_results.begin(), "Choose");
     }
     return *current_series;
 }
