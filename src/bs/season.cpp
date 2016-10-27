@@ -9,7 +9,7 @@
 #include <Node.h>
 
 namespace bs {
-    void season::load() const {
+    void season_base::load() const {
         if (!loaded) {
             cout << "Loading " << curses::color::get_accent_color() <<
                     *this << curses::color::previous << "." << endl;
@@ -17,7 +17,7 @@ namespace bs {
         }
     }
 
-    void season::load(const http::response& response) const {
+    void season_base::load(const http::response& response) const {
         unique_ptr<CDocument> document = response.parse();
         CSelection episode_nodes = document->find(settings::get("episode_sel")).assertAtLeast(1);
 
@@ -44,17 +44,17 @@ namespace bs {
         loaded = true;
     }
 
-    void season::create_view(curses::window& window) {
+    void season_base::create_view(curses::window& window) {
         if (view)
             throw exception("season view already exists");
-        view.reset(new season_view(*this, window));
+        view.reset(new season_view(static_cast<season&>(*this), window));
     }
 
-    void season::destroy_view() {
+    void season_base::destroy_view() {
         view.reset();
     }
 
-    ostream& operator<<(ostream& stream, const season& season) {
+    ostream& operator<<(ostream& stream, const season_base& season) {
         if (season.get_number() == 0)
             return stream << "Movies";
         return stream << "Season #" << season.get_number();

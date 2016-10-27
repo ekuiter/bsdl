@@ -5,7 +5,7 @@
 #include <Node.h>
 
 namespace bs {
-    void series::load() const {
+    void series_base::load() const {
         if (!loaded) {
             cout << "Loading series " << curses::color::get_accent_color() <<
                     *this << curses::color::previous << "." << endl;
@@ -13,7 +13,7 @@ namespace bs {
         }
     }
 
-    void series::load(const http::response& response) const {
+    void series_base::load(const http::response& response) const {
         unique_ptr<CDocument> document = response.parse();
         CSelection season_nodes = document->find(settings::get("season_sel")).assertAtLeast(1);
 
@@ -28,7 +28,7 @@ namespace bs {
         loaded = true;
     }
 
-    ostream& operator<<(ostream& stream, const series& series) {
+    ostream& operator<<(ostream& stream, const series_base& series) {
         return stream << util::platform::strip_chars(series.get_title());
     }
 }

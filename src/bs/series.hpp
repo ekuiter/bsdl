@@ -7,30 +7,38 @@
 #include "season.hpp"
 #include "exception.hpp"
 #include "../util/platform.hpp"
+#include "../util/with_map_range.hpp"
 
 using namespace std;
 
 namespace bs {
-    class series {
-        typedef map<int, season> season_map;
+    class series_base {
+    protected:
+        typedef map<int, season> map_type;
 
+    private:
         string title;
         http::request request;
         mutable bool loaded;
-        mutable season_map seasons;
+        mutable map_type seasons;
 
         void load(const http::response& response) const;
 
         void add_season(const season& season) const {
             seasons.insert({season.get_number(), season});
         }
+        
+    protected:
+        map_type& get_map() const {
+            return seasons;
+        }
 
     public:
-        series(const string& _title, const http::request& _request): title(_title), request(_request), loaded(false) {
+        series_base(const string& _title, const http::request& _request): title(_title), request(_request), loaded(false) {
             title = util::platform::encode(title);
         }
 
-        series(const string& _title, const http::response& response): title(_title) {
+        series_base(const string& _title, const http::response& response): title(_title) {
             title = util::platform::encode(title);
             load(response);
         }
@@ -45,7 +53,7 @@ namespace bs {
         }
 
         const season& operator[](int number) const {
-            return (*const_cast<series*>(this))[number];
+            return (*const_cast<series_base*>(this))[number];
         }
 
         season& operator[](int number) {
@@ -57,28 +65,10 @@ namespace bs {
             }
         }
 
-        decltype(boost::adaptors::values(const_cast<const season_map&>(seasons)).begin()) begin() const {
-            load();
-            return boost::adaptors::values(const_cast<const season_map&>(seasons)).begin();
-        }
-
-        decltype(boost::adaptors::values(const_cast<const season_map&>(seasons)).end()) end() const {
-            load();
-            return boost::adaptors::values(const_cast<const season_map&>(seasons)).end();
-        }
-
-        decltype(boost::adaptors::values(seasons).begin()) begin() {
-            load();
-            return boost::adaptors::values(seasons).begin();
-        }
-
-        decltype(boost::adaptors::values(seasons).end()) end() {
-            load();
-            return boost::adaptors::values(seasons).end();
-        }
-
         void load() const;
     };
-
-    ostream& operator<<(ostream& stream, const series& series);
+    
+    ostream& operator<<(ostream& stream, const series_base& series);
+    
+    typedef util::with_map_range<series_base> series;
 }

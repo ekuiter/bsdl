@@ -7,6 +7,7 @@
 #include "episode.hpp"
 #include "exception.hpp"
 #include "../http/client.hpp"
+#include "../util/with_map_range.hpp"
 
 using namespace std;
 
@@ -17,18 +18,16 @@ namespace curses {
 namespace bs {
     class season_view;
 
-    class season {
-        typedef map<int, episode> episode_map;
-        typedef boost::iterators::transform_iterator<
-            boost::range_detail::select_second_mutable<episode_map>, episode_map::iterator> episode_iterator;
-        typedef boost::iterators::transform_iterator<
-            boost::range_detail::select_second_const<episode_map>, episode_map::const_iterator> episode_const_iterator;
-
+    class season_base {
+    protected:
+        typedef map<int, episode> map_type;
+        
+    private:
         string series_title;
         int number;
         http::request request;
         mutable bool loaded;
-        mutable episode_map episodes;
+        mutable map_type episodes;
         shared_ptr<season_view> view;
 
         void load(const http::response& response) const;
@@ -36,12 +35,17 @@ namespace bs {
         void add_episode(const episode& episode) const {
             episodes.insert({episode.get_number(), episode});
         }
+        
+    protected:
+        map_type& get_map() const {
+            return episodes;
+        }
 
     public:
-        season(const string& _series_title, const int _number, const http::request& _request):
+        season_base(const string& _series_title, const int _number, const http::request& _request):
                 series_title(_series_title), number(_number), request(_request), loaded(false) { }
 
-        season(const string& _series_title, const int _number, const http::response& response):
+        season_base(const string& _series_title, const int _number, const http::response& response):
                 series_title(_series_title), number(_number) {
             load(response);
         }
@@ -60,7 +64,7 @@ namespace bs {
         }
 
         const episode& operator[](int number) const {
-            return (*const_cast<season*>(this))[number];
+            return (*const_cast<season_base*>(this))[number];
         }
 
         episode& operator[](int number) {
@@ -72,30 +76,12 @@ namespace bs {
             }
         }
 
-        episode_const_iterator begin() const {
-            load();
-            return boost::adaptors::values(const_cast<const episode_map&>(episodes)).begin();
-        }
-
-        episode_const_iterator end() const {
-            load();
-            return boost::adaptors::values(const_cast<const episode_map&>(episodes)).end();
-        }
-
-        episode_iterator begin() {
-            load();
-            return boost::adaptors::values(episodes).begin();
-        }
-
-        episode_iterator end() {
-            load();
-            return boost::adaptors::values(episodes).end();
-        }
-
         void load() const;
         void create_view(curses::window& window);
         void destroy_view();
     };
 
-    ostream& operator<<(ostream& stream, const season& season);
+    ostream& operator<<(ostream& stream, const season_base& season);
+    
+    typedef util::with_map_range<season_base> season;
 }
