@@ -21,14 +21,14 @@ namespace curses {
         protected:
             window& _window;
             stream _stream;
-            T& items;
+            T pointers;
             int postfix_length, max_entries, top_item, selected_item, item_number;
             color highlight_color;
 
-		public:
-			typedef typename remove_reference<decltype(*items.begin())>::type object_type;
+        public:
+            typedef typename remove_reference<decltype(*pointers.begin())>::type pointer_type;
 
-		protected:
+        protected:
             int get_entries() {
                 return min<int>(item_number - top_item, max_entries);
             }
@@ -52,41 +52,41 @@ namespace curses {
                     refresh();
             }
 
-            object_type* object_from(int item) {
+            pointer_type pointer_from(int item) {
                 int current_item = 0;
-                for (auto& obj : items) {
+                for (auto ptr : pointers) {
                     if (current_item == item)
-                        return &obj;
+                        return ptr;
                     current_item++;
                 }
                 return nullptr;
             }
 
-            int item_from(const object_type& obj) {
+            int item_from(const pointer_type ptr) {
                 int current_item = 0;
-                for (auto& current_obj : items) {
-                    if (&current_obj == &obj)
+                for (auto current_ptr : pointers) {
+                    if (current_ptr == ptr)
                         return current_item;
                     current_item++;
                 }
                 return -1;
             }
 
-            void refresh_items(function<void (int, int, const object_type&)> fn) {
+            void refresh_items(function<void (int, int, const pointer_type)> fn) {
                 int entry = 0, i = -1;
-                for (auto& obj : items) {
+                for (auto ptr : pointers) {
                     if (++i < top_item || i > get_bottom_item())
                         continue;
-                    fn(entry, i, obj);
+                    fn(entry, i, ptr);
                     entry++;
                 }
             }
 
-            void refresh_item(window& window, const string& prefix, const object_type& obj,
+            void refresh_item(window& window, const string& prefix, const pointer_type ptr,
                               int max_length, function<void (int, int)> fn = nullptr) {
                 point p_before, p_after;
                 _stream << stream::get(p_before), _stream << stream::write(" ", max_length) <<
-                        stream::move(p_before) << prefix << obj << stream::get(p_after);
+                        stream::move(p_before) << prefix << *ptr << stream::get(p_after);
 
                 if (p_after.y > p_before.y ||
                         (p_before.y == window.get_bounds().height - 1 && p_after.x > max_length - postfix_length)) {
@@ -115,18 +115,18 @@ namespace curses {
             }
 
         public:
-            base(window& window, T& _items, const typename base<T>::object_type* selected_object,
+            base(window& window, const T& _pointers, const typename base<T>::pointer_type selected_ptr,
                  int default_selected_item, int _max_entries, const color& _highlight_color):
-                    _window(window), _stream(window), items(_items), postfix_length(3), max_entries(_max_entries),
+                    _window(window), _stream(window), pointers(_pointers), postfix_length(3), max_entries(_max_entries),
                     top_item(0), selected_item(-1), item_number(0), highlight_color(_highlight_color) {
-                for (auto& obj : items)
+                for (auto ptr : pointers)
                     item_number++;
 
                 _stream.set_refresh(false);
                 window.set_scrolling(false);
 
-                if (selected_object) {
-                    select_item(item_from(*selected_object), false);
+                if (selected_ptr) {
+                    select_item(item_from(selected_ptr), false);
                     if (selected_item == -1)
                         throw exception("selected object is not in the collection");
                 } else
@@ -145,8 +145,8 @@ namespace curses {
                     select_item(top_item + entry);
             }
 
-            object_type* get_selected_object() {
-                return object_from(selected_item);
+            pointer_type get_selected_pointer() {
+                return pointer_from(selected_item);
             }
 
             virtual void refresh() = 0;

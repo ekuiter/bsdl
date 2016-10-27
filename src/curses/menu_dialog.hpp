@@ -17,10 +17,10 @@ namespace curses {
     class menu_dialog {
     public:
         template <typename T>
-        static auto run(window& window, const string& prompt, T& items,
-                        typename remove_reference<decltype(*items.begin())>::type* selected_object = nullptr,
+        static auto run(window& window, const string& prompt, const T& pointers,
+                        typename remove_reference<decltype(*pointers.begin())>::type selected_ptr = nullptr,
                         const string& action = "Continue", const color& highlight_color = color::get_accent_color())
-                        -> typename remove_reference<decltype(*items.begin())>::type* {
+                        -> typename remove_reference<decltype(*pointers.begin())>::type {
 
             stream stream(window);
             stream << prompt << endl;
@@ -30,13 +30,13 @@ namespace curses {
                     window.get_dimensions() - point(button_width, button_height), button_width, button_height)),
                     menu_wrapper(window, rectangle(0, 1, window.get_dimensions() - point(0, button_height + 1)));
             button button(button_wrapper, action, highlight_color);
-            menu::vertical<T> menu(menu_wrapper, items, selected_object, highlight_color);
+            menu::vertical<T> menu(menu_wrapper, pointers, selected_ptr, highlight_color);
 
             window.set_keyboard_callback(input::instance().keyboard_event('\n'));
             button_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED));
 
             input::instance().wait();
-            return menu.get_selected_object();
+            return menu.get_selected_pointer();
         }
     };
 }

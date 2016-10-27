@@ -52,7 +52,7 @@ namespace curses {
                             new window::plain(rectangle(p + point(1, 0), content_window.get_dimensions() - point(2, 1)))
                     );
                     tab_content_window->override_layer(this->_window.get_paneled_window().get_layer());
-                    this->object_from(item)->create_view(*tab_content_window);
+                    this->pointer_from(item)->create_view(*tab_content_window);
                     this->_stream << *tab_content_window << stream::refresh();
                     tab_content_windows[item] = move(tab_content_window);
                 }
@@ -70,19 +70,19 @@ namespace curses {
                     return "";
                 };
 
-				this->_stream << tab;
-				this->toggle_highlight(tab, sel);
-				this->_stream <<
-					stream::move(point(1, 0)) << stream::write(stream::ext_char(ts), max.x - 1) <<
-					stream::move(point(1, max.y)) << stream::write(stream::ext_char(bs), max.x - 1) <<
-					stream::move(point(max.x, 0)) << stream::ext_char(tr) <<
-					stream::move(point(max.x, max.y)) << stream::ext_char(br) << vertical_line(max.x, rs);
-				this->toggle_highlight(tab, neigh);
-				this->_stream << vertical_line(0, ls) <<
-					stream::move(point(0, 0)) << stream::ext_char(tl) <<
-					stream::move(point(0, max.y)) << stream::ext_char(bl);
-				this->toggle_highlight(tab, neigh);
-				this->toggle_highlight(tab, sel);
+                this->_stream << tab;
+                this->toggle_highlight(tab, sel);
+                this->_stream <<
+                        stream::move(point(1, 0)) << stream::write(stream::ext_char(ts), max.x - 1) <<
+                        stream::move(point(1, max.y)) << stream::write(stream::ext_char(bs), max.x - 1) <<
+                        stream::move(point(max.x, 0)) << stream::ext_char(tr) <<
+                        stream::move(point(max.x, max.y)) << stream::ext_char(br) << vertical_line(max.x, rs);
+                this->toggle_highlight(tab, neigh);
+                this->_stream << vertical_line(0, ls) <<
+                        stream::move(point(0, 0)) << stream::ext_char(tl) <<
+                        stream::move(point(0, max.y)) << stream::ext_char(bl);
+                this->toggle_highlight(tab, neigh);
+                this->toggle_highlight(tab, sel);
             }
 
             void refresh_border(window& tab, int entry, bool sel = false, bool neigh = false) {
@@ -102,9 +102,9 @@ namespace curses {
             }
 
         public:
-            horizontal(window& window, T& items, const typename base<T>::object_type* selected_object = nullptr,
+            horizontal(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
                        int _tab_width = 20, const color& highlight_color = color::get_accent_color()):
-                    base<T>(window, items, selected_object, 0, window.get_bounds().width / _tab_width, highlight_color),
+                    base<T>(window, pointers, selected_ptr, 0, window.get_bounds().width / _tab_width, highlight_color),
                     tab_width(_tab_width), tab_height(3),
                     content_window(window, rectangle(0, tab_height, window.get_dimensions() - point(0, tab_height))) {
                 if (this->item_number == 0)
@@ -143,15 +143,15 @@ namespace curses {
             }
 
             ~horizontal() {
-                for (auto& obj : this->items)
-                    obj.destroy_view();
+                for (auto ptr : this->pointers)
+                    ptr->destroy_view();
             }
 
             void refresh() override {
-                this->refresh_items([this](int entry, int i, const typename base<T>::object_type& obj) {
+                this->refresh_items([this](int entry, int i, const typename base<T>::pointer_type ptr) {
                     window& tab = *tabs[entry];
                     this->_stream << tab << stream::move(point(2, 1));
-                    this->refresh_item(tab, "", obj, tab_width - 1);
+                    this->refresh_item(tab, "", ptr, tab_width - 1);
                     refresh_border(tab, entry);
                     this->_stream << stream::refresh();
                 });

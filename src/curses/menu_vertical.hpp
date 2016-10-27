@@ -15,8 +15,8 @@ namespace curses {
                 return selected ? "* " : "- ";
             }
 
-            void _refresh_item(int entry, int i, const typename base<T>::object_type& obj) {
-                this->refresh_item(this->_window, prefix_for_item(i), obj, max_length,
+            void _refresh_item(int entry, int i, const typename base<T>::pointer_type ptr) {
+                this->refresh_item(this->_window, prefix_for_item(i), ptr, max_length,
                                    [this, &i](int y_before, int y_after) {
                     this->_stream << stream::move(point(0, y_before + 1));
                     if (i == this->get_bottom_item())
@@ -33,9 +33,9 @@ namespace curses {
             }
 
         public:
-            vertical(window& window, T& items, const typename base<T>::object_type* selected_object = nullptr,
+            vertical(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
                      const color& highlight_color = color::get_accent_color()):
-                    base<T>(window, items, selected_object, -1, window.get_bounds().height, highlight_color),
+                    base<T>(window, pointers, selected_ptr, -1, window.get_bounds().height, highlight_color),
                     max_length(window.get_bounds().width) {
                 window.set_keyboard_callback([this](int ch) {
                     if (ch == KEY_UP)
@@ -69,8 +69,8 @@ namespace curses {
                 this->_stream << stream::refresh();
             }
 
-            void refresh_object(const typename base<T>::object_type& obj) {
-                int item = this->item_from(obj);
+            void refresh_pointer(const typename base<T>::pointer_type ptr) {
+                int item = this->item_from(ptr);
                 if (item == -1)
                     throw exception("object is not in the collection");
                 if (item < this->top_item || item > this->get_bottom_item())
@@ -78,52 +78,52 @@ namespace curses {
                 int entry = item - this->top_item;
 
                 this->_stream << stream::move(point(0, entry));
-                _refresh_item(entry, item, obj);
+                _refresh_item(entry, item, ptr);
                 if (this->selected_item == item)
                     _refresh_selected_item();
                 this->_stream << stream::refresh();
             }
 
-			class multi;
+            class multi;
         };
 
-		template <typename T>
-		class vertical<T>::multi : public vertical<T> {
-			set<int> marked_items;
+	template <typename T>
+        class vertical<T>::multi : public vertical<T> {
+                set<int> marked_items;
 
-			string prefix_for_item(int item, bool selected = false) {
-				return marked_items.find(item) == marked_items.end() ? "[ ] " : "[*] ";
-			}
+                string prefix_for_item(int item, bool selected = false) {
+                    return marked_items.find(item) == marked_items.end() ? "[ ] " : "[*] ";
+                }
 
-		public:
-			multi(window& window, T& items, const typename base<T>::object_type* selected_object = nullptr,
-				const color& highlight_color = color::get_accent_color()) :
-				vertical<T>(window, items, selected_object, highlight_color) {
-				refresh();
-			}
+        public:
+                multi(window& window, const T& pointers, const typename base<T>::pointer_type selected_ptr = nullptr,
+                    const color& highlight_color = color::get_accent_color()) :
+                    vertical<T>(window, pointers, selected_ptr, highlight_color) {
+                    refresh();
+                }
 
-			void toggle_marked_object(const typename base<T>::object_type& obj) {
-				int item = this->item_from(obj);
-				if (item == -1)
-					throw exception("marked object is not in the collection");
-				if (marked_items.find(item) == marked_items.end())
-					marked_items.insert(item);
-				else
-					marked_items.erase(item);
-				refresh();
-			}
+                void toggle_marked_pointer(const typename base<T>::pointer_type ptr) {
+                    int item = this->item_from(ptr);
+                    if (item == -1)
+                        throw exception("marked object is not in the collection");
+                    if (marked_items.find(item) == marked_items.end())
+                        marked_items.insert(item);
+                    else
+                        marked_items.erase(item);
+                    refresh();
+                }
 
-			void toggle_all() {
-				for (auto& obj : this->items)
-					toggle_marked_object(obj);
-			}
+                void toggle_all() {
+                    for (auto ptr : this->pointers)
+                            toggle_marked_object(ptr);
+                }
 
-			vector<typename base<T>::object_type*> get_marked_objects() {
-				vector<typename base<T>::object_type*> objects;
-				for (auto item : marked_items)
-					objects.push_back(this->object_from(item));
-				return objects;
-			}
-		};
+                vector<typename base<T>::pointer_type> get_marked_pointers() {
+                    vector<typename base<T>::pointer_type> pointers;
+                    for (auto item : marked_items)
+                            pointers.push_back(this->pointer_from(item));
+                    return pointers;
+                }
+        };
     }
 }
