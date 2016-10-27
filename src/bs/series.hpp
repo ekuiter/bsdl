@@ -14,7 +14,7 @@ using namespace std;
 namespace bs {
     class series_base {
     protected:
-        typedef map<int, season> map_type;
+        typedef map<int, season*> map_type;
 
     private:
         string title;
@@ -23,6 +23,10 @@ namespace bs {
         mutable map_type seasons;
 
         void load(const http::response& response) const;
+        
+        void add_season(season* season) const {
+            seasons.insert({season->get_number(), season});
+        }
         
     protected:
         map_type& get_map() const {
@@ -48,11 +52,11 @@ namespace bs {
             return seasons.size();
         }
 
-        const season& operator[](int number) const {
+        const season* operator[](int number) const {
             return (*const_cast<series_base*>(this))[number];
         }
 
-        season& operator[](int number) {
+        season* operator[](int number) {
             load();
             try {
                 return seasons.at(number);

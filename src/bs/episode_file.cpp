@@ -19,7 +19,7 @@ namespace bs {
             throw exception(string("could not recognize \"") + old_file_name + "\"");
 
         int season_number = stoi(results[1]), number = stoi(results[2]);
-        _episode = _series[season_number][number];
+        _episode = (*_series[season_number])[number];
     }
 
     static vector<string> rename_files(series& _series, string directory_name, string pattern_str, bool do_rename) {

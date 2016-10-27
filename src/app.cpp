@@ -176,9 +176,7 @@ void app::display_series(bs::series& series) {
 
     _stream << stream::clear();
     set_title(series.get_title());
-    auto series_addressed = series | util::addressed<bs::season>();
-    menu::horizontal<util::addressed<bs::season>::inside<bs::series>::type>
-        series_menu(series_window, series_addressed, *series_addressed.begin());
+    menu::horizontal<bs::series> series_menu(series_window, series, *series.begin());
     if (settings.is_set("rename_files_directory"))
         bs::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)
