@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace bs {
+namespace aggregators {
     class exception : public runtime_error {
 
     public:

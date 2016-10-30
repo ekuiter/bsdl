@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include "settings.hpp"
-#include "bs/bs.hpp"
+#include "aggregators/bs/bs.hpp"
 #include "curses/terminal.hpp"
 #include "curses/widgets.hpp"
 #include "util/with_range.hpp"
@@ -22,7 +22,7 @@ class app {
     window::sub log_window;
     spinner spinner;
     ofstream log_file;
-    bs::series* current_series;
+    aggregators::bs::series* current_series;
 
     app();
     void set_title(const string& title);
@@ -36,7 +36,7 @@ public:
         return instance;
     }
 
-    const bs::series* get_current_series() const {
+    const aggregators::bs::series* get_current_series() const {
         return current_series;
     }
 
@@ -46,8 +46,8 @@ public:
                   height == -1 ? LINES * thirds / 3 : height).center(rectangle::get_screen(), status_width);
     }
 
-    vector<bs::series*> search_series();
-    bs::series& choose_series(vector<bs::series*>& search_results);
-    void display_series(bs::series& series);
-    void download_episodes(bs::download_selection& download_selection);
+    vector<aggregators::bs::series*> search_series();
+    aggregators::bs::series& choose_series(vector<aggregators::bs::series*>& search_results);
+    void display_series(aggregators::bs::series& series);
+    void download_episodes(aggregators::bs::download_selection& download_selection);
 };

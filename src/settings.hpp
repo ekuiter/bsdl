@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "bs/bs.hpp"
+#include "aggregators/bs/bs.hpp"
 #include "util/with_range.hpp"
 
 using namespace std;
@@ -20,7 +20,7 @@ protected:
     }
           
 private:
-    bs::download_selection _download_selection;
+    aggregators::bs::download_selection _download_selection;
     vector<providers::provider*> preferred_providers;
     mutable container_type settings_map;
     set<string> allowed_settings;
@@ -52,7 +52,7 @@ public:
         return settings_map[key] != "";
     }
 
-    bs::download_selection& get_download_selection() {
+    aggregators::bs::download_selection& get_download_selection() {
         return _download_selection;
     }
 

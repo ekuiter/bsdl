@@ -1,6 +1,6 @@
 #include "app.hpp"
 #include "util/platform.hpp"
-#include "bs/episode_download.hpp"
+#include "aggregators/bs/episode_download.hpp"
 #include "curses/platform.hpp"
 #include "util/download_dialog.hpp"
 #include "util/addressed.hpp"
@@ -50,7 +50,7 @@ app::app():
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
                 _stream.set_wrap(false);
-                _stream << "bsdl 1.0.0" << endl <<
+                _stream << "bsdl 1.1.0" << endl <<
                         stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);
@@ -117,9 +117,9 @@ int app::http_callback(http::request::status status, const http::request& reques
     return 0;
 }
 
-vector<bs::series*> app::search_series() {
+vector<aggregators::bs::series*> app::search_series() {
     set_title("Search series");
-    vector<bs::series*> search_results;
+    vector<aggregators::bs::series*> search_results;
     rectangle centered_bounds = get_centered_bounds(-1, 7);
     string series_search = settings["series_search"];
 
@@ -138,7 +138,7 @@ vector<bs::series*> app::search_series() {
             window::plain loading_window(get_centered_bounds(-1, -1, 3));
             stream _stream(loading_window, color::get_accent_color());
             _stream << stream::write_centered(string("Searching for series ") + series_search + " ...") << stream::refresh();
-            search_results = bs::bs::search(series_search);
+            search_results = aggregators::bs::bs::search(series_search);
         }
 
         if (search_results.size() == 0) {
@@ -154,7 +154,7 @@ vector<bs::series*> app::search_series() {
     return search_results;
 }
 
-bs::series& app::choose_series(vector<bs::series*>& search_results) {
+aggregators::bs::series& app::choose_series(vector<aggregators::bs::series*>& search_results) {
     set_title("Choose series");
     if (search_results.size() == 1)
         current_series = search_results[0];
@@ -166,7 +166,7 @@ bs::series& app::choose_series(vector<bs::series*>& search_results) {
     return *current_series;
 }
 
-void app::display_series(bs::series& series) {
+void app::display_series(aggregators::bs::series& series) {
     window::plain series_window(rectangle(status_window.get_full_bounds().width, 0,
                                           COLS - status_window.get_full_bounds().width, LINES));
     stream _stream(series_window, color::get_accent_color());
@@ -175,20 +175,20 @@ void app::display_series(bs::series& series) {
 
     _stream << stream::clear();
     set_title(series.get_title());
-    menu::horizontal<bs::series> series_menu(series_window, series, *series.begin());
+    menu::horizontal<aggregators::bs::series> series_menu(series_window, series, *series.begin());
     if (settings.is_set("rename_files_directory"))
-        bs::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
+        aggregators::bs::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)
         download_episodes(settings.get_download_selection());
     terminal.get_input().wait();
 }
 
-void app::download_episodes(bs::download_selection& download_selection) {
+void app::download_episodes(aggregators::bs::download_selection& download_selection) {
     if (!current_series)
         throw runtime_error("there is no current series");
 
     window::framed download_window(get_centered_bounds());
-    util::download_dialog::run<bs::episode, bs::episode::download>(
+    util::download_dialog::run<aggregators::bs::episode, aggregators::bs::episode::download>(
         download_window, download_selection.get_episodes(*current_series));
     download_selection.clear();
 }

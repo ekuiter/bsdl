@@ -86,10 +86,10 @@ void settings_base::read(const vector<string>& args) {
             string season_number = next_arg(), number = next_arg();
             boost::split(parts, number, boost::is_any_of("-"));
             if (parts.size() == 1)
-                _download_selection.add(new bs::download_selector::episode(stoi(season_number), stoi(number)));
+                _download_selection.add(new aggregators::bs::download_selector::episode(stoi(season_number), stoi(number)));
             else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
                 for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
-                    _download_selection.add(new bs::download_selector::episode(stoi(season_number), i));
+                    _download_selection.add(new aggregators::bs::download_selector::episode(stoi(season_number), i));
             else
                 throw runtime_error("illegal option, see bsdl --help");
         } else if (is_arg("--download", 1) || is_arg("-d", 1)) {
@@ -97,16 +97,16 @@ void settings_base::read(const vector<string>& args) {
             boost::split(parts, season_number, boost::is_any_of("-"));
             if (parts.size() == 1) {
                 if (season_number == "latest")
-                    _download_selection.add(new bs::download_selector::latest_episode);
+                    _download_selection.add(new aggregators::bs::download_selector::latest_episode);
                 else
-                    _download_selection.add(new bs::download_selector::season(stoi(season_number)));
+                    _download_selection.add(new aggregators::bs::download_selector::season(stoi(season_number)));
             } else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
                 for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
-                    _download_selection.add(new bs::download_selector::season(i));
+                    _download_selection.add(new aggregators::bs::download_selector::season(i));
             else
                 throw runtime_error("illegal option, see bsdl --help");
         } else if (is_arg("--download") || is_arg("-d"))
-            _download_selection.add(new bs::download_selector::series);
+            _download_selection.add(new aggregators::bs::download_selector::series);
         else if (is_arg("--provider", 1) || is_arg("-p", 1))
             preferred_providers.push_back(&providers::provider::instance(next_arg(), true));
         else if (is_arg("--output-files", 1) || is_arg("-o", 1))

@@ -19,11 +19,11 @@ function(prepend var prefix)
 endfunction(prepend)
 
 set(SOURCE_FILES main.cpp http/client.cpp http/response.cpp http/request.cpp http/request_chain.cpp
-		bs/series.cpp bs/season.cpp bs/episode.cpp bs/video_file.cpp providers/provider.cpp
-                curses/window.cpp curses/color.cpp curses/input.cpp bs/season_view.cpp app.cpp
-                curses/stream_modifier.cpp curses/stream.cpp curses/terminal.cpp bs/bs.cpp
-                http/request_implementation.cpp bs/episode_download.cpp bs/episode_file.cpp
-		settings.cpp)
+		aggregators/bs/series.cpp aggregators/bs/season.cpp aggregators/bs/episode.cpp
+                aggregators/bs/video_file.cpp providers/provider.cpp curses/window.cpp curses/color.cpp
+                curses/input.cpp aggregators/bs/season_view.cpp app.cpp curses/stream_modifier.cpp
+                curses/stream.cpp curses/terminal.cpp aggregators/bs/bs.cpp http/request_implementation.cpp
+                aggregators/bs/episode_download.cpp aggregators/bs/episode_file.cpp settings.cpp)
 
 prepend(SOURCE_FILES src/ ${SOURCE_FILES})
 if(WIN32)
