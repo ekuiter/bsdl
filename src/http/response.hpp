@@ -27,7 +27,7 @@ namespace http {
             return body;
         }
 
-        const class headers& get_headers() const noexcept {
+        const headers& get_headers() const noexcept {
             return _headers;
         }
 

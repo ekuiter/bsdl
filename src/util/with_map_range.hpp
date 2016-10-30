@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <map>
-#include <utility>
 #include <boost/range/adaptor/map.hpp>
 
 using namespace boost::adaptors;

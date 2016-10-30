@@ -3,17 +3,27 @@
 #include <iostream>
 #include <vector>
 #include "download_selector.hpp"
+#include "../util/with_range.hpp"
 
 using namespace std;
 
 namespace bs {
-    class download_selection {
-        vector<download_selector*> download_selectors;
+    class download_selection_base {
+    protected:
+        typedef vector<download_selector*> container_type;
+        
+    private:
+        mutable container_type download_selectors;
+        
+    protected:
+        container_type& get_container() const {
+            return download_selectors;
+        }
 
     public:
-        download_selection() {}
+        download_selection_base() {}
 
-        ~download_selection() {
+        ~download_selection_base() {
             for (auto download_selector : download_selectors)
                 delete download_selector;
         }
@@ -45,15 +55,17 @@ namespace bs {
             }
             return vector<episode*>(all_episodes.begin(), all_episodes.end());
         }
-
-        vector<download_selector*>::iterator begin() {
-            return download_selectors.begin();
-        }
-
-        vector<download_selector*>::iterator end() {
-            return download_selectors.end();
+        
+        friend ostream& operator<<(ostream& stream, download_selection_base& download_selection) {
+            int i = 0;
+            for (auto& download_selector : download_selection.download_selectors) {
+                stream << *download_selector;
+                if (++i < download_selection.size())
+                    stream << ", ";
+            }
+            return stream;
         }
     };
-
-    ostream& operator<<(ostream& stream, download_selection& download_selection);
+    
+    typedef util::with_range<download_selection_base> download_selection;
 }

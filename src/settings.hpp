@@ -3,26 +3,36 @@
 #include <iostream>
 #include <set>
 #include "bs/bs.hpp"
+#include "util/with_range.hpp"
 
 using namespace std;
 
-class settings {
-    settings(): allowed_settings({"series_search", "output_files_directory", "rename_files_directory",
+class settings_base {
+protected:
+    typedef map<string, string> container_type;
+       
+    settings_base(): allowed_settings({"series_search", "output_files_directory", "rename_files_directory",
           "rename_files_pattern", "show_info", "log_file", "config_file", "root_url", "search_path", "series_sel",
           "season_sel", "episode_sel", "video_file_sel", "movies_text", "providers", "provider_v",
           "provider_v_file_format", "provider_s", "provider_s_file_format"}) {
         for (auto& setting : allowed_settings)
             settings_map[setting];
     }
-
+          
+private:
     bs::download_selection _download_selection;
     vector<providers::provider*> preferred_providers;
-    map<string, string> settings_map;
+    mutable container_type settings_map;
     set<string> allowed_settings;
+    
+protected:
+    container_type& get_container() const {
+        return settings_map;
+    }
 
 public:
-    static settings& instance() {
-        static settings instance;
+    static util::with_range<settings_base>& instance() {
+        static util::with_range<settings_base> instance;
         return instance;
     }
 
@@ -50,15 +60,9 @@ public:
         return preferred_providers;
     }
 
-    map<string, string>::iterator begin() {
-        return settings_map.begin();
-    }
-
-    map<string, string>::iterator end() {
-        return settings_map.end();
-    }
-
     void read(const vector<string>& args);
 };
+
+typedef util::with_range<settings_base> settings;
 
 ostream& operator<<(ostream& stream, settings& _settings);

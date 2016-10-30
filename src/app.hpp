@@ -5,11 +5,13 @@
 #include "bs/bs.hpp"
 #include "curses/terminal.hpp"
 #include "curses/widgets.hpp"
+#include "util/with_range.hpp"
 
 using namespace std;
 using namespace curses;
 
-class settings;
+class settings_base;
+typedef util::with_range<settings_base> settings;
 
 class app {
     terminal& terminal;

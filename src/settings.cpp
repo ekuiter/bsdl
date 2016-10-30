@@ -20,7 +20,7 @@ ostream& operator<<(ostream& stream, settings& _settings) {
     return stream;
 }
 
-void settings::read(const vector<string>& args) {
+void settings_base::read(const vector<string>& args) {
     int first_arg = args.size() >= 2 && args[1][0] != '-' ? 2 : 1, i;
     auto next_arg = [&args, &i]() { return args[++i]; };
     auto skip_arg = [&next_arg](int num = 1) { while (num-- > 0) next_arg(); };

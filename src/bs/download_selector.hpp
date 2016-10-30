@@ -25,6 +25,10 @@ namespace bs {
 
         virtual episode_set get_episodes(series& _series) const = 0;
         virtual operator string() const = 0;
+        
+        friend ostream& operator<<(ostream& stream, download_selector& _download_selector) {
+            return stream << (string) _download_selector;
+        }
 
         class series;
         class season;
@@ -101,6 +105,4 @@ namespace bs {
             return "latest_episode";
         }
     };
-
-    ostream& operator<<(ostream& stream, download_selector& _download_selector);
 }
