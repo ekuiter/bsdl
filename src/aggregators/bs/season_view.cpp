@@ -58,7 +58,7 @@ namespace aggregators {
             download_all_wrapper->set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, download_all_callback));
 
             auto download_selected_callback = [menu_ptr]() {
-                episode* selected_episode = menu_ptr->get_selected_pointer();
+                auto selected_episode = menu_ptr->get_selected_pointer();
                 if (selected_episode)
                     menu_ptr->toggle_marked_pointer(selected_episode);
                 return true;

@@ -1,16 +1,41 @@
 #pragma once
 
 #include <iostream>
+#include "video_file.hpp"
 
 using namespace std;
 
 namespace aggregators {
     class episode {
-        virtual string get_series_title() const noexcept = 0;
-        virtual int get_season_number() const noexcept = 0;
-        virtual int get_number() const noexcept = 0;
-        virtual const video_file_map& get_video_files() const = 0;
-        virtual string get_id() const = 0;
+    public:
+        typedef unordered_map<providers::provider*, aggregators::video_file*> video_file_map;
+        
+    protected:
+        video_file_map video_files;
+        string series_title;
+        int season_number, number;
+        mutable bool error_logged;
+        
+        episode(const string& _series_title, const int _season_number, const int _number, const video_file_map& _video_files):
+                    series_title(_series_title), season_number(_season_number), number(_number),
+                    video_files(_video_files), error_logged(false) {}
+        
+    public:
+        string get_series_title() const noexcept {
+            return series_title;
+        }
+
+        int get_season_number() const noexcept {
+            return season_number;
+        }
+
+        int get_number() const noexcept {
+            return number;
+        }
+            
+        const video_file_map& get_video_files() const {
+            return video_files;
+        }        
 
         const video_file* get_preferred_video_file() const {
             const vector<providers::provider*>& preferred_providers = providers::provider::get_preferred_providers();
@@ -23,10 +48,17 @@ namespace aggregators {
                     cerr << "there are no video files for " << get_id() << endl;
                     error_logged = true;
                 }
-                return &video_file::unavailable_video_file;
+                return new video_file::unavailable();
             }
 
             return video_files.begin()->second;
+        }
+        
+        virtual string get_id() const = 0;
+        virtual ostream& print(ostream& stream) const = 0;
+        
+        friend ostream& operator<<(ostream& stream, const episode& episode) {
+            return episode.print(stream);
         }
     };
 }
