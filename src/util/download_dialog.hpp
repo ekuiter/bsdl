@@ -21,7 +21,7 @@ namespace util {
             };
 
             for (auto& downloadable : downloadables)
-                download_queue.push(downloadable->get_download(refresh_callback));
+                download_queue.push(*downloadable->get_download(refresh_callback));
 
             string abort_all_action = "Abort all",
                     abort_selected_action = "Abort selected";

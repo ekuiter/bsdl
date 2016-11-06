@@ -1,6 +1,6 @@
 #include "app.hpp"
 #include "util/platform.hpp"
-#include "aggregators/bs/episode_download.hpp"
+#include "aggregators/episode_download.hpp"
 #include "curses/platform.hpp"
 #include "util/download_dialog.hpp"
 #include "util/addressed.hpp"
@@ -177,7 +177,7 @@ void app::display_series(aggregators::bs::series& series) {
     set_title(series.get_title());
     menu::horizontal<aggregators::bs::series> series_menu(series_window, series, *series.begin());
     if (settings.is_set("rename_files_directory"))
-        aggregators::bs::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
+        ;//@TODOaggregators::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)
         download_episodes(settings.get_download_selection());
     terminal.get_input().wait();
@@ -188,7 +188,7 @@ void app::download_episodes(aggregators::bs::download_selection& download_select
         throw runtime_error("there is no current series");
 
     window::framed download_window(get_centered_bounds());
-    util::download_dialog::run<aggregators::bs::episode, aggregators::bs::episode::download>(
+    util::download_dialog::run<aggregators::bs::episode, aggregators::episode::download>(
         download_window, download_selection.get_episodes(*current_series));
     download_selection.clear();
 }

@@ -21,6 +21,9 @@ namespace aggregators {
                     video_files(_video_files), error_logged(false) {}
         
     public:
+        class download;
+        class file;
+            
         string get_series_title() const noexcept {
             return series_title;
         }
@@ -56,6 +59,8 @@ namespace aggregators {
         
         virtual string get_id() const = 0;
         virtual ostream& print(ostream& stream) const = 0;
+        virtual unique_ptr<file> get_file() const = 0;
+        unique_ptr<download> get_download(function<void (download&)> _refresh_callback = [](download&) {}) const;
         
         friend ostream& operator<<(ostream& stream, const episode& episode) {
             return episode.print(stream);

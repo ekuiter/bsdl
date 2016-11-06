@@ -8,6 +8,7 @@
 #include "../../providers/provider.hpp"
 #include "../../util/platform.hpp"
 #include "../episode.hpp"
+#include "../episode_download.hpp"
 #include "video_file.hpp"
 #include "exception.hpp"
 
@@ -60,7 +61,6 @@ namespace aggregators {
             }
 
             string get_id() const;
-            download get_download(function<void (episode::download&)> _refresh_callback = [](episode::download&) {}) const;
             ostream& print(ostream& stream) const;
         };
     }

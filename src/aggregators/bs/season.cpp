@@ -1,7 +1,6 @@
 #include "season.hpp"
 #include "bs.hpp"
 #include "video_file.hpp"
-#include "season_view.hpp"
 #include "../../providers/provider.hpp"
 #include "../../settings.hpp"
 #include "../../curses/terminal.hpp"
@@ -10,15 +9,7 @@
 
 namespace aggregators {
     namespace bs {
-        void season_base::load() const {
-            if (!loaded) {
-                cout << "Loading " << curses::color::get_accent_color() <<
-                        *this << curses::color::previous << "." << endl;
-                load(request());
-            }
-        }
-
-        void season_base::load(const http::response& response) const {
+        void season::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
             CSelection episode_nodes = document->find(settings::get("episode_sel")).assertAtLeast(1);
 
@@ -39,26 +30,16 @@ namespace aggregators {
                     video_files.insert({&provider, new video_file(provider, bs::root().get_relative(video_file_url))});
                 }
 
-                add_episode(new episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
+                //@TODOadd_episode(new episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
             }
 
             loaded = true;
         }
 
-        void season_base::create_view(curses::window& window) {
-            if (view)
-                throw exception("season view already exists");
-            view.reset(new season_view(static_cast<season&>(*this), window));
-        }
-
-        void season_base::destroy_view() {
-            view.reset();
-        }
-
-        ostream& operator<<(ostream& stream, const season_base& season) {
-            if (season.get_number() == 0)
+        ostream& season::print(ostream& stream) const {
+            if (get_number() == 0)
                 return stream << "Movies";
-            return stream << "Season #" << season.get_number();
+            return stream << "Season #" << get_number();
         }
     }
 }

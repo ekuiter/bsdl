@@ -45,7 +45,7 @@ namespace aggregators {
                 episode_set episodes;
                 for (auto season : _series)
                     for (auto episode : *season)
-                        episodes.insert(episode);
+                        ;//@TODOepisodes.insert(episode);
                 return episodes;
             }
 
@@ -63,7 +63,7 @@ namespace aggregators {
             episode_set get_episodes(bs::series& _series) const override {
                 episode_set episodes;
                 for (auto episode : *_series[season_number])
-                    episodes.insert(episode);
+                    ;//@TODOepisodes.insert(episode);
                 return episodes;
             }
 
@@ -80,7 +80,7 @@ namespace aggregators {
             episode(int _season_number, int _number): season_number(_season_number), number(_number) {}
 
             episode_set get_episodes(bs::series& _series) const override {
-                return { (*_series[season_number])[number] };
+                return {};//@TODOreturn { (*_series[season_number])[number] };
             }
 
             operator string() const override {
@@ -98,8 +98,8 @@ namespace aggregators {
                     last_season = season;
                 bs::episode* last_episode;
                 for (auto episode : *last_season)
-                    last_episode = episode;
-                return { last_episode };
+                    ;//@TODOlast_episode = episode;
+                return {};//@TODO{ last_episode };
             }
 
             operator string() const override {

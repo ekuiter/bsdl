@@ -1,5 +1,5 @@
 #include "episode.hpp"
-#include "episode_download.hpp"
+#include "../episode_download.hpp"
 #include "episode_file.hpp"
 #include "../../curses/terminal.hpp"
 
@@ -8,11 +8,7 @@ namespace aggregators {
         string episode::get_id() const {
             return file(*this).get_id();
         }
-
-        episode::download episode::get_download(episode::download::refresh_callback _refresh_callback) const {
-            return episode::download(*this, _refresh_callback);
-        }
-
+        
         ostream& episode::print(ostream& stream) const {
             curses::window* window = curses::terminal::instance().get_stream(stream).get_window();
             int width = window ? window->get_bounds().width : COLS, max_id_width = 13;
