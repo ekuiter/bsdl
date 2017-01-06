@@ -95,7 +95,7 @@ namespace aggregators {
             episode_set get_episodes(bs::series& _series) const override {
                 bs::season* last_season;
                 for (auto& season : _series)
-                    last_season = season;
+                    ;//@TODOlast_season = season;
                 bs::episode* last_episode;
                 for (auto episode : *last_season)
                     ;//@TODOlast_episode = episode;

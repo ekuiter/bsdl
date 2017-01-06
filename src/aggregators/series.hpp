@@ -56,7 +56,7 @@ namespace aggregators {
 
         void load() const;
         virtual ostream& print(ostream& stream) const = 0;
-        virtual unique_ptr<episode::file> get_file(const string& old_file_name, const string& pattern_str) const = 0;
+        virtual unique_ptr<episode::file> get_file(const string& old_file_name, const string& pattern_str) = 0;
         
         friend ostream& operator<<(ostream& stream, const series_base& series) {
             return series.print(stream);

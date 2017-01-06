@@ -171,7 +171,7 @@ void app::display_series(aggregators::bs::series& series) {
                                           COLS - status_window.get_full_bounds().width, LINES));
     stream _stream(series_window, color::get_accent_color());
     _stream << stream::write_centered(string("Loading series ") + series.get_title() + " ...") << stream::refresh();
-    series.load();
+    (dynamic_cast<aggregators::series&>(series)).load();//@TODO why?
 
     _stream << stream::clear();
     set_title(series.get_title());

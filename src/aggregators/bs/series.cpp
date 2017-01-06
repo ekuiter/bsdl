@@ -6,15 +6,7 @@
 
 namespace aggregators {
     namespace bs {
-        void series_base::load() const {
-            if (!loaded) {
-                cout << "Loading series " << curses::color::get_accent_color() <<
-                        *this << curses::color::previous << "." << endl;
-                load(request());
-            }
-        }
-
-        void series_base::load(const http::response& response) const {
+        void series::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
             CSelection season_nodes = document->find(settings::get("season_sel")).assertAtLeast(1);
 
@@ -29,8 +21,13 @@ namespace aggregators {
             loaded = true;
         }
 
-        ostream& operator<<(ostream& stream, const series_base& series) {
-            return stream << util::platform::strip_chars(series.get_title());
+        ostream& series::print(ostream& stream) const {
+            return stream << util::platform::strip_chars(get_title());
+        }
+        
+        unique_ptr<aggregators::episode::file> series::get_file(const string& old_file_name,
+            const string& pattern_str) {
+            return unique_ptr<aggregators::episode::file>(new episode::file(*this, old_file_name, pattern_str));
         }
     }
 }
