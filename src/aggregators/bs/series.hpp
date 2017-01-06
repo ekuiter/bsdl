@@ -24,9 +24,8 @@ namespace aggregators {
                 load(response);
             }
             
-            virtual ostream& print(ostream& stream) const override;
-            
-            virtual unique_ptr<aggregators::episode::file> get_file(const string& old_file_name,
+            ostream& print(ostream& stream) const override;
+            unique_ptr<aggregators::episode::file> get_file(const string& old_file_name,
                 const string& pattern_str) override;
         };
     }

@@ -22,7 +22,7 @@ class app {
     window::sub log_window;
     spinner spinner;
     ofstream log_file;
-    aggregators::bs::series* current_series;
+    aggregators::series* current_series;
 
     app();
     void set_title(const string& title);
@@ -36,7 +36,7 @@ public:
         return instance;
     }
 
-    const aggregators::bs::series* get_current_series() const {
+    const aggregators::series* get_current_series() const {
         return current_series;
     }
 
@@ -46,8 +46,8 @@ public:
                   height == -1 ? LINES * thirds / 3 : height).center(rectangle::get_screen(), status_width);
     }
 
-    vector<aggregators::bs::series*> search_series();
-    aggregators::bs::series& choose_series(vector<aggregators::bs::series*>& search_results);
-    void display_series(aggregators::bs::series& series);
+    vector<aggregators::series*> search_series();
+    aggregators::series& choose_series(vector<aggregators::series*>& search_results);
+    void display_series(aggregators::series& series);
     void download_episodes(aggregators::bs::download_selection& download_selection);
 };

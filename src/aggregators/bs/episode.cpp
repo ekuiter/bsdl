@@ -23,5 +23,9 @@ namespace aggregators {
                    curses::stream::write_truncated(util::platform::strip_chars(get_german_title()),
                         (width - max_id_width) / 2) << " " << util::platform::strip_chars(get_english_title());
         }
+        
+        unique_ptr<aggregators::episode::file> episode::get_file() const {
+            return unique_ptr<aggregators::episode::file>(new episode::file(*this));
+        }
     }
 }

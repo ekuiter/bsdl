@@ -28,8 +28,9 @@ namespace aggregators {
         for (directory_iterator it(directory_name); it != end_it; it++)
             if (is_regular_file(it->status())) {
                 try {
-                    string old_file_name = it->path().filename().string(),
-                            new_file_name = _series.get_file(old_file_name, pattern_str)->get_file_name();
+                    string old_file_name = it->path().filename().string();
+                    unique_ptr<episode::file> file = _series.get_file(old_file_name, pattern_str);
+                    string new_file_name = file->get_file_name();
                     changes.push_back(old_file_name + " => " + new_file_name);
 
                     if (do_rename) {
@@ -38,7 +39,7 @@ namespace aggregators {
                         path new_path = it->path();
                         rename(it->path(), new_path.remove_filename() /= new_file_name);
                     }
-                } catch (aggregators::bs::exception& e) {}
+                } catch (aggregators::exception& e) {}
             }
         return changes;
     }

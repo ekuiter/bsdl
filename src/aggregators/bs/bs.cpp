@@ -14,10 +14,10 @@ namespace aggregators {
             return http::request(settings::get("root_url"));
         }
 
-        vector<series*> bs::search(string series_search) {
+        vector<aggregators::series*> bs::search(string series_search) const {
             cout << "Searching for series " << curses::color::get_accent_color() <<
                     series_search << curses::color::previous << "." << endl;
-            vector<series*> search_results;
+            vector<aggregators::series*> search_results;
             boost::to_lower(series_search);
 
             unique_ptr<CDocument> document = root().get_relative(settings::get("search_path"))().parse();

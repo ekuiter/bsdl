@@ -60,8 +60,9 @@ namespace aggregators {
                 return video_files.begin()->second;
             }
 
-            string get_id() const;
-            ostream& print(ostream& stream) const;
+            string get_id() const override;
+            ostream& print(ostream& stream) const override;
+            unique_ptr<aggregators::episode::file> get_file() const override;
         };
     }
 }

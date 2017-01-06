@@ -29,8 +29,8 @@ namespace aggregators {
                     providers::provider& provider = providers::provider::instance(video_file_title);
                     video_files.insert({&provider, new video_file(provider, bs::root().get_relative(video_file_url))});
                 }
-
-                //@TODOadd_episode(new episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
+                
+                add_episode(new episode(series_title, number, episode_number, episode_title_de, episode_title_en, video_files));
             }
 
             loaded = true;
