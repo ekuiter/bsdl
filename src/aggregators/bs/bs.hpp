@@ -5,7 +5,6 @@
 #include "../../http/client.hpp"
 #include "../aggregator.hpp"
 #include "series.hpp"
-#include "download_selection.hpp"
 #include "episode_file.hpp"
 
 using namespace std;

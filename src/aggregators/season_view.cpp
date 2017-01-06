@@ -1,6 +1,6 @@
 #include "season_view.hpp"
 #include "season.hpp"
-#include "bs/download_selection.hpp"
+#include "download_selection.hpp"
 #include "../app.hpp"
 #include <sstream>
 
@@ -40,8 +40,8 @@ namespace aggregators {
         download_selected.reset(new curses::button(*download_selected_wrapper, download_selected_action));
 
         auto start_download_callback = [menu_ptr]() {
-            bs::download_selection _download_selection;
-            //@TODO_download_selection.add(menu_ptr->get_marked_pointers());
+            download_selection _download_selection;
+            _download_selection.add(menu_ptr->get_marked_pointers());
             app::instance().download_episodes(_download_selection);
             return true;
         };

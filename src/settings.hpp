@@ -20,7 +20,7 @@ protected:
     }
           
 private:
-    aggregators::bs::download_selection _download_selection;
+    aggregators::download_selection _download_selection;
     vector<providers::provider*> preferred_providers;
     mutable container_type settings_map;
     set<string> allowed_settings;
@@ -52,7 +52,7 @@ public:
         return settings_map[key] != "";
     }
 
-    aggregators::bs::download_selection& get_download_selection() {
+    aggregators::download_selection& get_download_selection() {
         return _download_selection;
     }
 

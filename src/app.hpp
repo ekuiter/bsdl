@@ -49,5 +49,5 @@ public:
     vector<aggregators::series*> search_series();
     aggregators::series& choose_series(vector<aggregators::series*>& search_results);
     void display_series(aggregators::series& series);
-    void download_episodes(aggregators::bs::download_selection& download_selection);
+    void download_episodes(aggregators::download_selection& download_selection);
 };

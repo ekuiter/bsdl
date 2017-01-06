@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "series.hpp"
+#include "download_selection.hpp"
 
 using namespace std;
 

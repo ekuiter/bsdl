@@ -184,12 +184,12 @@ void app::display_series(aggregators::series& series) {
     terminal.get_input().wait();
 }
 
-void app::download_episodes(aggregators::bs::download_selection& download_selection) {
+void app::download_episodes(aggregators::download_selection& download_selection) {
     if (!current_series)
         throw runtime_error("there is no current series");
 
     window::framed download_window(get_centered_bounds());
-    util::download_dialog::run<aggregators::bs::episode, aggregators::episode::download>(
-        download_window, download_selection.get_episodes(dynamic_cast<aggregators::bs::series&>(*current_series))); //@TODO generic
+    util::download_dialog::run<aggregators::episode, aggregators::episode::download>(
+        download_window, download_selection.get_episodes(*current_series));
     download_selection.clear();
 }
