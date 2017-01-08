@@ -44,10 +44,10 @@ namespace providers {
         int n = preferred_providers.size();
         if (n == 0)
             cout << "No preferred providers set." << endl;
-        else if (n == 1) {
+        else if (n == 1)
             cout << "Preferred provider set to " << curses::color::get_accent_color() <<
                     *preferred_providers[0] << curses::color::previous << "." << endl;
-        } else {
+        else {
             cout << "Preferred providers set to ";
             for (int i = 0; i < n; i++)
                 cout << curses::color::get_accent_color() << *preferred_providers[i] <<

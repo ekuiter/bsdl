@@ -24,7 +24,7 @@ set(SOURCE_FILES main.cpp http/client.cpp http/response.cpp http/request.cpp htt
                 curses/input.cpp app.cpp curses/stream_modifier.cpp aggregators/kx/kx.cpp aggregators/kx/series.cpp
                 curses/stream.cpp curses/terminal.cpp aggregators/bs/bs.cpp http/request_implementation.cpp
                 aggregators/bs/episode_file.cpp settings.cpp aggregators/kx/season.cpp aggregators/kx/episode.cpp
-                aggregators/kx/episode_file.cpp aggregators/kx/video_file.cpp util/platform.cpp
+                aggregators/kx/episode_file.cpp aggregators/kx/video_file.cpp util/platform.cpp aggregators/aggregator.cpp
                 aggregators/season.cpp aggregators/season_view.cpp aggregators/series.cpp aggregators/episode_file.cpp
                 aggregators/episode_download.cpp aggregators/episode.cpp)
 

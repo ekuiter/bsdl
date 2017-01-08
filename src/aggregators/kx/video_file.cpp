@@ -1,6 +1,7 @@
 #include "video_file.hpp"
 #include "../../settings.hpp"
 #include <json.hpp>
+#include <regex>
 
 using namespace nlohmann;
 

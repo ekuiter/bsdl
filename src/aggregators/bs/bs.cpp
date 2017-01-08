@@ -25,14 +25,10 @@ namespace aggregators {
                 if (boost::contains(current_series_title, series_search) ||
                         util::get_string_similarity(current_series_title, series_search) > 0.5) {
                     CNode series_node = sel.nodeAt(i).find("a").assertNum(1).nodeAt(0);
-                    if (series_search == current_series_title)
-                        search_results.clear();
                     search_results.push_back(new series(
                             series_node.text(),
                             root().get_relative(series_node.attribute("href"))
                     ));
-                    if (series_search == current_series_title)
-                        break;
                 }
             }
 

@@ -64,6 +64,7 @@ app::app():
         exit(EXIT_SUCCESS);
     }
 
+    aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
 }
 
@@ -147,7 +148,7 @@ vector<aggregators::series*> app::search_series() {
             window::plain loading_window(get_centered_bounds(-1, -1, 3));
             stream _stream(loading_window, color::get_accent_color());
             _stream << stream::write_centered(string("Searching for series ") + series_search + " ...") << stream::refresh();
-            search_results = aggregators::bs::bs::instance().search(series_search);
+            search_results = aggregators::aggregator::search(series_search);
         }
 
         if (search_results.size() == 0) {
