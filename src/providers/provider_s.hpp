@@ -9,7 +9,7 @@ using namespace std;
 
 namespace providers {
     class provider::s : public provider::youtube_dl {
-        s(): youtube_dl(settings::get("provider_s")) {}
+        s(): youtube_dl(get_provider_name("provider_s")) {}
 
     public:
         static s& instance() {

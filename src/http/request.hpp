@@ -22,6 +22,8 @@ namespace http {
         class implementation_base;
         class implementation;
         class download;
+        
+        static request idle;
 
     protected:
         string host, path;

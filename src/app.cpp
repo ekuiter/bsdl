@@ -50,7 +50,7 @@ app::app():
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
                 _stream.set_wrap(false);
-                _stream << "bsdl 1.1.0" << endl <<
+                _stream << "bsdl 1.2.0" << endl <<
                         stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);
@@ -67,8 +67,17 @@ app::app():
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
 }
 
-void app::set_title(const string& title) {
-    clog << endl << title << endl << stream::write("-", title.length()) << endl;
+void app::set_title(const string& _title, bool set_notice, string notice) {
+    if (set_notice) {
+        auto left_bracket = title.find_last_of('['), right_bracket = title.find_last_of(']');
+        if (left_bracket && right_bracket && left_bracket < right_bracket)
+            title = title.substr(0, left_bracket - 1);
+        if (notice != "")
+            title += " [" + notice + "]";
+    } else {
+        title = _title;
+        clog << endl << title << endl << stream::write("-", title.length()) << endl;
+    }
     stream stream(title_window);
     stream << stream::clear() << title << endl <<
 		stream::write(stream::ext_char(ACS_HLINE), title_window.get_bounds().width) << stream::refresh();

@@ -27,11 +27,5 @@ namespace aggregators {
             
             return file_name;
         }
-
-        int episode::file::get_number_of_seasons() const {
-            if (!app::instance().get_current_series())
-                throw exception("there is no current series");
-            return app::instance().get_current_series()->season_number();
-        }
     }
 }

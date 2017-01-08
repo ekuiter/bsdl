@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace aggregators {
-    namespace bs {
+    namespace kx {
         class episode::file : public aggregators::episode::file {
         public:
             using aggregators::episode::file::file;

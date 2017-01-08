@@ -21,9 +21,10 @@ endfunction(prepend)
 set(SOURCE_FILES main.cpp http/client.cpp http/response.cpp http/request.cpp http/request_chain.cpp
 		aggregators/bs/series.cpp aggregators/bs/season.cpp aggregators/bs/episode.cpp
                 aggregators/bs/video_file.cpp providers/provider.cpp curses/window.cpp curses/color.cpp
-                curses/input.cpp app.cpp curses/stream_modifier.cpp
+                curses/input.cpp app.cpp curses/stream_modifier.cpp aggregators/kx/kx.cpp aggregators/kx/series.cpp
                 curses/stream.cpp curses/terminal.cpp aggregators/bs/bs.cpp http/request_implementation.cpp
-                aggregators/bs/episode_file.cpp settings.cpp
+                aggregators/bs/episode_file.cpp settings.cpp aggregators/kx/season.cpp aggregators/kx/episode.cpp
+                aggregators/kx/episode_file.cpp aggregators/kx/video_file.cpp util/platform.cpp
                 aggregators/season.cpp aggregators/season_view.cpp aggregators/series.cpp aggregators/episode_file.cpp
                 aggregators/episode_download.cpp aggregators/episode.cpp)
 
@@ -45,6 +46,7 @@ target_link_libraries(bsdl ${CURL_LIBRARY})
 include_directories(lib/curlcpp/include)
 include_directories(lib/gumbo-parser/src)
 include_directories(lib/gumbo-query/src)
+include_directories(lib/json)
 
 if(WIN32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686")

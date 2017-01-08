@@ -8,11 +8,11 @@ namespace aggregators {
     namespace bs {
         void series::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection season_nodes = document->find(settings::get("season_sel")).assertAtLeast(1);
+            CSelection season_nodes = document->find(settings::get("bs_season_sel")).assertAtLeast(1);
 
             for (auto& season_node : season_nodes) {
                 string season_text = CNode(season_node).text();
-                int season_number = season_text == settings::get("movies_text") ? 0 : stoi(season_text);
+                int season_number = season_text == settings::get("bs_movies_text") ? 0 : stoi(season_text);
                 string season_url = CNode(season_node).attribute("href");
                 http::request season_request(bs::root().get_relative(season_url));
                 add_season(season_number == 1 ? new season(title, 1, response) : new season(title, season_number, season_request));

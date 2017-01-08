@@ -11,17 +11,13 @@
 namespace aggregators {
     namespace bs {
         http::request bs::root() {
-            return http::request(settings::get("root_url"));
+            return http::request(settings::get("bs_root_url"));
         }
 
-        vector<aggregators::series*> bs::search(string series_search) const {
-            cout << "Searching for series " << curses::color::get_accent_color() <<
-                    series_search << curses::color::previous << "." << endl;
+        vector<aggregators::series*> bs::search_internal(const string& series_search) const {
             vector<aggregators::series*> search_results;
-            boost::to_lower(series_search);
-
-            unique_ptr<CDocument> document = root().get_relative(settings::get("search_path"))().parse();
-            CSelection sel = document->find(settings::get("series_sel"));
+            unique_ptr<CDocument> document = root().get_relative(settings::get("bs_search_path"))().parse();
+            CSelection sel = document->find(settings::get("bs_series_sel"));
 
             for (int i = 0; i < sel.nodeNum(); i++) {
                 string current_series_title = sel.nodeAt(i).text();

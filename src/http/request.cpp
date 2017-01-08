@@ -5,6 +5,8 @@
 #include <regex>
 
 namespace http {
+    request request::idle("http://<idle>");
+    
     request::request(const string& url, method method, const headers& headers, const fields& fields):
             _method(method), _headers(headers), _fields(fields) {
         regex url_pattern("http(s?)://(.+?)($|(?:/.*))"), fragment_pattern("(.*?)(?:$|#)");
@@ -40,6 +42,8 @@ namespace http {
     }
 
     response request::operator()() const {
+        if (host == "<idle>")
+            return response();
         log();
         create_implementation().perform();
         response _response = _implementation->read_response();

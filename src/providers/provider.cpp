@@ -6,13 +6,13 @@
 
 namespace providers {
     vector<provider*> provider::preferred_providers;
-
+    
     provider& provider::instance(const string& name, bool should_throw) {
         if (name == "Unavailable")
             return unknown::instance(name);
-        else if (name == settings::get("provider_v"))
+        else if (is_provider(name, "provider_v"))
             return v::instance();
-        else if (name == settings::get("provider_s"))
+        else if (is_provider(name, "provider_s"))
             return s::instance();
         else {
             if (should_throw)
@@ -20,6 +20,23 @@ namespace providers {
             else
                 return unknown::instance(name);
         }
+    }
+    
+    vector<string> provider::get_provider_names(const string& setting) {
+        vector<string> provider_names;
+        boost::split(provider_names, settings::get(setting), boost::is_any_of(","));
+        for (auto& provider_name : provider_names)
+            boost::trim(provider_name);
+        return provider_names;
+    }
+    
+    string provider::get_provider_name(const string& setting) {
+        return get_provider_names(setting).front();
+    }
+    
+    bool provider::is_provider(const string& name, const string& setting) {
+        auto provider_names = get_provider_names(setting);
+        return find(provider_names.begin(), provider_names.end(), name) != provider_names.end();
     }
 
     void provider::set_preferred_providers(const vector<provider*>& _preferred_providers) {

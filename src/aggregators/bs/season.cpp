@@ -3,7 +3,6 @@
 #include "video_file.hpp"
 #include "../../providers/provider.hpp"
 #include "../../settings.hpp"
-#include "../../curses/terminal.hpp"
 #include <unordered_map>
 #include <Node.h>
 
@@ -11,7 +10,7 @@ namespace aggregators {
     namespace bs {
         void season::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection episode_nodes = document->find(settings::get("episode_sel")).assertAtLeast(1);
+            CSelection episode_nodes = document->find(settings::get("bs_episode_sel")).assertAtLeast(1);
 
             for (auto& episode_node : episode_nodes) {
                 CSelection episode_row = CNode(episode_node).find("td").assertNum(3);

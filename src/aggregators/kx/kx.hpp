@@ -5,19 +5,18 @@
 #include "../../http/client.hpp"
 #include "../aggregator.hpp"
 #include "series.hpp"
-#include "episode_file.hpp"
 
 using namespace std;
 
 namespace aggregators {
-    namespace bs {
-        class bs : public aggregators::aggregator {
-            bs() {}
+    namespace kx {
+        class kx : public aggregators::aggregator {
+            kx() {}
             vector<aggregators::series*> search_internal(const string& series_search) const override;
-   
+            
         public:
-            static bs& instance() {
-                static bs instance;
+            static kx& instance() {
+                static kx instance;
                 return instance;
             }
             

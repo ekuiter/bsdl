@@ -5,13 +5,17 @@
 
 namespace aggregators {
     namespace bs {
+        void episode::load(const http::response& response) const {
+            loaded = true;
+        }
+        
         string episode::get_id() const {
             return file(*this).get_id();
         }
         
         ostream& episode::print(ostream& stream) const {
             curses::window* window = curses::terminal::instance().get_stream(stream).get_window();
-            int width = window ? window->get_bounds().width : COLS, max_id_width = 13;
+            int width = window ? window->get_bounds().width : COLS;
 
             stream << get_id() << curses::stream::move(max_id_width);
 

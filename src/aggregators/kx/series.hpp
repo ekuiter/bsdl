@@ -3,14 +3,15 @@
 #include <iostream>
 #include <map>
 #include "../../http/client.hpp"
-#include "season.hpp"
+#include "../aggregator.hpp"
 #include "exception.hpp"
+#include "season.hpp"
 #include "../../util/platform.hpp"
 
 using namespace std;
 
 namespace aggregators {
-    namespace bs {
+    namespace kx {
         class series : public aggregators::series {
         private:
             void load(const http::response& response) const override;

@@ -12,7 +12,7 @@ namespace aggregators {
     class video_file {
     protected:
         const providers::provider& _provider;
-        http::request request;
+        mutable http::request request;
         mutable http::request::download download_request;
         mutable bool loaded;
         

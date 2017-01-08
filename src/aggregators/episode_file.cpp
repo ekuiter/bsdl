@@ -59,4 +59,10 @@ namespace aggregators {
             aggregators::rename_files(_series, directory_name, pattern_str, true);
         }
     }
+    
+    int episode::file::get_number_of_seasons() {
+        if (!app::instance().get_current_series())
+            throw exception("there is no current series");
+        return app::instance().get_current_series()->season_number();
+    }
 }

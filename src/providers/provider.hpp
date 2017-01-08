@@ -16,17 +16,19 @@ namespace providers {
     class provider {
         string name;
         static vector<provider*> preferred_providers;
+        static vector<string> get_provider_names(const string& setting);
 
         provider(const string& _name): name(_name) {}
 
     public:
         static provider& instance(const string& name, bool should_throw = false);
+        static string get_provider_name(const string& setting);
+        static bool is_provider(const string& name, const string& setting);
+        static void set_preferred_providers(const vector<provider*>& _preferred_providers);
 
         static const vector<provider*>& get_preferred_providers() {
             return preferred_providers;
-        }
-
-        static void set_preferred_providers(const vector<provider*>& _preferred_providers);
+        }        
 
         const string& get_name() const {
             return name;
