@@ -12,6 +12,10 @@ protected:
     typedef map<string, string> container_type;
        
     settings_base() {
+        for (int i = 1; i <= providers::provider::count; i++) {
+            allowed_settings.insert(string("provider_") + to_string(i));
+            allowed_settings.insert(string("provider_") + to_string(i) + "_file_format");
+        }
         for (auto& setting : allowed_settings)
             settings_map[setting];
     }

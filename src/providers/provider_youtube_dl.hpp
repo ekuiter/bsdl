@@ -9,6 +9,7 @@ using namespace std;
 using namespace http;
 
 namespace providers {
+    template <int Id>
     class provider::youtube_dl : public provider {    
         mutable bool youtube_dl_installed = false;
         mutable bool youtube_dl_updated = false;
@@ -61,9 +62,14 @@ namespace providers {
         }
 
     protected:
-        youtube_dl(const string& name): provider(name) {}
+        youtube_dl(): provider(get_provider_name(string("provider_") + to_string(Id))) {}
 
     public:
+        static youtube_dl& instance() {
+            static youtube_dl instance;
+            return instance;
+        }
+        
         request::download fetch(const request& _request) const override {
             install_youtube_dl();
             try {
@@ -74,6 +80,10 @@ namespace providers {
                 update_youtube_dl(_request);
                 return fetch(_request);
             }
+        }
+        
+        string get_file_format() const override {
+            return settings::get(string("provider_") + to_string(Id) + "_file_format");
         }
     };
 }

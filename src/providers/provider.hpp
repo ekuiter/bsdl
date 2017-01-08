@@ -21,6 +21,7 @@ namespace providers {
         provider(const string& _name): name(_name) {}
 
     public:
+        static const int count;
         static provider& instance(const string& name, bool should_throw = false);
         static string get_provider_name(const string& setting);
         static bool is_provider(const string& name, const string& setting);
@@ -48,9 +49,9 @@ namespace providers {
         };
 
         class unknown;
+        
+        template <int Id>
         class youtube_dl;
-        class v;
-        class s;
     };
 
     class provider::unknown : public provider {

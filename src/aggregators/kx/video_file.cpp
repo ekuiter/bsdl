@@ -35,7 +35,12 @@ namespace aggregators {
             
             CDocument doc;
             doc.parse(_json[settings::get("kx_stream_key")]);
-            http::request provider_request = doc.find("a").assertNum(1).nodeAt(0).attribute("href");
+            http::request provider_request;
+            try {
+                provider_request = doc.find("a").assertNum(1).nodeAt(0).attribute("href");
+            } catch (runtime_error) {
+                provider_request = doc.find("iframe").assertNum(1).nodeAt(0).attribute("src");
+            }
             
             if (first_mirror < 0)
                 first_mirror = current_mirror;

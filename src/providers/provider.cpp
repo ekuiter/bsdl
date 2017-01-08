@@ -1,25 +1,31 @@
 #include "provider.hpp"
-#include "provider_v.hpp"
-#include "provider_s.hpp"
+#include "provider_youtube_dl.hpp"
 #include "../settings.hpp"
 #include "../curses/terminal.hpp"
 
+#define PROVIDER(id) { \
+        string setting = string("provider_") + to_string(id); \
+        if (settings::instance().is_set(setting) && is_provider(name, setting)) \
+            return youtube_dl<id>::instance(); \
+    }
+
 namespace providers {
     vector<provider*> provider::preferred_providers;
-    
+    const int provider::count = 20;
+        
     provider& provider::instance(const string& name, bool should_throw) {
         if (name == "Unavailable")
             return unknown::instance(name);
-        else if (is_provider(name, "provider_v"))
-            return v::instance();
-        else if (is_provider(name, "provider_s"))
-            return s::instance();
-        else {
-            if (should_throw)
-                throw exception(string("unknown provider \"") + name + "\"");
-            else
-                return unknown::instance(name);
-        }
+        
+        PROVIDER(1); PROVIDER(2); PROVIDER(3); PROVIDER(4); PROVIDER(5);
+        PROVIDER(6); PROVIDER(7); PROVIDER(8); PROVIDER(9); PROVIDER(10);
+        PROVIDER(11); PROVIDER(12); PROVIDER(13); PROVIDER(14); PROVIDER(15);
+        PROVIDER(16); PROVIDER(17); PROVIDER(18); PROVIDER(19); PROVIDER(20);
+        
+        if (should_throw)
+            throw exception(string("unknown provider \"") + name + "\"");
+        else
+            return unknown::instance(name);
     }
     
     vector<string> provider::get_provider_names(const string& setting) {
