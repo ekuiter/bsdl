@@ -37,11 +37,12 @@ ostream& operator<<(ostream& stream, settings_base& settings) {
     stream << "download_selection = " << settings.get_download_selection() << endl;
     stream << "preferred_aggregators = ";
     print_vector(stream, settings.preferred_aggregators);
-    stream << "preferred_providers = ";
+    stream << endl << "preferred_providers = ";
     print_vector(stream, settings.preferred_providers);
     stream << endl;
     for (auto pair : settings.get_container())
-        stream << pair.first << " = " << pair.second << endl;
+        if (pair.second != "")
+            stream << pair.first << " = " << pair.second << endl;
     return stream;
 }
 

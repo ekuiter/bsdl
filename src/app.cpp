@@ -41,10 +41,11 @@ app::app():
         if (settings["show_info"] == "help") {
             message_dialog::run(message_window,
                                 "usage: bsdl [series] [--download [season [episode]]] [-d [season [episode]]] "
+                                        "[--aggregator aggregator] [-a aggregator] "
                                         "[--provider provider] [-p provider] "
                                         "[--output-files dir] [-o dir] "
                                         "[--rename-files [dir [pattern]]] [-r [dir [pattern]]] "
-                                        "[--log-file [file]] [-l [file]]"
+                                        "[--log-file [file]] [-l [file]] "
                                         "[--config-file file] [-c file]", "Exit");
         }
         if (settings["show_info"] == "version") {
@@ -55,7 +56,7 @@ app::app():
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);
                 _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
-                        " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser)." << endl <<
+                        " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json)." << endl <<
 						"Compiled for " << color::get_accent_color() << util::platform::get_name() <<
 						color::previous << " on " << color::get_accent_color() <<
                                                 __DATE__ << " " << __TIME__ << color::previous << ".";
