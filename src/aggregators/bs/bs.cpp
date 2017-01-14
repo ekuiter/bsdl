@@ -26,6 +26,7 @@ namespace aggregators {
                         util::get_string_similarity(current_series_title, series_search) > 0.5) {
                     CNode series_node = sel.nodeAt(i).find("a").assertNum(1).nodeAt(0);
                     search_results.push_back(new series(
+                            *this,
                             series_node.text(),
                             root().get_relative(series_node.attribute("href"))
                     ));

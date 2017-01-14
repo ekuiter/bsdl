@@ -43,10 +43,10 @@ public:
         return current_series;
     }
 
-    rectangle get_centered_bounds(int width = -1, int height = -1, int thirds = 2) {
+    rectangle get_centered_bounds(int width = -1, int height = -1, int quarters = 3) {
         int status_width = status_window.get_full_bounds().width;
-        return rectangle(width == -1 ? (COLS - status_width) * thirds / 3 : width,
-                  height == -1 ? LINES * thirds / 3 : height).center(rectangle::get_screen(), status_width);
+        return rectangle(width == -1 ? (COLS - status_width) * quarters / 4 : width,
+                  height == -1 ? LINES * quarters / 4 : height).center(rectangle::get_screen(), status_width);
     }
 
     void set_title(const string& title, bool set_notice = false, string notice = "");

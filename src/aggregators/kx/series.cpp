@@ -33,7 +33,13 @@ namespace aggregators {
         }
 
         ostream& series::print(ostream& stream) const {
-            return stream << util::platform::strip_chars(get_title());
+            curses::window* window = curses::terminal::instance().get_stream(stream).get_window();
+            int width = window ? window->get_bounds().width : COLS;
+            
+            if (aggregator::get_preferred_aggregators().size() > 1)
+                stream << get_aggregator() << curses::stream::move(max_aggregator_width);
+            return stream << curses::stream::write_truncated(language, 4) << " " <<
+                    util::platform::strip_chars(get_title());
         }
         
         unique_ptr<aggregators::episode::file> series::get_file(const string& old_file_name,

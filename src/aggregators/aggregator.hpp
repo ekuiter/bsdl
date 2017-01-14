@@ -20,6 +20,10 @@ namespace aggregators {
         static aggregator& instance(const string& name);
         static void set_preferred_aggregators(const vector<aggregator*>& _preferred_aggregators);
         
+        static const vector<aggregator*>& get_preferred_aggregators() {
+            return preferred_aggregators;
+        }
+        
         const string& get_name() const {
             return name;
         }

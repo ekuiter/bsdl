@@ -2,10 +2,12 @@
 #include "../curses/terminal.hpp"
 
 namespace aggregators {
+    int series_base::max_aggregator_width = 12;
+    
     void series_base::load() const {
         if (!loaded) {
             cout << "Loading series " << curses::color::get_accent_color() <<
-                    *this << curses::color::previous << "." << endl;
+                    title << curses::color::previous << "." << endl;
             load(request());
         }
     }

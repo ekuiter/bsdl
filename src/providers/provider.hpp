@@ -29,7 +29,7 @@ namespace providers {
 
         static const vector<provider*>& get_preferred_providers() {
             return preferred_providers;
-        }        
+        }
 
         const string& get_name() const {
             return name;

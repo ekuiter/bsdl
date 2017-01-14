@@ -22,6 +22,11 @@ namespace aggregators {
         }
 
         ostream& series::print(ostream& stream) const {
+            curses::window* window = curses::terminal::instance().get_stream(stream).get_window();
+            int width = window ? window->get_bounds().width : COLS;
+            
+            if (aggregator::get_preferred_aggregators().size() > 1)
+                stream << get_aggregator() << curses::stream::move(max_aggregator_width + 5);
             return stream << util::platform::strip_chars(get_title());
         }
         

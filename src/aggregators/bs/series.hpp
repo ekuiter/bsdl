@@ -10,7 +10,9 @@
 using namespace std;
 
 namespace aggregators {
-    namespace bs {
+    class aggregator;
+    
+    namespace bs {        
         class series : public aggregators::series {
         private:
             void load(const http::response& response) const override;
@@ -18,7 +20,8 @@ namespace aggregators {
         public:
             using aggregators::series::series;
 
-            series(const string& _title, const http::response& response): series(_title, http::request()) {
+            series(const aggregator& aggregator, const string& _title, const http::response& response):
+                series(aggregator, _title, http::request()) {
                 load(response);
             }
             

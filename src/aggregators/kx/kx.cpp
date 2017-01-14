@@ -4,6 +4,7 @@
 #include "../../settings.hpp"
 #include <algorithm>
 #include <functional>
+#include <regex>
 #include <Node.h>
 #include <boost/algorithm/string.hpp>
 
@@ -19,10 +20,17 @@ namespace aggregators {
             CSelection sel = document->find(settings::get("kx_series_sel"));
             
             for (int i = 0; i < sel.nodeNum(); i++) {
-                CNode series_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).assertNum(1).nodeAt(0);
+                CNode title_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).assertNum(1).nodeAt(0),
+                        language_node = sel.nodeAt(i).find(settings::get("kx_language_sel")).assertNum(1).nodeAt(0);
+                string title_text = title_node.text();
+                smatch title_results, language_results;
+                assert(regex_search(title_text, title_results, regex("^(.*?)(\\*.*subbed\\*.*)?$")));
+                assert(regex_search(language_node.attribute("src"), language_results, regex("lng/(.*)\\.")));
                 search_results.push_back(new series(
-                        series_node.text(),
-                        root().get_relative(series_node.attribute("href"))
+                        *this,
+                        title_results[1],
+                        title_results[2] == "" ? series::to_language_string(stoi(language_results[1])) : "Sub",
+                        root().get_relative(title_node.attribute("href"))
                 ));
             }
 

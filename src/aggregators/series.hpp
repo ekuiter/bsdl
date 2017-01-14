@@ -4,17 +4,22 @@
 #include "season.hpp"
 #include "../util/with_map_range.hpp"
 #include "../util/platform.hpp"
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
 namespace aggregators {
+    class aggregator;
+    
     class series_base {
     protected:
         typedef map<int, season*> map_type;
+        const aggregators::aggregator& _aggregator;
         string title;
         http::request request;
         mutable bool loaded;
         mutable map_type seasons;
+        static int max_aggregator_width;
 
         virtual void load(const http::response& response) const = 0;
 
@@ -28,10 +33,16 @@ namespace aggregators {
         }
 
     public:
-        series_base(const string& _title, const http::request& _request): title(_title), request(_request), loaded(false) {
+        series_base(const aggregator& aggregator, const string& _title, const http::request& _request):
+            _aggregator(aggregator), title(_title), request(_request), loaded(false) {
             title = util::platform::encode(title);
+            boost::trim(title);
         }
 
+        const aggregator& get_aggregator() const noexcept {
+            return _aggregator;
+        }
+        
         const string& get_title() const noexcept {
             return title;
         }

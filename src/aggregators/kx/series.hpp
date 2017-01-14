@@ -11,15 +11,31 @@
 using namespace std;
 
 namespace aggregators {
+    class aggregator;
+    
     namespace kx {
-        class series : public aggregators::series {
+        class series : public aggregators::series {            
         private:
             void load(const http::response& response) const override;
+            string language;
 
         public:
-            using aggregators::series::series;
+            static string to_language_string(int language) {
+                if (language == 1)  return "Ger";
+                if (language == 2)  return "Eng";
+                if (language == 15) return "Sub";
+                return "";
+            }
+            
+            series(const aggregator& aggregator, const string& _title, const string& _language, const http::request& _request):
+                aggregators::series(aggregator, _title, _request) {
+                language = _language;
+                title = util::platform::encode(title);
+            }
 
-            series(const string& _title, const http::response& response): series(_title, http::request()) {
+            series(const aggregator& aggregator, const string& _title, const string& _language, const http::response& response):
+                aggregators::series(aggregator, _title, http::request()) {
+                language = _language;
                 load(response);
             }
             
