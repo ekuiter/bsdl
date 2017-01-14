@@ -1,4 +1,5 @@
 #include "series.hpp"
+#include "movie_season.hpp"
 #include "episode_file.hpp"
 #include "kx.hpp"
 #include "../../curses/terminal.hpp"
@@ -13,7 +14,7 @@ namespace aggregators {
             CSelection season_nodes = document->find(settings::get("kx_season_sel") + " option");
             
             if (season_nodes.nodeNum() == 0)
-                throw exception("movies are not implemented yet"); // @TODO
+                add_season(new movie_season(title, response));
             else {
                 string parameters = document->find(settings::get("kx_season_sel")).assertNum(1).nodeAt(0).attribute("rel");
                 for (auto& season_node : season_nodes) {

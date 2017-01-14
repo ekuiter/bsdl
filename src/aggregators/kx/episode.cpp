@@ -9,7 +9,12 @@ namespace aggregators {
     namespace kx {
         void episode::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection video_file_nodes = document->find(settings::get("kx_video_file_sel")).assertAtLeast(1);
+            CSelection video_file_nodes = nullptr;
+            try {
+                video_file_nodes = document->find(settings::get("kx_video_file_sel")).assertAtLeast(1);
+            } catch (runtime_error) {
+                throw exception("this series is not available");
+            }
 
             for (auto& video_file_node : video_file_nodes) {
                 string video_file_title = CNode(video_file_node).find(".Named").assertNum(1).nodeAt(0).text(),

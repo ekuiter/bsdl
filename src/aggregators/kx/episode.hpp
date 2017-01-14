@@ -19,7 +19,7 @@ namespace aggregators {
         public:
             class file;
 
-        private:
+        protected:
             void load(const http::response& response) const override;
 
         public:

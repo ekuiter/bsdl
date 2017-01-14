@@ -5,6 +5,7 @@
 #include <memory>
 #include "exception.hpp"
 #include "episode.hpp"
+#include "season.hpp"
 #include "../../http/client.hpp"
 #include "../aggregator.hpp"
 
@@ -16,18 +17,14 @@ namespace curses {
 
 namespace aggregators {
     namespace kx {
-        class season : public aggregators::season {
+        class movie_season : public season {
         private:
-            vector<int> episode_numbers;
-            http::request mirrors_request;
             void load(const http::response& response) const override;
 
         public:
-            season(const string& _series_title, const http::request& _mirrors_request,
-                    const int _number, vector<int> _episode_numbers):
-                    aggregators::season(_series_title, _number, http::request::idle) {
-                episode_numbers = _episode_numbers;
-                mirrors_request = _mirrors_request;
+            movie_season(const string& _series_title, const http::response& response):
+                    season(_series_title, http::request(), 1, {}) {
+                load(response);
             }
 
             virtual ostream& print(ostream& stream) const override;

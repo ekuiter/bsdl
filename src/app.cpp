@@ -51,7 +51,7 @@ app::app():
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
                 _stream.set_wrap(false);
-                _stream << "bsdl 1.3.0" << endl <<
+                _stream << "bsdl 1.4.0" << endl <<
                         stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);
@@ -192,6 +192,7 @@ void app::display_series(aggregators::series& series) {
         aggregators::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)
         download_episodes(settings.get_download_selection());
+    
     terminal.get_input().wait();
 }
 
