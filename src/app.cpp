@@ -51,7 +51,7 @@ app::app():
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
                 _stream.set_wrap(false);
-                _stream << "bsdl 1.4.0" << endl <<
+                _stream << "bsdl 1.5.0" << endl <<
                         stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);

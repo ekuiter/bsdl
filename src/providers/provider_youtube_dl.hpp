@@ -11,12 +11,10 @@ using namespace http;
 namespace providers {
     template <int Id>
     class provider::youtube_dl : public provider {    
-        mutable bool youtube_dl_installed = false;
-        mutable bool youtube_dl_updated = false;
-
         void install_youtube_dl() const {
             if (youtube_dl_installed)
                 return;
+            
             try {
                 string version = util::platform::exec("youtube-dl --version");
                 boost::trim(version);
@@ -51,6 +49,7 @@ namespace providers {
         void update_youtube_dl(const request& _request) const {
             if (youtube_dl_updated)
                 throw not_found(_request);
+            
             try {
                 cout << "Video not found, updating youtube-dl ..." << endl;
                 util::platform::exec("sudo youtube-dl -U");

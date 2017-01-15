@@ -14,20 +14,29 @@ namespace aggregators {
         if (loaded)
             return download_request;
 
-        const aggregators::video_file* preferred_video_file = _episode.get_preferred_video_file();
-        const providers::provider& provider = preferred_video_file->get_provider();
+        const aggregators::video_file* preferred_video_file;
+        const providers::provider* provider;
+        
+        while (true) {
+            preferred_video_file = _episode.next_preferred_video_file();
+            provider = &preferred_video_file->get_provider();
 
-        message = provider.get_name();
-        _refresh_callback(*this);
-        download_request = preferred_video_file->get_download_request();
+            message = provider->get_name();
+            _refresh_callback(*this);
+
+            try {
+                download_request = preferred_video_file->get_download_request();
+                break;
+            } catch (providers::provider::not_found) {}
+        }
 
         cout << "Downloading " << color::get_accent_color() << _episode.get_description() <<
                 color::previous << " from " << color::get_accent_color() <<
-                provider.get_name() << color::previous << "." << endl;
+                provider->get_name() << color::previous << "." << endl;
 
         using namespace placeholders;
         download_request
-                .set_file_name(get_file_path(settings::get("output_files_directory")) + "." + provider.get_file_format())
+                .set_file_name(get_file_path(settings::get("output_files_directory")) + "." + provider->get_file_format())
                 .set_callback(bind(&download::http_callback, this, _1, _2, _3, _4, _5));
         loaded = true;
         return download_request;

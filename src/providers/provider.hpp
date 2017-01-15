@@ -17,6 +17,8 @@ namespace providers {
         string name;
         static vector<provider*> preferred_providers;
         static vector<string> get_provider_names(const string& setting);
+        static bool youtube_dl_installed;
+        static bool youtube_dl_updated;
 
         provider(const string& _name): name(_name) {}
 

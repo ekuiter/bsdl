@@ -12,6 +12,8 @@
 namespace providers {
     vector<provider*> provider::preferred_providers;
     const int provider::count = 20;
+    bool provider::youtube_dl_installed = false;
+    bool provider::youtube_dl_updated = false;
         
     provider& provider::instance(const string& name, bool should_throw) {
         if (name == "Unavailable")

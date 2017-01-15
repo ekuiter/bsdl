@@ -14,6 +14,7 @@ namespace aggregators {
         mutable video_file_map video_files;
         string series_title;
         int season_number, number;
+        mutable int skipped_video_files;
         mutable bool error_logged;
         http::request request;
         mutable bool loaded;
@@ -23,7 +24,7 @@ namespace aggregators {
         
         episode(const string& _series_title, const int _season_number, const int _number, const video_file_map& _video_files,
                     const http::request& _request):
-                    series_title(_series_title), season_number(_season_number), number(_number),
+                    series_title(_series_title), season_number(_season_number), number(_number), skipped_video_files(0),
                     video_files(_video_files), error_logged(false), request(_request), loaded(false) {}
         
     public:
@@ -51,8 +52,9 @@ namespace aggregators {
             return get_id() == "" ? series_title : get_id();
         }
 
-        const video_file* get_preferred_video_file(int skip = 0) const {
+        const video_file* next_preferred_video_file() const {
             load();
+            int skip = skipped_video_files++;
             const vector<providers::provider*>& preferred_providers = providers::provider::get_preferred_providers();
             for (auto& preferred_provider : preferred_providers)
                 if (video_files.find(preferred_provider) != video_files.end() && skip-- == 0)
@@ -62,6 +64,7 @@ namespace aggregators {
                 if (skip-- == 0)
                     return pair.second;
 
+            skipped_video_files--;
             if (!error_logged) {
                 cerr << "there are no video files for " << get_description() << endl;
                 error_logged = true;
