@@ -22,6 +22,8 @@ namespace aggregators {
             for (; num != 0; num /= 10, digits++);
             return digits;
         }
+        
+        static bool similar_file_exists(const string& file_name);
 
     public:
         file(const episode& episode): _episode(&episode) {}

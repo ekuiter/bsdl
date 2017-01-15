@@ -21,12 +21,13 @@ namespace aggregators {
         _refresh_callback(*this);
         download_request = preferred_video_file->get_download_request();
 
-        cout << "Downloading " << color::get_accent_color() << _episode.get_id() <<
+        cout << "Downloading " << color::get_accent_color() << _episode.get_description() <<
                 color::previous << " from " << color::get_accent_color() <<
                 provider.get_name() << color::previous << "." << endl;
 
         using namespace placeholders;
-        download_request.set_file_name(get_file_path(settings::get("output_files_directory")))
+        download_request
+                .set_file_name(get_file_path(settings::get("output_files_directory")) + "." + provider.get_file_format())
                 .set_callback(bind(&download::http_callback, this, _1, _2, _3, _4, _5));
         loaded = true;
         return download_request;

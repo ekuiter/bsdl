@@ -45,24 +45,28 @@ namespace aggregators {
         const video_file_map& get_video_files() const {
             load();
             return video_files;
-        }        
+        }
+        
+        string get_description() const {
+            return get_id() == "" ? series_title : get_id();
+        }
 
-        const video_file* get_preferred_video_file() const {
+        const video_file* get_preferred_video_file(int skip = 0) const {
             load();
             const vector<providers::provider*>& preferred_providers = providers::provider::get_preferred_providers();
             for (auto& preferred_provider : preferred_providers)
-                if (video_files.find(preferred_provider) != video_files.end())
+                if (video_files.find(preferred_provider) != video_files.end() && skip-- == 0)
                     return video_files.at(preferred_provider);
+            
+            for (auto pair : video_files)
+                if (skip-- == 0)
+                    return pair.second;
 
-            if (video_files.size() == 0) {
-                if (!error_logged) {
-                    cerr << "there are no video files for " << get_id() << endl;
-                    error_logged = true;
-                }
-                return new video_file::unavailable();
+            if (!error_logged) {
+                cerr << "there are no video files for " << get_description() << endl;
+                error_logged = true;
             }
-
-            return video_files.begin()->second;
+            return new video_file::unavailable();
         }
         
         void load() const;

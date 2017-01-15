@@ -21,6 +21,14 @@ namespace aggregators {
         int season_number = stoi(results[1]), number = stoi(results[2]);
         _episode = (*_series[season_number])[number];
     }
+    
+    bool episode::file::similar_file_exists(const string& file_name) {
+        directory_iterator end_it;
+        for (directory_iterator it(settings::get("output_files_directory")); it != end_it; it++)
+            if (is_regular_file(it->status()) && it->path().filename().string().find(file_name) != string::npos)
+                return true;
+        return false;
+    }
 
     static vector<string> rename_files(series& _series, string directory_name, string pattern_str, bool do_rename) {
         vector<string> changes;
@@ -30,7 +38,7 @@ namespace aggregators {
                 try {
                     string old_file_name = it->path().filename().string();
                     unique_ptr<episode::file> file = _series.get_file(old_file_name, pattern_str);
-                    string new_file_name = file->get_file_name();
+                    string new_file_name = file->get_file_name() + it->path().extension().string();
                     changes.push_back(old_file_name + " => " + new_file_name);
 
                     if (do_rename) {

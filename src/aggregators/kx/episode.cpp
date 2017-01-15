@@ -13,7 +13,8 @@ namespace aggregators {
             try {
                 video_file_nodes = document->find(settings::get("kx_video_file_sel")).assertAtLeast(1);
             } catch (runtime_error) {
-                throw exception("this series is not available");
+                loaded = true;
+                return;
             }
 
             for (auto& video_file_node : video_file_nodes) {
