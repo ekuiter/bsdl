@@ -58,8 +58,10 @@ namespace curses {
                 _window = window;
             }
 
-            void set_visible(bool _visible) {
+            bool set_visible(bool _visible) {
+                bool old_visible = visible;
                 visible = _visible;
+                return old_visible;
             }
 
             void set_refresh(bool _refresh) {
@@ -145,9 +147,8 @@ namespace curses {
             return *this;
         }
 
-        stream& set_visible(bool visible) {
-            dstbuf.set_visible(visible);
-            return *this;
+        bool set_visible(bool visible) {
+            return dstbuf.set_visible(visible);
         }
 
         stream& set_refresh(bool refresh) {

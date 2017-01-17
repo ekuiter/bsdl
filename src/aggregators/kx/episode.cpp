@@ -33,6 +33,8 @@ namespace aggregators {
         }
         
         ostream& episode::print(ostream& stream) const {
+            if (bs_episode)
+                return stream << *bs_episode;
             return stream << get_id() << curses::stream::move(max_id_width) << "Episode " << number;
         }
         

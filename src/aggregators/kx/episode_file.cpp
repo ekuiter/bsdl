@@ -7,10 +7,14 @@ using namespace boost::filesystem;
 namespace aggregators {
     namespace kx {
         string episode::file::get_file_name() const {            
+            const episode* kx_episode = dynamic_cast<const episode*>(_episode);
+            const bs::episode* bs_episode = kx_episode->get_bs_episode();
+            
+            if (bs_episode)
+                file_name = bs_episode->get_file()->get_file_name();
             if (file_name != "")
                 return file_name;
             
-            const episode* kx_episode = dynamic_cast<const episode*>(_episode);            
             int i = -1;
             do {
                 string id = kx_episode->get_id() != "" ? string(" ") + kx_episode->get_id() : "",

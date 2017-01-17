@@ -6,6 +6,7 @@
 #include "../aggregator.hpp"
 #include "exception.hpp"
 #include "season.hpp"
+#include "merge_with_bs.hpp"
 #include "../../util/platform.hpp"
 
 using namespace std;
@@ -31,12 +32,6 @@ namespace aggregators {
                 aggregators::series(aggregator, _title, _request) {
                 language = _language;
                 title = util::platform::encode(title);
-            }
-
-            series(const aggregator& aggregator, const string& _title, const string& _language, const http::response& response):
-                aggregators::series(aggregator, _title, http::request()) {
-                language = _language;
-                load(response);
             }
             
             ostream& print(ostream& stream) const override;

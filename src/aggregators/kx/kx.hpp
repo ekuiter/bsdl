@@ -13,13 +13,14 @@ namespace aggregators {
     namespace kx {
         class kx : public aggregators::aggregator {
             kx(): aggregator(settings::get("aggregator_kx")) {}
-            vector<aggregators::series*> search_internal(const string& series_search) const override;
             
         public:
             static kx& instance() {
                 static kx instance;
                 return instance;
             }
+            
+            vector<aggregators::series*> search_internal(const string& series_search) const override;
             
             static http::request root();
         };

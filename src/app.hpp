@@ -25,6 +25,7 @@ class app {
     window::sub log_window;
     spinner spinner;
     ofstream log_file;
+    vector<aggregators::series*> search_results;
     aggregators::series* current_series;
     string title;
 
@@ -39,8 +40,16 @@ public:
         return instance;
     }
 
+    const vector<aggregators::series*>& get_search_results() const {
+        return search_results;
+    }
+    
     const aggregators::series* get_current_series() const {
         return current_series;
+    }
+    
+    void set_current_series(aggregators::series& series) {
+        current_series = &series;
     }
 
     rectangle get_centered_bounds(int width = -1, int height = -1, int quarters = 3) {
@@ -51,7 +60,8 @@ public:
 
     void set_title(const string& title, bool set_notice = false, string notice = "");
     vector<aggregators::series*> search_series();
-    aggregators::series& choose_series(vector<aggregators::series*>& search_results);
+    aggregators::series& choose_series(vector<aggregators::series*>& search_results,
+        const string& prompt = "The following series were found:", const string& action = "Choose");
     void display_series(aggregators::series& series);
     void download_episodes(aggregators::download_selection& download_selection);
 };

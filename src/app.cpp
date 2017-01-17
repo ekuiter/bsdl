@@ -40,18 +40,14 @@ app::app():
         window::framed message_window(get_centered_bounds());
         if (settings["show_info"] == "help") {
             message_dialog::run(message_window,
-                                "usage: bsdl [series] [--download [season [episode]]] [-d [season [episode]]] "
-                                        "[--aggregator aggregator] [-a aggregator] "
-                                        "[--provider provider] [-p provider] "
-                                        "[--output-files dir] [-o dir] "
-                                        "[--rename-files [dir [pattern]]] [-r [dir [pattern]]] "
-                                        "[--log-file [file]] [-l [file]] "
-                                        "[--config-file file] [-c file]", "Exit");
+                                "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
+                                        "[--provider provider] [--output-files dir] [--rename-files [dir [pattern]]] "
+                                        "[--no-merge] [--log-file [file]] [--config-file file] [--version] [--help]", "Exit");
         }
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
                 _stream.set_wrap(false);
-                _stream << "bsdl 1.5.0" << endl <<
+                _stream << "bsdl 1.6.0" << endl <<
                         stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                         "Source code: https://github.com/ekuiter/bsdl" << endl;
                 _stream.set_wrap(true);
@@ -94,6 +90,7 @@ bool app::keyboard_callback(int ch) {
 int app::http_callback(http::request::status status, const http::request& request,
                   curl_off_t now_bytes, curl_off_t total_bytes, curl::curl_easy_exception* e) {
     static int i;
+    bool old_visible = terminal.get_stream(cout).set_visible(true);
 
     if (i++ % 2)
         spinner.spin();
@@ -124,13 +121,13 @@ int app::http_callback(http::request::status status, const http::request& reques
         terminal.get_input().wait_any_key();
         terminal.get_input().restore_blocking();
     }
-
+    
+    terminal.get_stream(cout).set_visible(old_visible);
     return 0;
 }
 
 vector<aggregators::series*> app::search_series() {
     set_title("Search series");
-    vector<aggregators::series*> search_results;
     rectangle centered_bounds = get_centered_bounds(-1, 7);
     string series_search = settings["series_search"];
 
@@ -165,25 +162,23 @@ vector<aggregators::series*> app::search_series() {
     return search_results;
 }
 
-aggregators::series& app::choose_series(vector<aggregators::series*>& search_results) {
+aggregators::series& app::choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) {
     set_title("Choose series");
     if (search_results.size() == 1)
-        current_series = search_results[0];
+        return *search_results[0];
     else {
         window::framed results_window(get_centered_bounds());
-        current_series = menu_dialog::run(results_window, "The following series were found:",
-                                          search_results, *search_results.begin(), "Choose");
+        return *menu_dialog::run(results_window, prompt, search_results, *search_results.begin(), action);
     }
-    return *current_series;
 }
 
 void app::display_series(aggregators::series& series) {
     window::plain series_window(rectangle(status_window.get_full_bounds().width, 0,
                                           COLS - status_window.get_full_bounds().width, LINES));
-    stream _stream(series_window, color::get_accent_color());
+    stream _stream(series_window, color::get_accent_color());    
     _stream << stream::write_centered(string("Loading series ") + series.get_title() + " ...") << stream::refresh();
     series.load();
-
+    
     _stream << stream::clear();
     set_title(series.get_title());
     menu::horizontal<aggregators::series> series_menu(series_window, series, *series.begin());

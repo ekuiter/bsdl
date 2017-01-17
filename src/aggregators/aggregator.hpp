@@ -11,7 +11,6 @@ namespace aggregators {
     class aggregator {
         string name;
         static vector<aggregator*> preferred_aggregators;
-        virtual vector<series*> search_internal(const string& series_search) const = 0;
         
     protected:
         aggregator(const string& _name): name(_name) {}
@@ -39,6 +38,8 @@ namespace aggregators {
             }
             return search_results;
         }
+        
+        virtual vector<series*> search_internal(const string& series_search) const = 0;
     };
     
     ostream& operator<<(ostream& stream, const aggregator& aggregator);
