@@ -25,6 +25,11 @@ namespace aggregators {
                 load(response);
             }
             
+            series(const aggregator& aggregator, const string& _title):
+                series(aggregator, _title, http::request()) {
+                loaded = true;
+            }
+            
             ostream& print(ostream& stream) const override;
             unique_ptr<aggregators::episode::file> get_file(const string& old_file_name,
                 const string& pattern_str) override;

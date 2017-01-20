@@ -10,8 +10,7 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "bs_series_sel", "bs_season_sel", "bs_episode_sel", "bs_video_file_sel", "bs_movies_text",
     "kx_root_url", "kx_search_path", "kx_series_sel", "kx_title_sel", "kx_language_sel", "kx_season_sel",
     "kx_mirror_by_episode_path", "kx_mirror_path", "kx_season_param", "kx_episode_param", "kx_video_file_sel",
-    "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx",
-    "merge_with_bs"};
+    "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx"};
 
 template <typename T>
 static void print_vector(ostream& stream, vector<T*>& vector) {
@@ -70,7 +69,6 @@ void settings_base::read(const vector<string>& args) {
         else if (is_arg("--rename-files", 2) || is_arg("-r", 2)) skip_arg(2);
         else if (is_arg("--rename-files", 1) || is_arg("-r", 1)) skip_arg();
         else if (is_arg("--rename-files") || is_arg("-r"));
-        else if (is_arg("--no-merge") || is_arg("-m"));
         else if (is_arg("--log-file", 1) || is_arg("-l", 1))     skip_arg();
         else if (is_arg("--log-file") || is_arg("-l"));
         else if (is_arg("--config-file", 1) || is_arg("-c", 1))
@@ -148,8 +146,6 @@ void settings_base::read(const vector<string>& args) {
             (*this)["rename_files_directory"] = next_arg();
         else if (is_arg("--rename-files") || is_arg("-r"))
             (*this)["rename_files_directory"] = ".";
-        else if (is_arg("--no-merge") || is_arg("-m"))
-            (*this)["merge_with_bs"] = "no-merge";
         else if (is_arg("--log-file", 1) || is_arg("-l", 1))
             (*this)["log_file"] = next_arg();
         else if (is_arg("--log-file") || is_arg("-l"))
@@ -170,6 +166,4 @@ void settings_base::read(const vector<string>& args) {
 
     if (!is_set("output_files_directory"))
         (*this)["output_files_directory"] = ".";
-    if (!is_set("merge_with_bs"))
-        (*this)["merge_with_bs"] = "merge";
 }

@@ -42,7 +42,7 @@ app::app():
             message_dialog::run(message_window,
                                 "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
                                         "[--provider provider] [--output-files dir] [--rename-files [dir [pattern]]] "
-                                        "[--no-merge] [--log-file [file]] [--config-file file] [--version] [--help]", "Exit");
+                                        "[--log-file [file]] [--config-file file] [--version] [--help]", "Exit");
         }
         if (settings["show_info"] == "version") {
             message_dialog::run(message_window, [&message_window](stream& _stream) {
