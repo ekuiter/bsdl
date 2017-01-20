@@ -9,10 +9,17 @@ namespace aggregators {
         void merge_with_bs::fetch_source_series(aggregators::series& series) {
             if (settings::get("merge_with_bs") == "merge") {
                 curses::terminal::instance().get_stream(cout).set_visible(false);
-                vector<aggregators::series*> search_results = app::instance().get_search_results();
-                search_results.erase(remove_if(search_results.begin(), search_results.end(), 
+                
+                vector<aggregators::series*> search_results;
+                auto preferred_aggregators = aggregator::get_preferred_aggregators();
+                if (find(preferred_aggregators.begin(), preferred_aggregators.end(), &bs::bs::instance())
+                        != preferred_aggregators.end()) {
+                    search_results = app::instance().get_search_results();
+                    search_results.erase(remove_if(search_results.begin(), search_results.end(), 
                         [](aggregators::series* series) { return &series->get_aggregator() != &bs::bs::instance(); }),
                         search_results.end());
+                } else
+                    search_results = bs::bs::instance().search_internal(app::instance().get_series_search());
                         
                 if (search_results.size() > 0)
                     (src_series = &app::instance().choose_series(

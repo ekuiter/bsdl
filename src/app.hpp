@@ -27,7 +27,7 @@ class app {
     ofstream log_file;
     vector<aggregators::series*> search_results;
     aggregators::series* current_series;
-    string title;
+    string title, series_search;
 
     app();
     bool keyboard_callback(int ch);
@@ -46,6 +46,10 @@ public:
     
     const aggregators::series* get_current_series() const {
         return current_series;
+    }
+    
+    const string& get_series_search() const {
+        return series_search;
     }
     
     void set_current_series(aggregators::series& series) {

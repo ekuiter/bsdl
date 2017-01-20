@@ -129,7 +129,7 @@ int app::http_callback(http::request::status status, const http::request& reques
 vector<aggregators::series*> app::search_series() {
     set_title("Search series");
     rectangle centered_bounds = get_centered_bounds(-1, 7);
-    string series_search = settings["series_search"];
+    series_search = settings["series_search"];
 
     do {
         while (series_search == "") {
@@ -151,7 +151,7 @@ vector<aggregators::series*> app::search_series() {
 
         if (search_results.size() == 0) {
             window::framed message_window(centered_bounds);
-            message_dialog::run(message_window, [&series_search](stream& _stream) {
+            message_dialog::run(message_window, [this](stream& _stream) {
                 _stream << "Nothing was found for " << color::get_accent_color() <<
                         series_search << color::previous << ".";
             }, "Try again");
