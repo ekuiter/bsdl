@@ -20,39 +20,52 @@ namespace providers {
                 boost::trim(version);
                 cout << "youtube-dl is installed (" << version << ")." << endl;
             } catch (util::platform::exec_failed) {
-                try {
-                    cout << "Installing youtube-dl ..." << endl;
-                    util::platform::exec("brew install youtube-dl");
-                } catch (util::platform::exec_failed) {
-                    try {
-                        cout << "Installing Homebrew ..." << endl;
-                        util::platform::exec("/usr/bin/ruby -e \"$(curl -fsSL "
-                                "https://raw.githubusercontent.com/Homebrew/install/master/install)\"");
-                        cout << "Homebrew has been installed." << endl;
-                        try {
-                            cout << "Installing youtube-dl ..." << endl;
-                            util::platform::exec("brew install youtube-dl");
-                        } catch (util::platform::exec_failed) {
-                            throw runtime_error("youtube-dl could not be installed.\nTry again or install it manually.");
-                        }
-                    } catch (util::platform::exec_failed) {
-                        throw runtime_error("Homebrew could not be installed.\nTry again or install it manually.");
-                    }
-                }
+#ifdef __MINGW32__
+				throw runtime_error("youtube-dl was not found, install it manually.");
+#else
+				try {
+					cout << "Installing youtube-dl ..." << endl;
+					util::platform::exec("brew install youtube-dl");
+				}
+				catch (util::platform::exec_failed) {
+					try {
+						cout << "Installing Homebrew ..." << endl;
+						util::platform::exec("/usr/bin/ruby -e \"$(curl -fsSL "
+							"https://raw.githubusercontent.com/Homebrew/install/master/install)\"");
+						cout << "Homebrew has been installed." << endl;
+						try {
+							cout << "Installing youtube-dl ..." << endl;
+							util::platform::exec("brew install youtube-dl");
+						}
+						catch (util::platform::exec_failed) {
+							throw runtime_error("youtube-dl could not be installed.\nTry again or install it manually.");
+						}
+					}
+					catch (util::platform::exec_failed) {
+						throw runtime_error("Homebrew could not be installed.\nTry again or install it manually.");
+					}
+				}
                 string version = util::platform::exec("youtube-dl --version");
                 boost::trim(version);
                 cout << "youtube-dl has been installed (" << version << ")." << endl;
-            }
+#endif
+			}
             youtube_dl_installed = true;
         }
 
         void update_youtube_dl(const request& _request) const {
+#ifdef __MINGW32__
+			string command = "youtube-dl -U";
+#else
+			string command = "sudo youtube-dl -U";
+#endif
+
             if (youtube_dl_updated)
                 throw not_found(_request);
             
             try {
                 cout << "Video not found, updating youtube-dl ..." << endl;
-                util::platform::exec("sudo youtube-dl -U");
+                util::platform::exec(command);
                 cout << "youtube-dl has been updated." << endl;
             } catch (util::platform::exec_failed) {
                 throw not_found(_request);

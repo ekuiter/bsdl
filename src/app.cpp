@@ -153,15 +153,15 @@ string app::run_start_window(const rectangle& bounds) {
         if (x > 0)
             _stream << color(COLOR_WHITE) <<
                     stream::move(point(x, row))     << stream::ext_char(ACS_TTEE) <<
-                    stream::move(point(x, row + 2)) << stream::ext_char(ACS_BTEE);
+                    stream::move(point(x, row + 2)) << stream::ext_char(ACS_BTEE) << stream::refresh();
         x += button_width - 1;
-        button_wrapper->set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&fn, &text_box]() {
-            platform::curs_set(0);
-            fn();
-            text_box->refresh();
-            platform::curs_set(1);
-            return true;
-        }));
+		button_wrapper->set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [fn, &text_box]() {
+			platform::curs_set(0);
+			fn();
+			text_box->refresh();
+			platform::curs_set(1);
+			return true;
+		}));
     };
 
     make_button(COLS >= 112 ? "Output directory" : "Output dir", [this, &bounds]() {

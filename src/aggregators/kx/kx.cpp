@@ -19,13 +19,13 @@ namespace aggregators {
             unique_ptr<CDocument> document = root().get_relative(settings::get("kx_search_path") + series_search)().parse();
             CSelection sel = document->find(settings::get("kx_series_sel"));
             
-            for (int i = 0; i < sel.nodeNum(); i++) {
-                CNode title_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).assertNum(1).nodeAt(0),
-                        language_node = sel.nodeAt(i).find(settings::get("kx_language_sel")).assertNum(1).nodeAt(0);
-                string title_text = title_node.text();
-                smatch title_results, language_results;
-                assert(regex_search(title_text, title_results, regex("^(.*?)(\\*.*subbed\\*.*)?$")));
-                assert(regex_search(language_node.attribute("src"), language_results, regex("lng/(.*)\\.")));
+			for (int i = 0; i < sel.nodeNum(); i++) {
+				CNode title_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).assertNum(1).nodeAt(0),
+					language_node = sel.nodeAt(i).find(settings::get("kx_language_sel")).assertNum(1).nodeAt(0);
+				string title_text = title_node.text(), language_src = language_node.attribute("src");
+				smatch title_results, language_results;
+				assert(regex_search(title_text, title_results, regex("^(.*?)(\\*.*subbed\\*.*)?$")));
+				assert(regex_search(language_src, language_results, regex("lng/(.*)\\.")));
                 search_results.push_back(new series(
                         *this,
                         title_results[1],

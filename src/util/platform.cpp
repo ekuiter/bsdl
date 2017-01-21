@@ -111,12 +111,20 @@ namespace util {
     
 	string platform::exec(string cmd) {
 #ifdef __MINGW32__
-		@TODO
+		string ignore_stderr = " 2>nul";
+		auto open_pipe = _popen;
+		auto close_pipe = _pclose;
+		int div = 1;
 #else
+		string ignore_stderr = " 2>/dev/null";
+		auto open_pipe = popen;
+		auto close_pipe = pclose;
+		int div = 256;
+#endif
         char buffer[128];
         string result = "";
-        cmd += " 2>/dev/null";
-        FILE* pipe = popen(cmd.c_str(), "r");
+		cmd += ignore_stderr;
+        FILE* pipe = open_pipe(cmd.c_str(), "r");
         if (!pipe)
             throw runtime_error(string("popen failed for command '") + cmd + "'");
         app::instance().set_title("", true, cmd.substr(0, cmd.find(' ')));
@@ -127,14 +135,13 @@ namespace util {
             }
         } catch (...) {
             app::instance().set_title("", true, "");
-            pclose(pipe);
+			close_pipe(pipe);
             throw;
         }
         app::instance().set_title("", true, "");
-        int exit_code = pclose(pipe) / 256;
+        int exit_code = close_pipe(pipe) / div;
         if (exit_code)
             throw exec_failed(exit_code);
         return result;
-#endif
 	}
 }

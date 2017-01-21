@@ -26,7 +26,7 @@ namespace aggregators {
 
         public:
             episode(const string& _series_title, const int _season_number, const int _number, const http::request& mirrors_request):
-                    aggregators::episode(_series_title, _season_number, _number, {}, mirrors_request), bs_episode(nullptr) {}
+                    aggregators::episode(_series_title, _season_number, _number, video_file_map(), mirrors_request), bs_episode(nullptr) {}
                     
             const bs::episode* get_bs_episode() const {
                 return bs_episode;

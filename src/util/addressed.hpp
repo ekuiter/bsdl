@@ -17,9 +17,9 @@ namespace util {
             boost::range_detail::transform_holder<function<T* (T&)>>(
                 boost::adaptors::transformed(
                     (function<T* (T&)>)
-                        [](T& elem) {
+                        ([](T& elem) {
                             return &elem;
-                        }
+                        })
                     )) {}
     };
 }
