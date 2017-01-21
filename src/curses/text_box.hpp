@@ -17,18 +17,10 @@ namespace curses {
         string text;
         int cursor;
 
-        void refresh() {
-			platform::curs_set(0);
-            point p;
-            _stream << stream::move(point(0, 0)) << text <<
-                    stream::get(p), _stream << stream::write(" ", _window.get_bounds().width - p.x) <<
-                    stream::move(point(cursor, 0)) << stream::refresh();
-			platform::curs_set(1);
-        }
-
     public:
-        text_box(window& window, const color& _highlight_color = color::get_accent_color()):
-                _window(window), _stream(window), highlight_color(_highlight_color), cursor(0) {
+        text_box(window& window, const color& _highlight_color = color::get_accent_color(), const string& initial_text = ""):
+                _window(window), _stream(window), highlight_color(_highlight_color), text(initial_text), cursor(initial_text.length()) {
+                    
             window.set_keyboard_callback([this](int ch) {
                 if (ch >= 0x20 && ch <= 0x7e && text.length() < _window.get_bounds().width - 1) // printable ASCII
                     text.insert(cursor++, 1, ch);
@@ -55,6 +47,15 @@ namespace curses {
 
         ~text_box() {
 			platform::curs_set(0);
+        }
+        
+        void refresh() {
+			platform::curs_set(0);
+            point p;
+            _stream << stream::move(point(0, 0)) << text <<
+                    stream::get(p), _stream << stream::write(" ", _window.get_bounds().width - p.x) <<
+                    stream::move(point(cursor, 0)) << stream::refresh();
+			platform::curs_set(1);
         }
 
         const string& get_text() {

@@ -62,7 +62,10 @@ public:
                   height == -1 ? LINES * quarters / 4 : height).center(rectangle::get_screen(), status_width);
     }
 
+    void help_message();
+    void version_message();
     void set_title(const string& title, bool set_notice = false, string notice = "");
+    string run_start_window(const rectangle& bounds);
     vector<aggregators::series*> search_series();
     aggregators::series& choose_series(vector<aggregators::series*>& search_results,
         const string& prompt = "The following series were found:", const string& action = "Choose");

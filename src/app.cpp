@@ -38,31 +38,39 @@ app::app():
 
     if (settings.is_set("show_info")) {
         window::framed message_window(get_centered_bounds());
-        if (settings["show_info"] == "help") {
-            message_dialog::run(message_window,
-                                "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
-                                        "[--provider provider] [--output-files dir] [--rename-files [dir [pattern]]] "
-                                        "[--log-file [file]] [--config-file file] [--version] [--help]", "Exit");
-        }
-        if (settings["show_info"] == "version") {
-            message_dialog::run(message_window, [&message_window](stream& _stream) {
-                _stream.set_wrap(false);
-                _stream << "bsdl 1.6.0" << endl <<
-                        stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
-                        "Source code: https://github.com/ekuiter/bsdl" << endl;
-                _stream.set_wrap(true);
-                _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
-                        " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json)." << endl <<
-						"Compiled for " << color::get_accent_color() << util::platform::get_name() <<
-						color::previous << " on " << color::get_accent_color() <<
-                                                __DATE__ << " " << __TIME__ << color::previous << ".";
-            }, "Exit");
-        }
+        if (settings["show_info"] == "help")
+            help_message();
+        if (settings["show_info"] == "version")
+            version_message();
         exit(EXIT_SUCCESS);
     }
 
     aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
+}
+
+void app::help_message() {
+    window::framed message_window(get_centered_bounds());
+    message_dialog::run(message_window,
+        "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
+                "[--provider provider] [--output-files dir] [--rename-files [dir [pattern]]] "
+                "[--log-file [file]] [--config-file file] [--version] [--help]", "Okay");
+}
+
+void app::version_message() {
+    window::framed message_window(get_centered_bounds());
+    message_dialog::run(message_window, [&message_window](stream& _stream) {
+        _stream.set_wrap(false);
+        _stream << "bsdl 1.6.0" << endl <<
+                stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
+                "Source code: https://github.com/ekuiter/bsdl" << endl;
+        _stream.set_wrap(true);
+        _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
+                " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json)." << endl <<
+                                        "Compiled for " << color::get_accent_color() << util::platform::get_name() <<
+                                        color::previous << " on " << color::get_accent_color() <<
+                                        __DATE__ << " " << __TIME__ << color::previous << ".";
+    }, "Okay");
 }
 
 void app::set_title(const string& _title, bool set_notice, string notice) {
@@ -126,15 +134,94 @@ int app::http_callback(http::request::status status, const http::request& reques
     return 0;
 }
 
+string app::run_start_window(const rectangle& bounds) {
+    window::framed start_window(bounds);
+    stream _stream(start_window);
+    _stream << color::get_accent_color() << "Welcome to bsdl!";
+    window::sub search_dialog(start_window, rectangle(0, 1, bounds.width - 4, 5));
+    int x = 0;
+    vector<window::sub*> button_wrappers;
+    vector<button*> buttons;
+    text_box* text_box;
+    
+    auto make_button = [&start_window, &_stream, &x, &text_box, &button_wrappers, &buttons]
+        (const string& action, function<void ()> fn) {
+        int row = 3, button_width = action.length() + (COLS >= 88 ? 4 : 2);
+        window::sub* button_wrapper = new window::sub(start_window, rectangle(x, row, button_width, 3));
+        button_wrappers.push_back(button_wrapper);
+        buttons.push_back(new button(*button_wrapper, action));
+        if (x > 0)
+            _stream << color(COLOR_WHITE) <<
+                    stream::move(point(x, row))     << stream::ext_char(ACS_TTEE) <<
+                    stream::move(point(x, row + 2)) << stream::ext_char(ACS_BTEE);
+        x += button_width - 1;
+        button_wrapper->set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&fn, &text_box]() {
+            platform::curs_set(0);
+            fn();
+            text_box->refresh();
+            platform::curs_set(1);
+            return true;
+        }));
+    };
+
+    make_button(COLS >= 112 ? "Output directory" : "Output dir", [this, &bounds]() {
+        do {
+            {
+                window::framed input_window(bounds);
+                settings["output_files_directory"] = input_dialog::run(input_window,
+                    string(COLS >= 82 ? "\n" : "") + "Enter output directory for episodes:",
+                    "Save", color::get_accent_color(), settings["output_files_directory"]);
+            }
+            boost::trim(settings["output_files_directory"]);
+            if (!settings.is_set("output_files_directory"))
+                cerr << "Please enter an output directory." << endl;
+        } while (!settings.is_set("output_files_directory"));
+        cout << "Episodes will be saved to " << color::get_accent_color() <<
+                settings["output_files_directory"] << color::previous << "." << endl;
+    });
+    
+    make_button(COLS >= 100 ? "Rename files" : "Rename", [this, &bounds]() {
+        {
+            window::framed input_window(bounds);
+            settings["rename_files_directory"] = input_dialog::run(input_window,
+                    string(COLS >= 89 ? "\n" : "") + "Enter directory with episodes to rename:",
+                    "Continue", color::get_accent_color(), settings["rename_files_directory"]);
+            boost::trim(settings["rename_files_directory"]);
+        }
+        {
+            window::framed input_window(bounds);
+            settings["rename_files_pattern"] = input_dialog::run(input_window, "\nEnter renaming pattern:",
+                    "Save", color::get_accent_color(), settings["rename_files_pattern"]);
+        }
+        if (!settings.is_set("rename_files_directory"))
+            cout << "No episodes will be renamed." << endl;
+        else
+            cout << "Episodes in " << color::get_accent_color() << settings["rename_files_directory"] << color::previous <<
+                    " will be renamed using the pattern " << color::get_accent_color() <<
+                    (settings["rename_files_pattern"] == "" ? "default" : settings["rename_files_pattern"]) <<
+                    color::previous << "." << endl;
+    });
+    
+    make_button("Info", bind(&app::version_message, this));
+    
+    string series_search = input_dialog::run(search_dialog, "Enter series to search:", "Search",
+            color::get_accent_color(), "", &text_box);
+    
+    for (auto button : buttons)
+        delete button;
+    for (auto button_wrapper : button_wrappers)
+        delete button_wrapper;
+    return series_search;
+}
+
 vector<aggregators::series*> app::search_series() {
     set_title("Search series");
-    rectangle centered_bounds = get_centered_bounds(-1, 7);
+    rectangle centered_bounds = get_centered_bounds(-1, 8);
     series_search = settings["series_search"];
 
     do {
         while (series_search == "") {
-            window::framed search_window(centered_bounds);
-            series_search = input_dialog::run(search_window, "Enter series to search:", "Search");
+            series_search = run_start_window(centered_bounds);
             boost::trim(series_search);
             if (series_search == "") {
                 window::framed message_window(centered_bounds);
@@ -143,7 +230,7 @@ vector<aggregators::series*> app::search_series() {
         }
 
         {
-            window::plain loading_window(get_centered_bounds(-1, -1, 3));
+            window::plain loading_window(get_centered_bounds(-1, -1));
             stream _stream(loading_window, color::get_accent_color());
             _stream << stream::write_centered(string("Searching for series ") + series_search + " ...") << stream::refresh();
             search_results = aggregators::aggregator::search(series_search);
