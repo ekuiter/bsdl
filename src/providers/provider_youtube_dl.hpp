@@ -54,18 +54,18 @@ namespace providers {
         }
 
         void update_youtube_dl(const request& _request) const {
-#ifdef __MINGW32__
-			string command = "youtube-dl -U";
-#else
-			string command = "sudo youtube-dl -U";
-#endif
-
             if (youtube_dl_updated)
                 throw not_found(_request);
             
             try {
                 cout << "Video not found, updating youtube-dl ..." << endl;
-                util::platform::exec(command);
+#ifdef __MINGW32__
+                util::platform::exec("youtube-dl -U");
+#else
+                cerr << "Please enter your sudo password.";
+                util::platform::exec("sudo youtube-dl -U", true);
+#endif
+                
                 cout << "youtube-dl has been updated." << endl;
             } catch (util::platform::exec_failed) {
                 throw not_found(_request);

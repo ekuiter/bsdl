@@ -17,7 +17,7 @@ namespace util {
     	static void sleep(const chrono::seconds& cooldown);
     	static string encode(const string& str);
     	static string strip_chars(string str);        
-    	static string exec(string cmd);
+    	static string exec(string cmd, bool has_output = false);
         
         struct exec_failed : exception {
             int exit_code;

@@ -1,5 +1,6 @@
 #include "platform.hpp"
 #include "../app.hpp"
+#include "../curses/terminal.hpp"
 
 #ifdef __MINGW32__
 #include <Windows.h>
@@ -109,7 +110,7 @@ namespace util {
 #endif
 	}
     
-	string platform::exec(string cmd) {
+	string platform::exec(string cmd, bool has_output) {
 #ifdef __MINGW32__
 		string ignore_stderr = " 2>nul";
 		auto open_pipe = _popen;
@@ -128,6 +129,10 @@ namespace util {
         if (!pipe)
             throw runtime_error(string("popen failed for command '") + cmd + "'");
         app::instance().set_title("", true, cmd.substr(0, cmd.find(' ')));
+        curses::point p;
+        cout << curses::stream::get(p);
+        if (has_output && p.x)
+            cout << endl;
         try {
             while (!feof(pipe)) {
                 if (fgets(buffer, 128, pipe) != NULL)
