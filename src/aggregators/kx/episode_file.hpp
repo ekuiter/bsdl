@@ -13,6 +13,8 @@ using namespace std;
 namespace aggregators {
     namespace kx {
         class episode::file : public aggregators::episode::file {
+	    mutable const bs::episode* bs_episode = nullptr;
+            
         public:
             using aggregators::episode::file::file;
 
