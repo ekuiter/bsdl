@@ -2,7 +2,7 @@
 #include "../curses/terminal.hpp"
 
 namespace aggregators {
-    int series_base::max_aggregator_width = 12;
+    int series_base::max_aggregator_width = 13;
     
     void series_base::load() const {
         if (!loaded) {

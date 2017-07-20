@@ -27,7 +27,10 @@ set(SOURCE_FILES main.cpp http/client.cpp http/response.cpp http/request.cpp htt
                 aggregators/kx/episode_file.cpp aggregators/kx/video_file.cpp util/platform.cpp aggregators/aggregator.cpp
                 aggregators/season.cpp aggregators/season_view.cpp aggregators/series.cpp aggregators/episode_file.cpp
                 aggregators/episode_download.cpp aggregators/episode.cpp aggregators/kx/movie_season.cpp
-                aggregators/kx/movie_episode.cpp aggregators/kx/merge_with_bs.cpp)
+                aggregators/kx/movie_episode.cpp aggregators/kx/merge_with_bs.cpp
+                aggregators/mk/mk.cpp aggregators/mk/series.cpp aggregators/mk/episode.cpp aggregators/mk/episode_file.cpp
+                aggregators/mk/merge_with_bs.cpp aggregators/mk/movie_episode.cpp aggregators/mk/movie_season.cpp
+                aggregators/mk/season.cpp aggregators/mk/video_file.cpp)
 
 prepend(SOURCE_FILES src/ ${SOURCE_FILES})
 if(WIN32)

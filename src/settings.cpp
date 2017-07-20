@@ -10,7 +10,10 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "bs_series_sel", "bs_season_sel", "bs_episode_sel", "bs_video_file_sel", "bs_movies_text",
     "kx_root_url", "kx_search_path", "kx_series_sel", "kx_title_sel", "kx_language_sel", "kx_season_sel",
     "kx_mirror_by_episode_path", "kx_mirror_path", "kx_season_param", "kx_episode_param", "kx_video_file_sel",
-    "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx"};
+    "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx", "aggregator_mk",
+    "mk_root_url", "mk_search_path", "mk_series_sel", "mk_title_sel", "mk_language_sel", "mk_season_sel", "mk_episode_sel",
+    "mk_video_file_sel", "mk_video_file_title_sel", "mk_video_file_url_sel", "mk_video_file_script_sel",
+    "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src"};
 
 template <typename T>
 static void print_vector(ostream& stream, vector<T*>& vector) {

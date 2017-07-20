@@ -11,19 +11,16 @@
 using namespace std;
 
 namespace aggregators {
-    namespace kx {
+    namespace mk {
         class season : public aggregators::season {
         private:
-            vector<int> episode_numbers;
-            http::request mirrors_request;
+            map<int, http::request> episode_requests;
             void load(const http::response& response) const override;
 
         public:
-            season(const string& _series_title, const http::request& _mirrors_request,
-                    const int _number, vector<int> _episode_numbers):
+            season(const string& _series_title, const int _number, const map<int, http::request>& _episode_requests):
                     aggregators::season(_series_title, _number, http::request::idle) {
-                episode_numbers = _episode_numbers;
-                mirrors_request = _mirrors_request;
+                episode_requests = _episode_requests;
             }
 
             virtual ostream& print(ostream& stream) const override;
