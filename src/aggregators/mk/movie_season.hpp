@@ -11,10 +11,6 @@
 
 using namespace std;
 
-namespace curses {
-    class window;
-}
-
 namespace aggregators {
     namespace mk {
         class movie_season : public season {

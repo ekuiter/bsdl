@@ -13,7 +13,7 @@ namespace aggregators {
             unique_ptr<CDocument> document = response.parse();
             CSelection season_nodes = document->find(settings::get("kx_season_sel") + " option");
             
-            merge_with_bs::instance().fetch_source_series(const_cast<series&>(*this));
+            bs::merge_transform::instance().fetch_source_series();
             
             if (season_nodes.nodeNum() == 0)
                 add_season(new movie_season(title, response));

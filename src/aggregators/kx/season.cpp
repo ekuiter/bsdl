@@ -2,7 +2,7 @@
 #include "kx.hpp"
 #include "../../providers/provider.hpp"
 #include "../../settings.hpp"
-#include "merge_with_bs.hpp"
+#include "../bs/merge_transform.hpp"
 #include <unordered_map>
 #include <Node.h>
 
@@ -15,7 +15,7 @@ namespace aggregators {
                             to_string(number) + settings::get("kx_episode_param") + to_string(episode_number))));
             
             loaded = true;
-            merge_with_bs::instance()(const_cast<season*>(this));
+            bs::merge_transform::instance()(const_cast<season*>(this));
         }
 
         ostream& season::print(ostream& stream) const {

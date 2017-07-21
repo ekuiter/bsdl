@@ -2,7 +2,7 @@
 #include "mk.hpp"
 #include "../../providers/provider.hpp"
 #include "../../settings.hpp"
-#include "merge_with_bs.hpp"
+#include "../bs/merge_transform.hpp"
 #include <unordered_map>
 #include <Node.h>
 
@@ -13,7 +13,7 @@ namespace aggregators {
                 add_episode(new episode(series_title, number, pair.first, pair.second));
             
             loaded = true;
-            merge_with_bs::instance()(const_cast<season*>(this));
+            bs::merge_transform::instance()(const_cast<season*>(this));
         }
 
         ostream& season::print(ostream& stream) const {

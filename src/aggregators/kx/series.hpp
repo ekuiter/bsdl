@@ -6,7 +6,7 @@
 #include "../aggregator.hpp"
 #include "exception.hpp"
 #include "season.hpp"
-#include "merge_with_bs.hpp"
+#include "../bs/merge_transform.hpp"
 #include "../../util/platform.hpp"
 
 using namespace std;

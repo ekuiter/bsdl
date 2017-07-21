@@ -61,7 +61,7 @@ void app::version_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window, [&message_window](stream& _stream) {
         _stream.set_wrap(false);
-        _stream << "bsdl 1.6.0" << endl <<
+        _stream << "bsdl 1.7.0" << endl <<
                 stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                 "Source code: https://github.com/ekuiter/bsdl" << endl;
         _stream.set_wrap(true);
