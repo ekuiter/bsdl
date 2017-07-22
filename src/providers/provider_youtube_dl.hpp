@@ -22,7 +22,7 @@ namespace providers {
             } catch (util::platform::exec_failed) {
 #ifdef __MINGW32__
 				throw runtime_error("youtube-dl was not found, install it manually.");
-#else
+#elif defined(__APPLE__)
 				try {
 					cout << "Installing youtube-dl ..." << endl;
 					util::platform::exec("brew install youtube-dl");
@@ -48,8 +48,21 @@ namespace providers {
                 string version = util::platform::exec("youtube-dl --version");
                 boost::trim(version);
                 cout << "youtube-dl has been installed (" << version << ")." << endl;
+#else
+                try {
+                    cout << "Installing youtube-dl ..." << endl;
+                    cerr << "Please enter your sudo password.";
+                    util::platform::exec("sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl");
+                    util::platform::exec("sudo chmod a+rx /usr/local/bin/youtube-dl");
+                }
+                catch (util::platform::exec_failed) {
+                    throw runtime_error("youtube-dl could not be installed.\nTry again or install it manually.");
+                }
+                string version = util::platform::exec("youtube-dl --version");
+                boost::trim(version);
+                cout << "youtube-dl has been installed (" << version << ")." << endl;
 #endif
-			}
+            }
             youtube_dl_installed = true;
         }
 

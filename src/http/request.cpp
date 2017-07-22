@@ -91,7 +91,8 @@ namespace http {
     request request::get_relative(const string& path) const {
         regex url_pattern("(.*/)");
         smatch results;
-        assert(regex_search(get_url(), results, url_pattern));
+        string url = get_url();
+        assert(regex_search(url, results, url_pattern));
         return request(string(results[0]) + path);
     }
 

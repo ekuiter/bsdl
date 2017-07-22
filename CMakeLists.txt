@@ -6,15 +6,18 @@ project(bsdl)
 if(WIN32)
 	set(EXECUTABLE_PATH ${CMAKE_SOURCE_DIR}/bin_win32)
 	set(LIB_TYPE STATIC)
-else(WIN32)
+elseif(APPLE)
 	set(EXECUTABLE_PATH ${CMAKE_SOURCE_DIR}/bin_macos)
+	set(LIB_TYPE SHARED)
+else(WIN32)
+	set(EXECUTABLE_PATH ${CMAKE_SOURCE_DIR}/bin_linux)
 	set(LIB_TYPE SHARED)
 endif(WIN32)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/static)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fno-inline-functions")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fno-inline-functions -fpermissive")
 
 # EXTERNAL LIBRARIES
 
@@ -24,8 +27,10 @@ find_package(Boost REQUIRED COMPONENTS system filesystem)
 include_directories(${Boost_INCLUDE_DIR})
 if(WIN32)
 set(BOOST_LIBRARIES ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_system-mgw49-mt-1_61.a ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_filesystem-mgw49-mt-1_61.a)
-else(WIN32)
+elseif(APPLE)
 set(BOOST_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+else(WIN32)
+set(BOOST_LIBRARIES ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_system_linux.a ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_filesystem_linux.a)
 endif(WIN32)
 
 find_package(CURL REQUIRED)
@@ -111,7 +116,7 @@ if(WIN32)
 	find_file(GCCDLL libgcc_s_dw2-1.dll)
 	file(COPY ${GCCDLL} DESTINATION ${EXECUTABLE_PATH})
 	
-else(WIN32) # Mac OS
+elseif(APPLE)
 	find_package(CURSES REQUIRED)
 	include_directories(${CURSES_INCLUDE_DIR})
 	target_link_libraries(curses ${CURSES_LIBRARIES})
@@ -126,6 +131,27 @@ else(WIN32) # Mac OS
 	file(COPY lib/gumbo-parser/libgumbo.dylib DESTINATION ${EXECUTABLE_PATH})
 
 	set(LIBGQ ${CMAKE_SOURCE_DIR}/lib/gumbo-query/libgq.dylib)
+	target_link_libraries(http ${LIBGQ})
+	file(COPY ${LIBGQ} DESTINATION ${EXECUTABLE_PATH})
+
+else(WIN32)
+        set(CURSES_NEED_NCURSES TRUE)
+        find_package(Curses REQUIRED)
+	include_directories(${CURSES_INCLUDE_DIR})
+	target_link_libraries(curses ${CURSES_LIBRARIES})
+
+	find_library(CURSES_PANEL_LIBRARY panel)
+	target_link_libraries(curses ${CURSES_PANEL_LIBRARY})
+
+	set(LIBCURLCPP ${CMAKE_SOURCE_DIR}/lib/curlcpp/libcurlcpp.so)
+	target_link_libraries(http ${LIBCURLCPP})
+	file(COPY ${LIBCURLCPP} DESTINATION ${EXECUTABLE_PATH})
+
+	set(LIBGUMBO ${CMAKE_SOURCE_DIR}/lib/gumbo-parser/libgumbo.so.1)
+	target_link_libraries(http ${LIBGUMBO})
+	file(COPY ${LIBGUMBO} DESTINATION ${EXECUTABLE_PATH})
+
+        set(LIBGQ ${CMAKE_SOURCE_DIR}/lib/gumbo-query/libgq.so)
 	target_link_libraries(http ${LIBGQ})
 	file(COPY ${LIBGQ} DESTINATION ${EXECUTABLE_PATH})
     

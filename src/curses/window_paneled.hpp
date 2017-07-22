@@ -1,7 +1,13 @@
 #pragma once
 
 #include "window.hpp"
+#ifdef __MINGW32__
 #include <panel.h>
+#elif defined (__APPLE__)
+#include <panel.h>
+#else
+#include <ncurses/panel.h>
+#endif
 
 using namespace std;
 

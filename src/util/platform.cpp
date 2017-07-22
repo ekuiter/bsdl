@@ -4,16 +4,19 @@
 
 #ifdef __MINGW32__
 #include <Windows.h>
-#else
+#elif defined (__APPLE__)
 #include <mach-o/dyld.h>
+#else
 #endif
 
 namespace util {
 	string platform::get_name() {
 #ifdef __MINGW32__
 		return "Windows";
-#else
+#elif defined (__APPLE__)
 		return "Mac OS";
+#else
+                return "Linux";
 #endif
 	}
 
@@ -36,7 +39,7 @@ namespace util {
 		return boost::filesystem::path(buf);
 	}
 
-#else
+#elif defined (__APPLE__)
 	boost::filesystem::path platform::executable_path(const string& argv0) {
 		char buf[1024] = { 0 };
 		uint32_t size = sizeof(buf);
@@ -47,6 +50,10 @@ namespace util {
 		boost::filesystem::path p(
 			boost::filesystem::canonical(buf, boost::filesystem::current_path(), ec));
 		return p.make_preferred();
+	}
+#else
+	boost::filesystem::path platform::executable_path(const string& argv0) {
+		return executable_path_fallback(argv0);
 	}
 #endif
 
@@ -78,15 +85,17 @@ namespace util {
 	}
 
 	string platform::encode(const string& str) {
-#ifdef __MINGW32__
-		return utf8_to_latin1(str);
+#ifdef __APPLE__
+                return str;
 #else
-		return str;
+		return utf8_to_latin1(str);
 #endif
 	}
 
 	string platform::strip_chars(string str) {
-#ifdef __MINGW32__
+#ifdef __APPLE__
+		return str;
+#else
 		vector<pair<string, string>> special_characters = {
 			{"À", "A"}, {"Á", "A"}, {"Â", "A"}, {"Ã", "A"}, {"Ä", "AE"}, {"Å", "A"}, {"Æ", "AE"}, {"Ç", "C"},
 			{"È", "E"}, {"É", "E"}, {"Ê", "E"}, {"Ë", "E"}, {"Ì", "I"}, {"Í", "I"}, {"Î", "I"}, {"Ï", "I"},
@@ -104,8 +113,6 @@ namespace util {
 		for (int i = 0; i < str.length(); i++)
 			if (static_cast<unsigned char>(str[i]) > 0x7f)
 				str.replace(i, 1, "?");
-		return str;
-#else
 		return str;
 #endif
 	}

@@ -2,6 +2,7 @@
 .idea/
 bin_macos/
 bin_win32/
+bin_linux/
 lib/boost/
 src/tests/
 CMakeFiles/
