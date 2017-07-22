@@ -10,7 +10,7 @@
 ### Windows
 
 - Install CMake, add C:\Program Files\CMake\bin to PATH.
-- Install MinGW. (mingw-developer-toolkit, mingw32-base, mingw32-gcc-g++, msys-base, both mingw32-libpdcurses)
+- Install MinGW. (mingw-developer-toolkit, mingw32-base, mingw32-gcc-g++@4.9.3, msys-base, both mingw32-libpdcurses)
 - Start MSYS, goto root folder.
 - If all libraries are set up ==> cmake -G "MSYS Makefiles".
 - compile the following libs in a fresh directory (no cmake cache etc.)!
