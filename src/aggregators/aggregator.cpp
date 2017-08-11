@@ -2,6 +2,7 @@
 #include "bs/bs.hpp"
 #include "kx/kx.hpp"
 #include "mk/mk.hpp"
+#include "pr/pr.hpp"
 
 namespace aggregators {
     vector<aggregator*> aggregator::preferred_aggregators;
@@ -13,6 +14,8 @@ namespace aggregators {
             return kx::kx::instance();
         else if (name == settings::get("aggregator_mk"))
             return mk::mk::instance();
+        else if (name == settings::get("aggregator_pr"))
+            return pr::pr::instance();
         else
             throw exception(string("unknown aggregator \"") + name + "\"");
     }

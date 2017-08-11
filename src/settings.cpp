@@ -13,7 +13,10 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx", "aggregator_mk",
     "mk_root_url", "mk_search_path", "mk_series_sel", "mk_title_sel", "mk_language_sel", "mk_season_sel", "mk_episode_sel",
     "mk_video_file_sel", "mk_video_file_title_sel", "mk_video_file_url_sel", "mk_video_file_script_sel",
-    "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src"};
+    "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src", "aggregator_pr",
+    "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
+    "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
+    "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel"};
 
 template <typename T>
 static void print_vector(ostream& stream, vector<T*>& vector) {
@@ -42,6 +45,8 @@ ostream& operator<<(ostream& stream, settings_base& settings) {
     print_vector(stream, settings.preferred_aggregators);
     stream << endl << "preferred_providers = ";
     print_vector(stream, settings.preferred_providers);
+    stream << endl << "preferred_subtitles = ";
+    print_vector(stream, settings.preferred_subtitles);
     stream << endl;
     for (auto pair : settings.get_container())
         if (pair.second != "")
@@ -68,6 +73,7 @@ void settings_base::read(const vector<string>& args) {
         else if (is_arg("--download") || is_arg("-d"));
         else if (is_arg("--aggregator", 1) || is_arg("-a", 1))   skip_arg();
         else if (is_arg("--provider", 1) || is_arg("-p", 1))     skip_arg();
+        else if (is_arg("--subtitle", 1) || is_arg("-s", 1))     skip_arg();
         else if (is_arg("--output-files", 1) || is_arg("-o", 1)) skip_arg();
         else if (is_arg("--rename-files", 2) || is_arg("-r", 2)) skip_arg(2);
         else if (is_arg("--rename-files", 1) || is_arg("-r", 1)) skip_arg();
@@ -141,6 +147,8 @@ void settings_base::read(const vector<string>& args) {
             preferred_aggregators.push_back(&aggregators::aggregator::instance(next_arg()));
         else if (is_arg("--provider", 1) || is_arg("-p", 1))
             preferred_providers.push_back(&providers::provider::instance(next_arg(), true));
+        else if (is_arg("--subtitle", 1) || is_arg("-s", 1))
+            preferred_subtitles.push_back(&aggregators::subtitle::instance(next_arg()));
         else if (is_arg("--output-files", 1) || is_arg("-o", 1))
             (*this)["output_files_directory"] = next_arg();
         else if (is_arg("--rename-files", 2) || is_arg("-r", 2))
@@ -166,6 +174,9 @@ void settings_base::read(const vector<string>& args) {
     
     for (auto& provider : build_vector("providers", preferred_providers))
         preferred_providers.push_back(&providers::provider::instance(provider, true));
+
+    for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
+        preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
 
     if (!is_set("output_files_directory"))
         (*this)["output_files_directory"] = ".";

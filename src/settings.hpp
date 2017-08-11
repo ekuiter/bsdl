@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 #include "aggregators/aggregator.hpp"
+#include "aggregators/subtitle.hpp"
 #include "util/with_range.hpp"
 
 using namespace std;
@@ -24,6 +25,7 @@ private:
     aggregators::download_selection _download_selection;
     vector<aggregators::aggregator*> preferred_aggregators;
     vector<providers::provider*> preferred_providers;
+    vector<aggregators::subtitle*> preferred_subtitles;
     mutable container_type settings_map;
     static set<string> allowed_settings;
     
@@ -64,6 +66,10 @@ public:
 
     vector<providers::provider*> get_preferred_providers() {
         return preferred_providers;
+    }
+
+    vector<aggregators::subtitle*> get_preferred_subtitles() {
+        return preferred_subtitles;
     }
 
     void read(const vector<string>& args);

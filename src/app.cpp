@@ -47,21 +47,23 @@ app::app():
 
     aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
+    aggregators::subtitle::set_preferred_subtitles(settings.get_preferred_subtitles());
 }
 
 void app::help_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window,
         "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
-                "[--provider provider] [--output-files dir] [--rename-files [dir [pattern]]] "
-                "[--log-file [file]] [--config-file file] [--version] [--help]", "Okay");
+                "[--provider provider] [--subtitle subtitle] [--output-files dir] "
+                "[--rename-files [dir [pattern]]] [--log-file [file]] [--config-file file] "
+                "[--version] [--help]", "Okay");
 }
 
 void app::version_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window, [&message_window](stream& _stream) {
         _stream.set_wrap(false);
-        _stream << "bsdl 1.7.0" << endl <<
+        _stream << "bsdl 1.8.0" << endl <<
                 stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                 "Source code: https://github.com/ekuiter/bsdl" << endl;
         _stream.set_wrap(true);

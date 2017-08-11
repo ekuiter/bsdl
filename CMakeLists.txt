@@ -18,6 +18,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/static)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fno-inline-functions -fpermissive")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -D__FILE__='\"$(notdir $(abspath $<))\"'")
 
 # EXTERNAL LIBRARIES
 
@@ -70,13 +71,21 @@ add_library(mk STATIC src/aggregators/mk/mk.cpp
 set_target_properties(mk PROPERTIES OUTPUT_NAME "bsdl_mk")
 target_link_libraries(mk ${BOOST_LIBRARIES} http curses bs)
 
+add_library(pr STATIC src/aggregators/pr/series.cpp src/aggregators/pr/season.cpp
+  src/aggregators/pr/episode.cpp src/aggregators/pr/video_file.cpp src/aggregators/pr/pr.cpp 
+  src/aggregators/pr/episode_file.cpp)
+set_target_properties(pr PROPERTIES OUTPUT_NAME "bsdl_pr")
+target_link_libraries(pr ${BOOST_LIBRARIES} http curses)
+
 add_library(aggregators STATIC src/aggregators/aggregator.cpp
   src/aggregators/season.cpp src/aggregators/season_view.cpp src/aggregators/series.cpp
-  src/aggregators/episode_file.cpp src/aggregators/episode_download.cpp src/aggregators/episode.cpp)
+  src/aggregators/episode_file.cpp src/aggregators/episode_download.cpp src/aggregators/episode.cpp
+  src/aggregators/subtitle.cpp)
 set_target_properties(aggregators PROPERTIES OUTPUT_NAME "bsdl_aggregators")
-target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk)
+target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 
-add_library(core STATIC src/app.cpp src/settings.cpp src/util/platform.cpp src/providers/provider.cpp)
+add_library(core STATIC src/app.cpp src/settings.cpp src/util/platform.cpp src/util/string_similarity.cpp
+  src/providers/provider.cpp)
 set_target_properties(core PROPERTIES OUTPUT_NAME "bsdl_core")
 target_link_libraries(core http curses aggregators)
 
@@ -85,7 +94,7 @@ if(WIN32)
   set(SOURCE_FILES ${SOURCE_FILES} res_win32/bsdl.o)
 endif(WIN32)
 add_executable(bsdl ${SOURCE_FILES})
-target_link_libraries(bsdl ${BOOST_LIBRARIES} http curses aggregators bs kx mk core)
+target_link_libraries(bsdl ${BOOST_LIBRARIES} http curses aggregators bs kx mk pr core)
 
 # EXTERNAL LIBRARIES
 
