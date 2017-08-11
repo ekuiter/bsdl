@@ -14,8 +14,8 @@ namespace aggregators {
             
             for (auto& video_file_node : video_file_nodes) {
                 string video_file_title = CNode(video_file_node).
-                    find(settings::get("mk_video_file_title_sel")).assertNum(1).nodeAt(0).text().substr(3),
-                    video_file_url = CNode(video_file_node).find("a").assertNum(2).nodeAt(0).attribute("href");
+                    find(settings::get("mk_video_file_title_sel")).ASSERT_NUM(1).nodeAt(0).text().substr(3),
+                    video_file_url = CNode(video_file_node).find("a").ASSERT_NUM(2).nodeAt(0).attribute("href");
                 providers::provider& provider = providers::provider::instance(video_file_title);
                 video_files.insert({&provider, new video_file(provider, {mk::root().get_relative(video_file_url)})});
             }

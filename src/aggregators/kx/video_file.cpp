@@ -13,7 +13,7 @@ namespace aggregators {
             if (replacement.is_boolean())
                 return 1;
             doc.parse(replacement);
-            string mirror_text = doc.find(".Data").assertNum(1).nodeAt(0).text();
+            string mirror_text = doc.find(".Data").ASSERT_NUM(1).nodeAt(0).text();
             smatch results;
             assert(regex_search(mirror_text, results, regex(": (.*)/")));
             return stoi(results[1]);
@@ -25,7 +25,7 @@ namespace aggregators {
             if (replacement.is_boolean())
                 return false;
             doc.parse(replacement);
-            *_request = _request->get_relative(doc.find("li").assertNum(1).nodeAt(0).attribute("rel"));
+            *_request = _request->get_relative(doc.find("li").ASSERT_NUM(1).nodeAt(0).attribute("rel"));
             return true;
         }
         
@@ -37,9 +37,9 @@ namespace aggregators {
             doc.parse(_json[settings::get("kx_stream_key")]);
             http::request provider_request;
             try {
-                provider_request = doc.find("a").assertNum(1).nodeAt(0).attribute("href");
+                provider_request = doc.find("a").ASSERT_NUM(1).nodeAt(0).attribute("href");
             } catch (runtime_error) {
-                provider_request = doc.find("iframe").assertNum(1).nodeAt(0).attribute("src");
+                provider_request = doc.find("iframe").ASSERT_NUM(1).nodeAt(0).attribute("src");
             }
             
             if (first_mirror < 0)

@@ -8,7 +8,7 @@ namespace aggregators {
     namespace bs {
         void series::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection season_nodes = document->find(settings::get("bs_season_sel")).assertAtLeast(1);
+            CSelection season_nodes = document->find(settings::get("bs_season_sel")).ASSERT_AT_LEAST(1);
 
             for (auto& season_node : season_nodes) {
                 string season_text = CNode(season_node).text();

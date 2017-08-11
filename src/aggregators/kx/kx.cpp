@@ -20,8 +20,8 @@ namespace aggregators {
             CSelection sel = document->find(settings::get("kx_series_sel"));
             
 			for (int i = 0; i < sel.nodeNum(); i++) {
-				CNode title_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).assertNum(1).nodeAt(0),
-					language_node = sel.nodeAt(i).find(settings::get("kx_language_sel")).assertNum(1).nodeAt(0);
+				CNode title_node = sel.nodeAt(i).find(settings::get("kx_title_sel")).ASSERT_NUM(1).nodeAt(0),
+					language_node = sel.nodeAt(i).find(settings::get("kx_language_sel")).ASSERT_NUM(1).nodeAt(0);
 				string title_text = title_node.text(), language_src = language_node.attribute("src");
 				smatch title_results, language_results;
 				assert(regex_search(title_text, title_results, regex("^(.*?)(\\*.*subbed\\*.*)?$")));

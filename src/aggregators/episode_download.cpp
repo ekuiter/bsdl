@@ -16,6 +16,7 @@ namespace aggregators {
 
         const aggregators::video_file* preferred_video_file;
         const providers::provider* provider;
+        _episode.reset_skipped_video_files();
         
         while (true) {
             preferred_video_file = _episode.next_preferred_video_file();

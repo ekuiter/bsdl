@@ -10,10 +10,10 @@ namespace aggregators {
     namespace bs {
         void season::load(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection episode_nodes = document->find(settings::get("bs_episode_sel")).assertAtLeast(1);
+            CSelection episode_nodes = document->find(settings::get("bs_episode_sel")).ASSERT_AT_LEAST(1);
 
             for (auto& episode_node : episode_nodes) {
-                CSelection episode_row = CNode(episode_node).find("td").assertNum(3);
+                CSelection episode_row = CNode(episode_node).find("td").ASSERT_NUM(3);
                 int episode_number = stoi(episode_row.nodeAt(0).text());
                 string episode_title_de = episode_row.nodeAt(1).find("a strong").nodeNum() == 1 ?
                                           episode_row.nodeAt(1).find("a strong").nodeAt(0).text() : "";

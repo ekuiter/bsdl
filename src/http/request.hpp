@@ -146,6 +146,7 @@ namespace http {
         virtual response operator()() const;
         virtual bool operator()(const string& file_name) const;
         request get_relative(const string& path) const;
+        request operator+(const string& path) const;
     };
 
     class request::download : public request {

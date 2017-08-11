@@ -24,7 +24,7 @@ namespace aggregators {
                 boost::to_lower(current_series_title);
                 if (boost::contains(current_series_title, series_search) ||
                         util::get_string_similarity(current_series_title, series_search) > 0.5) {
-                    CNode series_node = sel.nodeAt(i).find("a").assertNum(1).nodeAt(0);
+                    CNode series_node = sel.nodeAt(i).find("a").ASSERT_NUM(1).nodeAt(0);
                     search_results.push_back(new series(
                             *this,
                             series_node.text(),

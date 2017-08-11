@@ -13,7 +13,7 @@ namespace aggregators {
             CSelection script_nodes = document->find(settings::get("mk_video_file_script_sel"));
             
             for (auto& video_file_node : video_file_nodes) {
-                CNode link_node = CNode(video_file_node).find("a").assertNum(2).nodeAt(0);
+                CNode link_node = CNode(video_file_node).find("a").ASSERT_NUM(2).nodeAt(0);
                 if (link_node.childNum() != 3)
                     throw std::runtime_error(std::string("node has ") + std::to_string(link_node.childNum()) + " children instead of 3");
                 string video_file_title = link_node.childAt(2).text().substr(3),

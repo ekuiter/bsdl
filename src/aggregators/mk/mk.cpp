@@ -20,8 +20,8 @@ namespace aggregators {
             CSelection sel = document->find(settings::get("mk_series_sel"));
             
             for (int i = 0; i < sel.nodeNum(); i++) {
-                CNode title_node = sel.nodeAt(i).find(settings::get("mk_title_sel")).assertNum(1).nodeAt(0),
-                    language_node = sel.nodeAt(i).find(settings::get("mk_language_sel")).assertNum(1).nodeAt(0);
+                CNode title_node = sel.nodeAt(i).find(settings::get("mk_title_sel")).ASSERT_NUM(1).nodeAt(0),
+                    language_node = sel.nodeAt(i).find(settings::get("mk_language_sel")).ASSERT_NUM(1).nodeAt(0);
                 string title_text = title_node.text(), language_src = language_node.attribute("src");
                 boost::trim(title_text);
                 search_results.push_back(new series(*this, title_text, series::to_language_string(language_src),

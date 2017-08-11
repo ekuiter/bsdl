@@ -96,6 +96,10 @@ namespace http {
         return request(string(results[0]) + path);
     }
 
+    request request::operator+(const string& path) const {
+        return request(get_url() + path);
+    }
+
     ostream& operator<<(ostream& stream, const request& request) {
         return stream << request.get_url();
     }

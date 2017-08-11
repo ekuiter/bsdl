@@ -52,6 +52,10 @@ namespace aggregators {
             return get_id() == "" ? series_title : get_id();
         }
 
+        void reset_skipped_video_files() const {
+            skipped_video_files = 0;
+        }
+
         const video_file* next_preferred_video_file() const {
             load();
             int skip = skipped_video_files++;

@@ -18,7 +18,7 @@ namespace aggregators {
             if (season_nodes.nodeNum() == 0)
                 add_season(new movie_season(title, response));
             else {
-                string parameters = document->find(settings::get("kx_season_sel")).assertNum(1).nodeAt(0).attribute("rel");
+                string parameters = document->find(settings::get("kx_season_sel")).ASSERT_NUM(1).nodeAt(0).attribute("rel");
                 for (auto& season_node : season_nodes) {
                     int season_number = stoi(CNode(season_node).attribute("value"));
                     string episodes_string = CNode(season_node).attribute("rel");

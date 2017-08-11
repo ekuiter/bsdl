@@ -156,4 +156,14 @@ namespace util {
             throw exec_failed(exit_code);
         return result;
 	}
+
+    void platform::browse(const string& url) {
+#ifdef __MINGW32__
+	@TODO
+#elif defined (__APPLE__)
+	exec(string("open ") + url);
+#else
+	@TODO
+#endif
+    }
 }
