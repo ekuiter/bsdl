@@ -54,19 +54,8 @@ ostream& operator<<(ostream& stream, settings_base& settings) {
     return stream;
 }
 
-void settings_base::read(const vector<string>& args) {
-    int first_arg = args.size() >= 2 && args[1][0] != '-' ? 2 : 1, i;
-    auto next_arg = [&args, &i]() { return args[++i]; };
-    auto skip_arg = [&next_arg](int num = 1) { while (num-- > 0) next_arg(); };
-    auto is_arg = [&](string arg, int additional_args = 0) {
-        if (i + additional_args >= args.size())
-            return false;
-        bool ret = args[i] == arg;
-        for (int j = 1; j <= additional_args; j++)
-            ret = ret && args[i + j][0] != '-';
-        return ret;
-    };
-
+template<typename T, typename U, typename V>
+void settings_base::validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U skip_arg, V next_arg) {
     for (i = first_arg; i < args.size(); i++) {
         if (is_arg("--download", 2) || is_arg("-d", 2))          skip_arg(2);
         else if (is_arg("--download", 1) || is_arg("-d", 1))     skip_arg();
@@ -87,10 +76,9 @@ void settings_base::read(const vector<string>& args) {
         else
             throw runtime_error("illegal option, see bsdl --help");
     }
+}
 
-    if (!is_set("config_file"))
-        (*this)["config_file"] = (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
-
+void settings_base::read_config_file() {
     string config_file_name = (*this)["config_file"];
     if (!boost::filesystem::exists(config_file_name))
         throw runtime_error(string("config file \"") + config_file_name + "\" does not exist");
@@ -112,10 +100,10 @@ void settings_base::read(const vector<string>& args) {
         boost::trim(value);
         (*this)[key] = value;
     }
+}
 
-    if (first_arg == 2)
-        (*this)["series_search"] = args[1];
-
+template<typename T, typename U>
+void settings_base::process_args(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg) {
     vector<string> parts;
     for (i = first_arg; i < args.size(); i++) {
         if (is_arg("--download", 2) || is_arg("-d", 2)) {
@@ -160,7 +148,7 @@ void settings_base::read(const vector<string>& args) {
         else if (is_arg("--log-file", 1) || is_arg("-l", 1))
             (*this)["log_file"] = next_arg();
         else if (is_arg("--log-file") || is_arg("-l"))
-            (*this)["log_file"] = "bsdl.log";
+            (*this)["log_file"] = default_log_file(args);
         else if (is_arg("--config-file", 1) || is_arg("-c", 1))
             (*this)["config_file"] = next_arg();
         else if (is_arg("--help") || is_arg("-h"))
@@ -168,16 +156,46 @@ void settings_base::read(const vector<string>& args) {
         else if (is_arg("--version") || is_arg("-v"))
             (*this)["show_info"] = "version";
     }
+}
+
+void settings_base::read(const vector<string>& args) {
+    int first_arg = args.size() >= 2 && args[1][0] != '-' ? 2 : 1, i;
+    auto next_arg = [&args, &i]() { return args[++i]; };
+    auto skip_arg = [&next_arg](int num = 1) { while (num-- > 0) next_arg(); };
+    auto is_arg = [&](string arg, int additional_args = 0) {
+        if (i + additional_args >= args.size())
+            return false;
+        bool ret = args[i] == arg;
+        for (int j = 1; j <= additional_args; j++)
+            ret = ret && args[i + j][0] != '-';
+        return ret;
+    };
+
+    validate_usage(args, i, first_arg, is_arg, skip_arg, next_arg);
+    if (!is_set("config_file"))
+        (*this)["config_file"] = default_config_file(args);
+    read_config_file();
+    if (first_arg == 2)
+        (*this)["series_search"] = args[1];
+    process_args(args, i, first_arg, is_arg, next_arg);
 
     for (auto& aggregator : build_vector("aggregators", preferred_aggregators))
         preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator));
-    
     for (auto& provider : build_vector("providers", preferred_providers))
         preferred_providers.push_back(&providers::provider::instance(provider, true));
-
     for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
         preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
 
     if (!is_set("output_files_directory"))
         (*this)["output_files_directory"] = ".";
+    if (!is_set("log_file"))
+        (*this)["log_file"] = default_log_file(args);
+}
+
+string settings_base::default_config_file(const vector<string>& args) {
+    return (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
+}
+
+string settings_base::default_log_file(const vector<string>& args) {
+    return (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.log").string();
 }
