@@ -28,6 +28,8 @@ private:
     vector<aggregators::subtitle*> preferred_subtitles;
     mutable container_type settings_map;
     static set<string> allowed_settings;
+    typedef util::with_range<settings_base> settings_with_range;
+    static settings_with_range* _instance;
     
 protected:
     container_type& get_container() const {
@@ -35,9 +37,13 @@ protected:
     }
 
 public:
-    static util::with_range<settings_base>& instance() {
-        static util::with_range<settings_base> instance;
-        return instance;
+    static settings_with_range& instance() {
+        return *_instance;
+    }
+
+    static settings_with_range& reset_instance() {
+        delete _instance;
+        return *(_instance = new settings_with_range());
     }
 
     static string& get(const string& key) {
@@ -78,6 +84,7 @@ public:
     template<typename T, typename U>
     void process_args(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg);
     void read(const vector<string>& args);
+    string resource_file(const vector<string>& args, const string& filename);
     string default_config_file(const vector<string>& args);
     string default_log_file(const vector<string>& args);
     

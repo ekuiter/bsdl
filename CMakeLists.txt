@@ -24,12 +24,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -D__FILE__=
 
 set(BOOST_ROOT lib/boost)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS system filesystem)
+find_package(Boost REQUIRED COMPONENTS system filesystem unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 if(WIN32)
 set(BOOST_LIBRARIES ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_system-mgw49-mt-1_61.a ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_filesystem-mgw49-mt-1_61.a)
 elseif(APPLE)
 set(BOOST_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+set(TEST_LIBRARY ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 else(WIN32)
 set(BOOST_LIBRARIES ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_system_linux.a ${CMAKE_SOURCE_DIR}/lib/boost/stage/lib/libboost_filesystem_linux.a)
 endif(WIN32)
@@ -95,6 +96,11 @@ if(WIN32)
 endif(WIN32)
 add_executable(bsdl ${SOURCE_FILES})
 target_link_libraries(bsdl ${BOOST_LIBRARIES} http curses aggregators bs kx mk pr core)
+
+add_executable(bsdltest EXCLUDE_FROM_ALL src/test/test_util.cpp src/test/settings.cpp src/test/provider.cpp)
+target_link_libraries(bsdltest ${BOOST_LIBRARIES} ${TEST_LIBRARY} http curses aggregators bs kx mk pr core)
+add_custom_target(check ./bsdltest WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)
+add_custom_target(check-all ./bsdltest --run_test=* WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)
 
 # EXTERNAL LIBRARIES
 

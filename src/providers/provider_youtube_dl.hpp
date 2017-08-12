@@ -10,8 +10,9 @@ using namespace http;
 
 namespace providers {
     template <int Id>
-    class provider::youtube_dl : public provider {    
-        void install_youtube_dl() const {
+    class provider::youtube_dl : public provider {
+    public:
+        static void install_youtube_dl() {
             if (youtube_dl_installed)
                 return;
             
@@ -66,7 +67,7 @@ namespace providers {
             youtube_dl_installed = true;
         }
 
-        void update_youtube_dl(const request& _request) const {
+        static void update_youtube_dl(const request& _request) {
             if (youtube_dl_updated)
                 throw not_found(_request);
             

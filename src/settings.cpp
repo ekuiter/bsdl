@@ -17,6 +17,7 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
     "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
     "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel"};
+settings* settings_base::_instance = new settings();
 
 template <typename T>
 static void print_vector(ostream& stream, vector<T*>& vector) {
@@ -68,7 +69,6 @@ void settings_base::validate_usage(const vector<string>& args, int& i, int first
         else if (is_arg("--rename-files", 1) || is_arg("-r", 1)) skip_arg();
         else if (is_arg("--rename-files") || is_arg("-r"));
         else if (is_arg("--log-file", 1) || is_arg("-l", 1))     skip_arg();
-        else if (is_arg("--log-file") || is_arg("-l"));
         else if (is_arg("--config-file", 1) || is_arg("-c", 1))
             (*this)["config_file"] = next_arg();
         else if (is_arg("--help") || is_arg("-h"));
@@ -147,8 +147,6 @@ void settings_base::process_args(const vector<string>& args, int& i, int first_a
             (*this)["rename_files_directory"] = ".";
         else if (is_arg("--log-file", 1) || is_arg("-l", 1))
             (*this)["log_file"] = next_arg();
-        else if (is_arg("--log-file") || is_arg("-l"))
-            (*this)["log_file"] = default_log_file(args);
         else if (is_arg("--config-file", 1) || is_arg("-c", 1))
             (*this)["config_file"] = next_arg();
         else if (is_arg("--help") || is_arg("-h"))
@@ -192,10 +190,14 @@ void settings_base::read(const vector<string>& args) {
         (*this)["log_file"] = default_log_file(args);
 }
 
+string settings_base::resource_file(const vector<string>& args, const string& filename) {
+    return (util::platform::executable_path(args[0]).remove_filename() /= filename).string();
+}
+
 string settings_base::default_config_file(const vector<string>& args) {
-    return (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.cfg").string();
+    return resource_file(args, "bsdl.cfg");
 }
 
 string settings_base::default_log_file(const vector<string>& args) {
-    return (util::platform::executable_path(args[0]).remove_filename() /= "bsdl.log").string();
+    return resource_file(args, "bsdl.log");
 }
