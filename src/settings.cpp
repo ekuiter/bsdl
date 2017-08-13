@@ -6,7 +6,7 @@
 #include <boost/filesystem.hpp>
 
 set<string> settings_base::allowed_settings = {"series_search", "output_files_directory", "rename_files_directory",
-    "rename_files_pattern", "show_info", "log_file", "config_file", "bs_root_url", "bs_search_path",
+    "rename_files_pattern", "action", "log_file", "config_file", "bs_root_url", "bs_search_path",
     "bs_series_sel", "bs_season_sel", "bs_episode_sel", "bs_video_file_sel", "bs_movies_text",
     "kx_root_url", "kx_search_path", "kx_series_sel", "kx_title_sel", "kx_language_sel", "kx_season_sel",
     "kx_mirror_by_episode_path", "kx_mirror_path", "kx_season_param", "kx_episode_param", "kx_video_file_sel",
@@ -73,6 +73,8 @@ void settings_base::validate_usage(const vector<string>& args, int& i, int first
             (*this)["config_file"] = next_arg();
         else if (is_arg("--help") || is_arg("-h"));
         else if (is_arg("--version") || is_arg("-v"));
+        else if (is_arg("--test", 1) || is_arg("-t", 1))         skip_arg();
+        else if (is_arg("--test") || is_arg("-t"));
         else
             throw runtime_error("illegal option, see bsdl --help");
     }
@@ -150,9 +152,13 @@ void settings_base::process_args(const vector<string>& args, int& i, int first_a
         else if (is_arg("--config-file", 1) || is_arg("-c", 1))
             (*this)["config_file"] = next_arg();
         else if (is_arg("--help") || is_arg("-h"))
-            (*this)["show_info"] = "help";
+            (*this)["action"] = "help";
         else if (is_arg("--version") || is_arg("-v"))
-            (*this)["show_info"] = "version";
+            (*this)["action"] = "version";
+        else if (is_arg("--test", 1) || is_arg("-t", 1))
+            (*this)["action"] = next_arg();
+        else if (is_arg("--test") || is_arg("-t"))
+            (*this)["action"] = "test";
     }
 }
 

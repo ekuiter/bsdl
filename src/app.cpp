@@ -44,13 +44,17 @@ main_app::main_app():
     set_title("bsdl");
     cout << "bsdl initialized (" << terminal.get_locale() << ")." << endl;
     clog << endl << "Settings:" << endl << settings << endl;
+}
 
-    if (settings.is_set("show_info")) {
+void main_app::initialize() {
+    if (settings.is_set("action")) {
         window::framed message_window(get_centered_bounds());
-        if (settings["show_info"] == "help")
+        if (settings["action"] == "help")
             help_message();
-        if (settings["show_info"] == "version")
+        else if (settings["action"] == "version")
             version_message();
+        else
+            run_tests();
         exit(EXIT_SUCCESS);
     }
 
@@ -82,6 +86,29 @@ void main_app::version_message() {
                                         color::previous << " on " << color::get_accent_color() <<
                                         __DATE__ << " " << __TIME__ << color::previous << ".";
     }, "Okay");
+}
+
+void main_app::run_tests() {
+    terminal.~terminal();
+    char buffer[128];
+    string args = settings["action"] == "test" ? "" :
+        string(" --run_test=") + (settings["action"] == "all" ? "*" : settings["action"]);
+    if (settings["action"] == "list")
+        args = " --list_content";
+    FILE* pipe = popen((settings::instance().resource_file({ "bsdl" }, "bsdltest") + args).c_str(), "r");
+    if (!pipe) {
+        fprintf(stderr, "popen failed");
+        exit(EXIT_FAILURE);
+    }
+    try {
+        while (!feof(pipe))
+            if (fgets(buffer, 128, pipe) != NULL)
+                fprintf(stderr, "%s", buffer);
+    } catch (...) {
+        fprintf(stderr, "reading pipe failed");
+        exit(EXIT_FAILURE);
+    }
+    exit(pclose(pipe) / 256);
 }
 
 void main_app::set_title(const string& _title, bool set_notice, string notice) {

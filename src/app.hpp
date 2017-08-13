@@ -24,6 +24,7 @@ public:
     virtual const string& get_series_search() const = 0;
     virtual void set_current_series(aggregators::series& series) = 0;
     virtual rectangle get_centered_bounds(int width = -1, int height = -1, int quarters = 3) = 0;
+    virtual void initialize() = 0;
     virtual void help_message() = 0;
     virtual void version_message() = 0;
     virtual void set_title(const string& title, bool set_notice = false, string notice = "") = 0;
@@ -78,8 +79,10 @@ public:
                   height == -1 ? LINES * quarters / 4 : height).center(rectangle::get_screen(), status_width);
     }
 
+    void initialize();
     void help_message();
     void version_message();
+    void run_tests();
     void set_title(const string& title, bool set_notice = false, string notice = "");
     string run_start_window(const rectangle& bounds);
     vector<aggregators::series*> search_series();
