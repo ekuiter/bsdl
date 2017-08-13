@@ -12,29 +12,41 @@
 #include "stream_modifier.hpp"
 #include "input.hpp"
 #include <iostream>
+#include <memory>
 #include <curses.h>
 
 using namespace std;
 
 extern int ESCDELAY;
 
-namespace curses {
+namespace curses {    
     class terminal {
+    protected:
+        static unique_ptr<terminal> _instance;
+    
+    public:
+        virtual ~terminal() {}
+        static terminal& instance();
+        virtual void run(function<void (terminal& terminal)> fn) = 0;
+        virtual stream& get_stream(ostream& _stream) = 0;
+        virtual input& get_input() = 0;
+        virtual char* get_locale() = 0;
+    };
+
+    class main_terminal : public terminal {
+        friend class terminal;
+        
         WINDOW* _1;
         int _2;
         stream curses_out, curses_log, curses_err;
         input& _input;
+        char* locale;
 
-        terminal();
-        terminal(const terminal&) = delete;
+        main_terminal();
+        main_terminal(const terminal&) = delete;
 
     public:
-        static terminal& instance() {
-            static terminal instance;
-            return instance;
-        }
-
-        ~terminal() {
+        ~main_terminal() {
             endwin();
         }
 
@@ -43,6 +55,10 @@ namespace curses {
 
         input& get_input() {
             return _input;
+        }
+
+        char* get_locale() {
+            return locale;
         }
     };
 }

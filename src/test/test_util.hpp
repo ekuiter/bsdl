@@ -9,6 +9,14 @@
 #include "../providers/provider_youtube_dl.hpp"
 #include "../aggregators/aggregator.hpp"
 
+#define MOCK_THROW(return_type, fn, signature)  \
+    return_type fn signature override {         \
+        throw mock_error(#fn);                  \
+    }
+
+#define MOCK_EMPTY(return_type, fn, signature)  \
+    return_type fn signature override {}
+
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 
@@ -48,4 +56,10 @@ struct data_fixture {
     aggregators::subtitle& another_subtitle() { return aggregators::subtitle::instance(data["another_subtitle"]); }
 };
 
-struct settings_and_data_fixture : public settings_fixture, public data_fixture {};
+template<class First, class... Rest>
+struct multi_fixture : public First, public multi_fixture<Rest...> {};
+
+template<class First>
+struct multi_fixture<First> : public First {};
+
+typedef multi_fixture<settings_fixture, data_fixture> settings_and_data_fixture;

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <set>
+#include <memory>
 #include "aggregators/aggregator.hpp"
 #include "aggregators/subtitle.hpp"
 #include "util/with_range.hpp"
@@ -29,7 +30,7 @@ private:
     mutable container_type settings_map;
     static set<string> allowed_settings;
     typedef util::with_range<settings_base> settings_with_range;
-    static settings_with_range* _instance;
+    static unique_ptr<settings_with_range> _instance;
     
 protected:
     container_type& get_container() const {
@@ -42,8 +43,8 @@ public:
     }
 
     static settings_with_range& reset_instance() {
-        delete _instance;
-        return *(_instance = new settings_with_range());
+        _instance.reset(new settings_with_range());
+        return *_instance;
     }
 
     static string& get(const string& key) {

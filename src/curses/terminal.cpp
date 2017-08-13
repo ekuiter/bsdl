@@ -2,8 +2,16 @@
 #include "message_dialog.hpp"
 
 namespace curses {
-    terminal::terminal(): _1(initscr()), _2(start_color()),
-                          curses_out(cout), curses_log(clog), curses_err(cerr), _input(input::instance()) {
+    unique_ptr<terminal> terminal::_instance = nullptr;
+
+    terminal& terminal::instance() {
+        if (!_instance)
+            _instance.reset(new main_terminal());
+        return *_instance;
+    }
+    
+    main_terminal::main_terminal(): locale(setlocale(LC_ALL, "")), _1(initscr()), _2(start_color()),
+                                    curses_out(cout), curses_log(clog), curses_err(cerr), _input(input::instance()) {
         color::set_accent_color(color(COLOR_CYAN));
         raw();
         noecho();
@@ -16,7 +24,7 @@ namespace curses {
         refresh();
     }
 
-    void terminal::run(function<void (terminal& terminal)> fn) {
+    void main_terminal::run(function<void (terminal& terminal)> fn) {
         try {
             if (COLS < 80 || LINES < 15)
                 throw exception("the terminal is too small, please resize your window!");
@@ -35,7 +43,7 @@ namespace curses {
         }
     }
 
-    stream& terminal::get_stream(ostream& _stream) {
+    stream& main_terminal::get_stream(ostream& _stream) {
         if (&_stream == &cout)
             return curses_out;
         if (&_stream == &clog)

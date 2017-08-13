@@ -8,7 +8,15 @@
 #include <boost/format.hpp>
 #include <fstream>
 
-app::app():
+unique_ptr<app> app::_instance = nullptr;
+
+app& app::instance() {
+    if (!_instance)
+        _instance.reset(new main_app());
+    return *_instance;
+}
+
+main_app::main_app():
         terminal(terminal::instance()), settings(settings::instance()),
         status_window(rectangle(0, 0, COLS / 3, LINES)),
         title_window(status_window, rectangle(0, 0, status_window.get_bounds().width, 2)),
@@ -29,11 +37,11 @@ app::app():
     }
 
     using namespace placeholders;
-    terminal.get_input().register_keyboard_callback(bind(&app::keyboard_callback, this, _1));
-    http::client::instance().set_callback(bind(&app::http_callback, this, _1, _2, _3, _4, _5));
+    terminal.get_input().register_keyboard_callback(bind(&main_app::keyboard_callback, this, _1));
+    http::client::instance().set_callback(bind(&main_app::http_callback, this, _1, _2, _3, _4, _5));
 
     set_title("bsdl");
-    cout << "bsdl initialized." << endl;
+    cout << "bsdl initialized (" << terminal.get_locale() << ")." << endl;
     clog << endl << "Settings:" << endl << settings << endl;
 
     if (settings.is_set("show_info")) {
@@ -50,7 +58,7 @@ app::app():
     aggregators::subtitle::set_preferred_subtitles(settings.get_preferred_subtitles());
 }
 
-void app::help_message() {
+void main_app::help_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window,
         "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
@@ -59,7 +67,7 @@ void app::help_message() {
                 "[--version] [--help]", "Okay");
 }
 
-void app::version_message() {
+void main_app::version_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window, [&message_window](stream& _stream) {
         _stream.set_wrap(false);
@@ -75,7 +83,7 @@ void app::version_message() {
     }, "Okay");
 }
 
-void app::set_title(const string& _title, bool set_notice, string notice) {
+void main_app::set_title(const string& _title, bool set_notice, string notice) {
     if (set_notice) {
         auto left_bracket = title.find_last_of('['), right_bracket = title.find_last_of(']');
         if (left_bracket && right_bracket && left_bracket < right_bracket)
@@ -91,13 +99,13 @@ void app::set_title(const string& _title, bool set_notice, string notice) {
 		stream::write(stream::ext_char(ACS_HLINE), title_window.get_bounds().width) << stream::refresh();
 }
 
-bool app::keyboard_callback(int ch) {
+bool main_app::keyboard_callback(int ch) {
     if (ch == 27) // ESC
         exit(EXIT_SUCCESS);
     return true;
 }
 
-int app::http_callback(http::request::status status, const http::request& request,
+int main_app::http_callback(http::request::status status, const http::request& request,
                   curl_off_t now_bytes, curl_off_t total_bytes, curl::curl_easy_exception* e) {
     static int i;
     bool old_visible = terminal.get_stream(cout).set_visible(true);
@@ -136,7 +144,7 @@ int app::http_callback(http::request::status status, const http::request& reques
     return 0;
 }
 
-string app::run_start_window(const rectangle& bounds) {
+string main_app::run_start_window(const rectangle& bounds) {
     window::framed start_window(bounds);
     stream _stream(start_window);
     _stream << color::get_accent_color() << "Welcome to bsdl!";
@@ -204,7 +212,7 @@ string app::run_start_window(const rectangle& bounds) {
                     color::previous << "." << endl;
     });
     
-    make_button("Info", bind(&app::version_message, this));
+    make_button("Info", bind(&main_app::version_message, this));
     
     string series_search = input_dialog::run(search_dialog, "Enter series to search:", "Search",
             color::get_accent_color(), "", &text_box);
@@ -216,7 +224,7 @@ string app::run_start_window(const rectangle& bounds) {
     return series_search;
 }
 
-vector<aggregators::series*> app::search_series() {
+vector<aggregators::series*> main_app::search_series() {
     set_title("Search series");
     rectangle centered_bounds = get_centered_bounds(-1, 8);
     series_search = settings["series_search"];
@@ -251,7 +259,7 @@ vector<aggregators::series*> app::search_series() {
     return search_results;
 }
 
-aggregators::series& app::choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) {
+aggregators::series& main_app::choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) {
     set_title("Choose series");
     if (search_results.size() == 1)
         return *search_results[0];
@@ -261,7 +269,7 @@ aggregators::series& app::choose_series(vector<aggregators::series*>& search_res
     }
 }
 
-void app::display_series(aggregators::series& series) {
+void main_app::display_series(aggregators::series& series) {
     window::plain series_window(rectangle(status_window.get_full_bounds().width, 0,
                                           COLS - status_window.get_full_bounds().width, LINES));
     stream _stream(series_window, color::get_accent_color());    
@@ -280,7 +288,7 @@ void app::display_series(aggregators::series& series) {
     terminal.get_input().wait();
 }
 
-void app::download_episodes(aggregators::download_selection& download_selection) {
+void main_app::download_episodes(aggregators::download_selection& download_selection) {
     if (!current_series)
         throw runtime_error("there is no current series");
 

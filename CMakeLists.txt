@@ -97,7 +97,8 @@ endif(WIN32)
 add_executable(bsdl ${SOURCE_FILES})
 target_link_libraries(bsdl ${BOOST_LIBRARIES} http curses aggregators bs kx mk pr core)
 
-add_executable(bsdltest EXCLUDE_FROM_ALL src/test/test_util.cpp src/test/settings.cpp src/test/provider.cpp)
+add_executable(bsdltest EXCLUDE_FROM_ALL src/test/test_util.cpp src/test/mock_app.cpp src/test/mock_terminal.cpp
+  src/test/settings.cpp src/test/provider.cpp)
 target_link_libraries(bsdltest ${BOOST_LIBRARIES} ${TEST_LIBRARY} http curses aggregators bs kx mk pr core)
 add_custom_target(check ./bsdltest WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)
 add_custom_target(check-all ./bsdltest --run_test=* WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)

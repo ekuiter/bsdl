@@ -4,8 +4,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    setlocale(LC_ALL, "");
-
     curses::terminal::instance().run([argc, argv](curses::terminal& terminal) {
         settings::instance().read(vector<string>(argv, argv + argc));
         app& app = app::instance();
@@ -14,6 +12,4 @@ int main(int argc, char* argv[]) {
         app.set_current_series(series);
         app.display_series(series);
     });
-
-    return EXIT_SUCCESS;
 }

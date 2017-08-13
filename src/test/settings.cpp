@@ -3,7 +3,7 @@
 
 BOOST_FIXTURE_TEST_SUITE(settings_suite, settings_fixture)
 BOOST_AUTO_TEST_CASE(read_invalid_key) { BOOST_CHECK_THROW(settings::get("invalid key"), runtime_error); }
-BOOST_AUTO_TEST_CASE(read_valid_key) { BOOST_CHECK_NO_THROW(settings::get("aggregators")); }
+BOOST_AUTO_TEST_CASE(read_valid_key) { settings::get("aggregators"); }
 BOOST_AUTO_TEST_CASE(is_set_valid_key) { BOOST_TEST(settings::instance().is_set("aggregators")); }
 BOOST_AUTO_TEST_CASE(is_set_invalid_key) { BOOST_TEST(!settings::instance().is_set("invalid key")); }
 BOOST_AUTO_TEST_CASE(empty_download_selection) { BOOST_TEST(settings::instance().get_download_selection().size() == 0); }
@@ -37,9 +37,7 @@ preferred_test_case(aggregator, "-a")
 preferred_test_case(provider, "-p")
 preferred_test_case(subtitle, "-s")
 
-BOOST_AUTO_TEST_CASE(valid_usage) {
-    BOOST_CHECK_NO_THROW(settings_fixture({ "some series", "-o", ".", "-r", ".", "SxxExx", "-v", "-h" }));
-}
+BOOST_AUTO_TEST_CASE(valid_usage) { settings_fixture({ "some series", "-o", ".", "-r", ".", "SxxExx", "-v", "-h" }); }
 
 BOOST_AUTO_TEST_CASE(invalid_usages) {
     BOOST_CHECK_THROW(settings_fixture({ "some series", "-o", "-r", ".", "SxxExx", "-v", "-h" }), runtime_error);
