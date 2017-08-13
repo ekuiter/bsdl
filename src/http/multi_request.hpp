@@ -73,18 +73,6 @@ namespace http {
                 results.insert({&_request, _response});
             }
 
-            const results_map& get_results() {
-                for (auto& request : requests)
-                    process_result(*request, results);
-
-                for (auto& request : requests) {
-                    curl.remove(request->get_implementation().get_curl());
-                    request->destroy_implementation();
-                }
-
-                return results;
-            }
-
         public:
             request() {}
 
@@ -98,6 +86,18 @@ namespace http {
                 if (!request.is_fetch())
                     throw exception("request has to be fetch request");
                 _remove(request);
+            }
+
+            const results_map& get_results() {
+                for (auto& request : requests)
+                    process_result(*request, results);
+
+                for (auto& request : requests) {
+                    curl.remove(request->get_implementation().get_curl());
+                    request->destroy_implementation();
+                }
+
+                return results;
             }
 
             class download;

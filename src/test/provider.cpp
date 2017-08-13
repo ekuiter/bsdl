@@ -16,9 +16,8 @@ BOOST_AUTO_TEST_CASE(youtube_dl_update, * utf::depends_on("provider_suite/long_r
 }
 
 BOOST_AUTO_TEST_CASE(youtube_dl_fetch, * utf::depends_on("provider_suite/long_running/youtube_dl_update")) {
-    BOOST_TEST(youtube_dl_provider().fetch(youtube_dl_request()).get_url() == data["youtube_dl_result"].get<string>());
+    BOOST_TEST(youtube_dl_provider().fetch(youtube_dl_request()).get_url() == get_data("youtube_dl_result"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
 BOOST_AUTO_TEST_SUITE_END()

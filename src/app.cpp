@@ -38,7 +38,8 @@ main_app::main_app():
 
     using namespace placeholders;
     terminal.get_input().register_keyboard_callback(bind(&main_app::keyboard_callback, this, _1));
-    http::client::instance().set_callback(bind(&main_app::http_callback, this, _1, _2, _3, _4, _5));
+    http::client::instance().set_callback(bind(&main_app::http_callback, this, _1, _2, _3, _4, _5)).
+        set_timeout(stoi(settings::get("timeout")));
 
     set_title("bsdl");
     cout << "bsdl initialized (" << terminal.get_locale() << ")." << endl;

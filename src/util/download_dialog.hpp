@@ -13,7 +13,7 @@ namespace util {
         static void run(window& window, const vector<T1*>& downloadables,
                         const color& highlight_color = color::get_accent_color()) {
 
-            http::download_queue<T2> download_queue;
+            http::download_queue<T2> download_queue(stoi(settings::get("parallel_transfers")));
             menu::vertical<typename http::download_queue<T2>::addressed_type>* menu_ptr = nullptr;
 
             auto refresh_callback = [&menu_ptr](T2& download) {

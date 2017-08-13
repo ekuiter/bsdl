@@ -24,7 +24,7 @@ namespace http {
 
         if (_request.is_fetch()) {
             curl.add<CURLOPT_HEADER>(true);
-            curl.add<CURLOPT_TIMEOUT>(60);
+            curl.add<CURLOPT_TIMEOUT>(timeout);
         }
 
         curl_header header;

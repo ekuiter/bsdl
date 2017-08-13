@@ -15,6 +15,7 @@ namespace http {
     class client {
         request::callback _callback;
         bool verbose;
+        int timeout = 60;
 
         client():
                 _callback([](request::status, const request&, curl_off_t, curl_off_t, curl::curl_easy_exception* e) { return 0; }),
@@ -37,6 +38,11 @@ namespace http {
 
         client& set_verbose(bool _verbose) {
             verbose = _verbose;
+            return *this;
+        }
+
+        client& set_timeout(int _timeout) {
+            timeout = _timeout;
             return *this;
         }
 
