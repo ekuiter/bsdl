@@ -26,7 +26,7 @@ namespace curses {
     
     public:
         virtual ~terminal() {}
-        static terminal& instance();
+        static terminal& instance(char* locale = setlocale(LC_ALL, NULL));
         virtual void run(function<void (terminal& terminal)> fn) = 0;
         virtual stream& get_stream(ostream& _stream) = 0;
         virtual input& get_input() = 0;
@@ -42,7 +42,7 @@ namespace curses {
         input& _input;
         char* locale;
 
-        main_terminal();
+        main_terminal(char* locale);
         main_terminal(const terminal&) = delete;
 
     public:

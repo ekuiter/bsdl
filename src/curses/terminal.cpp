@@ -4,13 +4,13 @@
 namespace curses {
     unique_ptr<terminal> terminal::_instance = nullptr;
 
-    terminal& terminal::instance() {
+    terminal& terminal::instance(char* _locale) {
         if (!_instance)
-            _instance.reset(new main_terminal());
+            _instance.reset(new main_terminal(_locale));
         return *_instance;
     }
     
-    main_terminal::main_terminal(): locale(setlocale(LC_ALL, "")), _1(initscr()), _2(start_color()),
+    main_terminal::main_terminal(char* _locale): locale(_locale), _1(initscr()), _2(start_color()),
                                     curses_out(cout), curses_log(clog), curses_err(cerr), _input(input::instance()) {
         color::set_accent_color(color(COLOR_CYAN));
         raw();
