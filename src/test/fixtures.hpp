@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <random>
 #include <boost/test/unit_test.hpp>
 #include <json.hpp>
 #include "../settings.hpp"
@@ -11,6 +12,7 @@
 
 string executable_file();
 string resource_file(const string& resource);
+default_random_engine& random_engine();
 
 // settings fixture
 
@@ -26,6 +28,15 @@ struct settings_fixture {
 };
 
 // data fixture
+
+#define SOME_SERIES(name)                                       \
+    string name##_series() {                                    \
+        vector<string> series = data[#name "_series"];          \
+        shuffle(series.begin(), series.end(), random_engine()); \
+        string series_title = *series.begin();                  \
+        boost::to_lower(series_title);                          \
+        return series_title;                                    \
+    }
 
 struct data_fixture {
     nlohmann::json data;
@@ -49,6 +60,11 @@ struct data_fixture {
     http::request youtube_dl_request() { return http::request(get_data("youtube_dl_request")); }
     aggregators::subtitle& some_subtitle() { return aggregators::subtitle::instance(get_data("some_subtitle")); }
     aggregators::subtitle& another_subtitle() { return aggregators::subtitle::instance(get_data("another_subtitle")); }
+
+    SOME_SERIES(bs)
+    SOME_SERIES(kx)
+    SOME_SERIES(mk)
+    SOME_SERIES(pr)
 };
 
 // silent stream fixture

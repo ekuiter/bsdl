@@ -8,9 +8,9 @@ BOOST_AUTO_TEST_CASE(empty_multi_request, * utf::timeout(1)) {
     while (multi_request());
 }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled())
+BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(10))
 
-BOOST_AUTO_TEST_CASE(multi_request, * utf::timeout(10)) {
+BOOST_AUTO_TEST_CASE(multi_request) {
     http::multi::request multi_request;
     auto requests = { http::request("http://abc.xyz"), http::request("http://google.com"), http::request("http://example.com") };
     for (auto request : requests)
@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(multi_request, * utf::timeout(10)) {
     while (multi_request());
 }
 
-BOOST_FIXTURE_TEST_CASE(download_multi_request, data_fixture, * utf::timeout(10)) {
+BOOST_FIXTURE_TEST_CASE(download_multi_request, data_fixture) {
     http::multi::request::download download_multi_request;
     auto some_request = http::request::download(get_data("some_binary")),
         another_request = http::request::download(get_data("some_binary"));

@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(empty_request) {
 
 BOOST_AUTO_TEST_CASE(idle_request) { check_response(http::request::idle(), 0, ""); }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled())
+BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(10))
 
 BOOST_AUTO_TEST_CASE(simple_url_request) { check_response(http::request("http://abc.xyz")(), 200, "<html"); }
 BOOST_AUTO_TEST_CASE(complex_url_request) { check_response(http::request("http://abc.xyz/a/path?with=a&query=and#fragment")(), 404, "<html"); }

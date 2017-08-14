@@ -10,7 +10,7 @@ BOOST_FIXTURE_TEST_CASE(empty_download_request, silent_cerr_fixture) {
     remove(file_name.c_str());
 }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled())
+BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(10))
 
 BOOST_AUTO_TEST_CASE(download_request_invalid_file) { BOOST_CHECK_THROW(http::request::download("http://abc.xyz")(""), http::exception); }
 

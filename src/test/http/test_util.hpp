@@ -1,9 +1,6 @@
 #pragma once
 
 #include "../test_util.hpp"
-#include "../../http/request.hpp"
-
-#undef timeout
 
 inline void check_request(const http::request& request, const string& url, const string& host,
                           const string& path, bool https, const string& method) {

@@ -20,9 +20,9 @@ BOOST_AUTO_TEST_CASE(empty_download_queue, * utf::timeout(1)) {
     download_queue();
 }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled())
+BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(10))
 
-BOOST_FIXTURE_TEST_CASE(full_download_queue, data_fixture, * utf::timeout(10)) {
+BOOST_FIXTURE_TEST_CASE(full_download_queue, data_fixture) {
     for (int transfers = 1; transfers <= 3; transfers++) {
         http::download_queue<mock_download> download_queue(transfers);
         for (int i = 0; i < 5; i++)

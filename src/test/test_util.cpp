@@ -9,3 +9,20 @@ string executable_file() {
 string resource_file(const string& resource) {
     return settings::instance().resource_file({ executable_file() }, resource);
 }
+
+struct seed_fixture {
+    static default_random_engine random_engine;
+    
+    seed_fixture() {
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        random_engine = default_random_engine(seed);
+    }
+};
+
+default_random_engine seed_fixture::random_engine;
+
+default_random_engine& random_engine() {
+    return seed_fixture::random_engine;
+}
+
+BOOST_GLOBAL_FIXTURE(seed_fixture);

@@ -22,10 +22,14 @@ namespace aggregators {
             for (int i = 0; i < sel.nodeNum(); i++) {
                 CNode title_node = sel.nodeAt(i).find(settings::get("mk_title_sel")).ASSERT_NUM(1).nodeAt(0),
                     language_node = sel.nodeAt(i).find(settings::get("mk_language_sel")).ASSERT_NUM(1).nodeAt(0);
-                string title_text = title_node.text(), language_src = language_node.attribute("src");
+                string title_text = title_node.text(), language_src = language_node.attribute("src"),
+                    link = title_node.attribute("href");
+                smatch results;
+                if (regex_search(link, results, regex(settings::get("mk_exclude_regex"))))
+                    continue;
                 boost::trim(title_text);
                 search_results.push_back(new series(*this, title_text, series::to_language_string(language_src),
-                                                    root().get_relative(title_node.attribute("href"))));
+                                                    root().get_relative(link)));
             }
 
             return search_results;

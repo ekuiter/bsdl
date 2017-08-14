@@ -3,6 +3,8 @@
 #include <boost/test/unit_test.hpp>
 #include "fixtures.hpp"
 
+#undef timeout
+
 #define MOCK_THROW(return_type, fn, signature)  \
     return_type fn signature override {         \
         throw mock_error(#fn);                  \
@@ -16,3 +18,4 @@ namespace tt = boost::test_tools;
 
 string executable_file();
 string resource_file(const string& resource);
+default_random_engine& random_engine();
