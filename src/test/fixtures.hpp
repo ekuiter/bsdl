@@ -19,10 +19,15 @@ default_random_engine& random_engine();
 struct settings_fixture {
     settings_fixture(vector<string> args = {}) {
         args.insert(args.begin(), executable_file());
+        reset_settings();
         settings::instance().read(args);
     }
 
     ~settings_fixture() {
+        reset_settings();
+    }
+
+    void reset_settings() {
         settings::instance().reset_instance();
     }
 };

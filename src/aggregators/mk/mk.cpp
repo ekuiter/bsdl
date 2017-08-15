@@ -25,7 +25,8 @@ namespace aggregators {
                 string title_text = title_node.text(), language_src = language_node.attribute("src"),
                     link = title_node.attribute("href");
                 smatch results;
-                if (regex_search(link, results, regex(settings::get("mk_exclude_regex"))))
+                if (regex_search(link, results, regex(settings::get("mk_exclude_regex"))) ||
+                    title_node.attribute("target") != "")
                     continue;
                 boost::trim(title_text);
                 search_results.push_back(new series(*this, title_text, series::to_language_string(language_src),
