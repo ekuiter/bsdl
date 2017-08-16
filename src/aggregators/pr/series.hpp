@@ -18,7 +18,7 @@ namespace aggregators {
         private:
             void load(const http::response& response) const override;
             string language;
-            static vector<aggregators::subtitle*> get_subtitles(const http::response& response);
+            vector<aggregators::subtitle*> get_subtitles(const http::response& response) const;
 
         public:            
             series(const aggregator& aggregator, const string& _title, const string& _language, const http::request& _request):

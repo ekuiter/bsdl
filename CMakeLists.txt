@@ -97,7 +97,7 @@ endif(WIN32)
 add_executable(bsdl ${SOURCE_FILES})
 target_link_libraries(bsdl ${BOOST_LIBRARIES} http curses aggregators bs kx mk pr core)
 
-add_executable(bsdltest EXCLUDE_FROM_ALL src/test/test_util.cpp src/test/mock_app.cpp src/test/mock_terminal.cpp
+add_executable(bsdltest src/test/test_util.cpp src/test/mock_app.cpp src/test/mock_terminal.cpp
   src/test/settings.cpp src/test/provider.cpp src/test/http/request.cpp src/test/http/download_request.cpp
   src/test/http/multi_request.cpp src/test/http/http_fixture.cpp src/test/http/response.cpp
   src/test/http/download_queue.cpp src/test/aggregators/aggregator.cpp src/test/aggregators/download_selection.cpp

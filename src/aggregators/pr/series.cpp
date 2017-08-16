@@ -6,9 +6,11 @@
 
 namespace aggregators {
     namespace pr {
-        vector<aggregators::subtitle*> series::get_subtitles(const http::response& response) {
+        vector<aggregators::subtitle*> series::get_subtitles(const http::response& response) const {
             unique_ptr<CDocument> document = response.parse();
-            CSelection subtitle_sel = document->find(settings::get("pr_subtitle_sel")).ASSERT_AT_LEAST(1);
+            CSelection subtitle_sel = document->find(settings::get("pr_subtitle_sel"));
+            if (subtitle_sel.nodeNum() == 0)
+                throw exception(title + " is not available on " + get_aggregator().get_name() + ", try another aggregator");
             vector<aggregators::subtitle*> subtitles;
             for (int i = 0; i < subtitle_sel.nodeNum(); i++) {
                 CNode subtitle_node = subtitle_sel.nodeAt(i);
