@@ -34,6 +34,7 @@ public:
         const string& prompt = "The following series were found:", const string& action = "Choose") = 0;
     virtual void display_series(aggregators::series& series) = 0;
     virtual void download_episodes(aggregators::download_selection& download_selection) = 0;
+    virtual bool is_testing() = 0;
 };
 
 class main_app : public app {
@@ -57,37 +58,41 @@ class main_app : public app {
                   curl_off_t now_bytes, curl_off_t total_bytes, curl::curl_easy_exception* e);
 
 public:
-    const vector<aggregators::series*>& get_search_results() const {
+    const vector<aggregators::series*>& get_search_results() const override {
         return search_results;
     }
     
-    const aggregators::series* get_current_series() const {
+    const aggregators::series* get_current_series() const override {
         return current_series;
     }
     
-    const string& get_series_search() const {
+    const string& get_series_search() const override {
         return series_search;
     }
     
-    void set_current_series(aggregators::series& series) {
+    void set_current_series(aggregators::series& series) override {
         current_series = &series;
     }
 
-    rectangle get_centered_bounds(int width = -1, int height = -1, int quarters = 3) {
+    rectangle get_centered_bounds(int width = -1, int height = -1, int quarters = 3) override {
         int status_width = status_window.get_full_bounds().width;
         return rectangle(width == -1 ? (COLS - status_width) * quarters / 4 : width,
                   height == -1 ? LINES * quarters / 4 : height).center(rectangle::get_screen(), status_width);
     }
 
-    void initialize();
-    void help_message();
-    void version_message();
+    bool is_testing() override {
+        return false;
+    }
+    
+    void initialize() override;
+    void help_message() override;
+    void version_message() override;
     void run_tests();
-    void set_title(const string& title, bool set_notice = false, string notice = "");
-    string run_start_window(const rectangle& bounds);
-    vector<aggregators::series*> search_series();
+    void set_title(const string& title, bool set_notice = false, string notice = "") override;
+    string run_start_window(const rectangle& bounds) override;
+    vector<aggregators::series*> search_series() override;
     aggregators::series& choose_series(vector<aggregators::series*>& search_results,
-       const string& prompt = "The following series were found:", const string& action = "Choose");
-    void display_series(aggregators::series& series);
-    void download_episodes(aggregators::download_selection& download_selection);
+       const string& prompt = "The following series were found:", const string& action = "Choose") override;
+    void display_series(aggregators::series& series) override;
+    void download_episodes(aggregators::download_selection& download_selection) override;
 };

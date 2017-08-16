@@ -92,7 +92,7 @@ void main_app::run_tests() {
     terminal.~terminal();
     char buffer[128];
     string args = settings["action"] == "test" ? "" :
-        string(" --run_test=") + (settings["action"] == "all" ? "*" : settings["action"]);
+        string(" --run_test=") + (settings["action"] == "quick" ? "!@long_running" : settings["action"]);
     if (settings["action"] == "list")
         args = " --list_content";
     FILE* pipe = popen((settings::instance().resource_file({ "bsdl" }, "bsdltest") + args).c_str(), "r");

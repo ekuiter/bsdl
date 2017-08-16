@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_CASE(empty_multi_request, * utf::timeout(1)) {
     while (multi_request());
 }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(10))
+LONG_RUNNING_TEST_SUITE(AUTO, * utf::timeout(10))
 
 BOOST_AUTO_TEST_CASE(multi_request) {
     http::multi::request multi_request;

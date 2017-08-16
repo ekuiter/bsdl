@@ -13,6 +13,9 @@
 #define MOCK_EMPTY(return_type, fn, signature)  \
     return_type fn signature override {}
 
+#define LONG_RUNNING_TEST_SUITE(type, ...)                              \
+    BOOST_##type##_TEST_SUITE(long_running, __VA_ARGS__ * utf::label("long_running"))
+
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 

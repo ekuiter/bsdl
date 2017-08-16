@@ -4,7 +4,7 @@ BOOST_FIXTURE_TEST_SUITE(provider_suite, settings_and_data_fixture)
 BOOST_AUTO_TEST_CASE(provider_valid) { some_provider(); }
 BOOST_AUTO_TEST_CASE(provider_invalid) { BOOST_CHECK_THROW(providers::provider::instance("abc.xyz", true), providers::provider::exception); }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled())
+LONG_RUNNING_TEST_SUITE(AUTO,)
 
 BOOST_AUTO_TEST_CASE(youtube_dl_install) {
     cout << "You might be prompted to enter your sudo password." << endl;

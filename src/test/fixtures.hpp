@@ -14,13 +14,49 @@ string executable_file();
 string resource_file(const string& resource);
 default_random_engine& random_engine();
 
+// silent stream fixture
+
+struct mockbuf : public streambuf {
+    virtual int overflow(int c) override {
+        return c;
+    }
+};
+    
+#define SILENT_STREAM_FIXTURE(s)                \
+    class silent_##s##_fixture {                \
+        ostream& stream = s;                    \
+        mockbuf dstbuf;                         \
+        streambuf* srcbuf;                      \
+                                                \
+    public:                                     \
+    silent_##s##_fixture() {                    \
+        srcbuf = stream.rdbuf();                \
+        stream.rdbuf(&dstbuf);                  \
+    }                                           \
+                                                \
+    ~silent_##s##_fixture() {                   \
+        stream.rdbuf(srcbuf);                   \
+    }                                           \
+    }
+
+SILENT_STREAM_FIXTURE(cout);
+SILENT_STREAM_FIXTURE(cerr);
+SILENT_STREAM_FIXTURE(clog);
+
 // settings fixture
 
 struct settings_fixture {
     settings_fixture(vector<string> args = {}) {
         args.insert(args.begin(), executable_file());
         reset_settings();
-        settings::instance().read(args);
+        settings& settings = settings::instance();
+        settings.read(args);
+        {
+            silent_cout_fixture f;
+            aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
+            providers::provider::set_preferred_providers(settings.get_preferred_providers());
+            aggregators::subtitle::set_preferred_subtitles(settings.get_preferred_subtitles());
+        }
     }
 
     ~settings_fixture() {
@@ -71,35 +107,6 @@ struct data_fixture {
     SOME_SERIES(mk)
     SOME_SERIES(pr)
 };
-
-// silent stream fixture
-
-struct mockbuf : public streambuf {
-    virtual int overflow(int c) override {
-        return c;
-    }
-};
-    
-#define SILENT_STREAM_FIXTURE(s)                \
-    class silent_##s##_fixture {                \
-        ostream& stream = s;                    \
-        mockbuf dstbuf;                         \
-        streambuf* srcbuf;                      \
-                                                \
-    public:                                     \
-    silent_##s##_fixture() {                    \
-        srcbuf = stream.rdbuf();                \
-        stream.rdbuf(&dstbuf);                  \
-    }                                           \
-                                                \
-    ~silent_##s##_fixture() {                   \
-        stream.rdbuf(srcbuf);                   \
-    }                                           \
-    }
-
-SILENT_STREAM_FIXTURE(cout);
-SILENT_STREAM_FIXTURE(cerr);
-SILENT_STREAM_FIXTURE(clog);
 
 // multi fixture
 

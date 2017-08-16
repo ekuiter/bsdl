@@ -23,7 +23,7 @@ BOOST_FIXTURE_TEST_SUITE(aggregator_suite, aggregator_fixture)
 BOOST_AUTO_TEST_CASE(aggregator_valid) { aggregators::aggregator::instance(get_data("some_aggregator")); }
 BOOST_AUTO_TEST_CASE(aggregator_invalid) { BOOST_CHECK_THROW(aggregators::aggregator::instance("invalid aggregator"), aggregators::exception); }
 
-BOOST_AUTO_TEST_SUITE(long_running, * utf::disabled() * utf::timeout(30))
+LONG_RUNNING_TEST_SUITE(AUTO, * utf::timeout(30))
 
 BOOST_AUTO_TEST_CASE(aggregator_search_invalid) { BOOST_TEST(aggregators::aggregator::search("$ invalid series title ?").size() == 0); }
 BOOST_AUTO_TEST_CASE(aggregator_search_valid) { BOOST_TEST(aggregators::aggregator::search(bs_series()).size() > 0); }

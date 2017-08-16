@@ -1,14 +1,6 @@
 #include "test_util.hpp"
 
-struct download_selection_fixture : aggregator_fixture {
-    aggregators::series* series;
-    
-    download_selection_fixture() {
-        auto search_results = bs_aggregator().search_internal(bs_series());
-        BOOST_TEST(search_results.size() > 0);
-        series = *search_results.begin();
-    }
-
+struct download_selection_fixture : series_fixture {
     aggregators::download_selection& get_download_selection() {
         return settings::instance().get_download_selection();
     }
@@ -33,7 +25,7 @@ struct download_selection_fixture : aggregator_fixture {
 BOOST_AUTO_TEST_SUITE(aggregators_suite)
 BOOST_AUTO_TEST_SUITE(download_selection_suite)
 
-BOOST_FIXTURE_TEST_SUITE(long_running, download_selection_fixture, * utf::disabled() * utf::timeout(30))
+LONG_RUNNING_TEST_SUITE(FIXTURE, download_selection_fixture, * utf::timeout(30))
 
 DOWNLOAD_SELECTOR(series, ({ "-d" }), series_episode_number(), "series")
 DOWNLOAD_SELECTOR(season, ({ "-d", "1" }), (*series)[1]->episode_number(), "season(1)")

@@ -12,7 +12,7 @@ namespace aggregators {
             vector<aggregators::series*> search_results;
             auto preferred_aggregators = aggregator::get_preferred_aggregators();
             if (find(preferred_aggregators.begin(), preferred_aggregators.end(), &bs::instance())
-                    != preferred_aggregators.end()) {
+                != preferred_aggregators.end() && !app::instance().is_testing()) {
                 search_results = app::instance().get_search_results();
                 search_results.erase(remove_if(search_results.begin(), search_results.end(), 
                     [](aggregators::series* series) { return &series->get_aggregator() != &bs::instance(); }),
