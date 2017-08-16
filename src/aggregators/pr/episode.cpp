@@ -6,22 +6,16 @@
 #include <json.hpp>
 #include <regex>
 #include "../../util/platform.hpp"
+#include "captcha_solver.hpp"
 
 using namespace nlohmann;
 
 namespace aggregators {
     namespace pr {
         void episode::load(const http::response& response) const {           
-            unique_ptr<CDocument> document = response.parse();
-            if (document->find(settings::get("pr_captcha_sel")).nodeNum() > 0) {
-                cerr << "You need to visit " << settings::get("aggregator_pr") << " in your browser and solve the captcha once." << endl;
-                util::platform::sleep(chrono::seconds(3));
-                cerr << "Visiting " << settings::get("aggregator_pr") << " ..." << endl;
-                util::platform::browse(request.get_url());
-                cerr << "When you have solved the captcha, try again." << endl;
-                return;
-            }
-            
+            http::response solved_response = captcha_solver::instance()(request, response);
+
+            unique_ptr<CDocument> document = solved_response.parse();
             CSelection script_nodes = document->find(settings::get("pr_video_file_sel")).ASSERT_AT_LEAST(1);
             string script = script_nodes.nodeAt(script_nodes.nodeNum() - 1).text();
             smatch results;

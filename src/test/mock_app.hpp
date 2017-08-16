@@ -5,6 +5,7 @@
 
 struct mock_app : public app {
     string series_search;
+    aggregators::series* current_series;
     
     struct mock_error : public runtime_error {
         mock_error(const string& msg): runtime_error(msg + " called on mock app") {}
@@ -26,12 +27,15 @@ struct mock_app : public app {
         return series_search;
     }
 
+    const aggregators::series* get_current_series() const override {
+        return current_series;
+    }
+
     aggregators::series& choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) override {
         return *search_results[0];
     }
 
     MOCK_THROW(const vector<aggregators::series*>&, get_search_results, () const);
-    MOCK_THROW(const aggregators::series*, get_current_series, () const);
     MOCK_THROW(void, set_current_series, (aggregators::series& series));
     MOCK_THROW(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));
     MOCK_THROW(void, initialize, ());

@@ -16,8 +16,14 @@ struct aggregator_fixture : public settings_and_data_fixture {
     GET_AGGREGATOR(kx)
     GET_AGGREGATOR(mk)
     GET_AGGREGATOR(pr)
+};
 
-    aggregators::series* any_series() {
+struct series_fixture : aggregator_fixture {
+    aggregators::series& series;
+    
+    series_fixture(): series(any_series()) {}
+
+    aggregators::series& any_series() {
         uniform_int_distribution<int> distribution(1, 4);
         int num = distribution(random_engine());
         vector<aggregators::series*> search_results;
@@ -27,13 +33,8 @@ struct aggregator_fixture : public settings_and_data_fixture {
         if (num == 3) search_results = mk_aggregator().search_internal(series_search = mk_series());
         if (num == 4) search_results = pr_aggregator().search_internal(series_search = pr_series());
         BOOST_TEST(search_results.size() > 0);
-        mock_app::instance().series_search = series_search;
-        return *search_results.begin();
+        mock_app& mock_app = mock_app::instance();
+        mock_app.series_search = series_search;
+        return *(mock_app.current_series = *search_results.begin());
     }
-};
-
-struct series_fixture : aggregator_fixture {
-    aggregators::series* series;
-    
-    series_fixture(): series(any_series()) {}
 };
