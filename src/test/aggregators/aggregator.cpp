@@ -13,8 +13,11 @@ static void check_search_results(vector<aggregators::series*> search_results, st
 
 #define AGGREGATOR_SEARCH(name)                                         \
     BOOST_AUTO_TEST_CASE(name##_search) {                               \
-        auto series = name##_series();                                  \
-        check_search_results(name##_aggregator().search_internal(series), series); \
+        vector<string> args = test_arguments();                         \
+        if (find(args.begin(), args.end(), #name) != args.end()) {      \
+            auto series = name##_series();                              \
+            check_search_results(name##_aggregator().search_internal(series), series); \
+        }                                                               \
     }
 
 BOOST_AUTO_TEST_SUITE(aggregators_suite)

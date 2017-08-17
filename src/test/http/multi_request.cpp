@@ -29,8 +29,8 @@ BOOST_FIXTURE_TEST_CASE(download_multi_request, data_fixture) {
     download_multi_request.add(some_request);
     download_multi_request.add(another_request);
     while (download_multi_request());
-    check_file_type(some_file_name, get_data("binary_file_type"));
-    check_file_type(another_file_name, get_data("binary_file_type"));
+    check_file_type(some_file_name, get_data("binary_mime_type"));
+    check_file_type(another_file_name, get_data("binary_mime_type"));
     remove(some_file_name.c_str());
     remove(another_file_name.c_str());
 }

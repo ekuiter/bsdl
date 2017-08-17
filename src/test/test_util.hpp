@@ -21,4 +21,6 @@ namespace tt = boost::test_tools;
 
 string executable_file();
 string resource_file(const string& resource);
+vector<string> test_arguments();
+void check_file_type(const string& file_name, const string& file_type);
 default_random_engine& random_engine();

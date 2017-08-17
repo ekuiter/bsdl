@@ -32,7 +32,7 @@ BOOST_FIXTURE_TEST_CASE(download_request_binary, data_fixture) {
     auto file_name = resource_file("download_request_binary");
     auto request = http::request::download(get_data("some_binary"));
     BOOST_TEST(request(file_name));
-    check_file_type(file_name, get_data("binary_file_type"));
+    check_file_type(file_name, get_data("binary_mime_type"));
     remove(file_name.c_str());
 }
 

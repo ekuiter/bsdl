@@ -29,7 +29,7 @@ BOOST_FIXTURE_TEST_CASE(full_download_queue, data_fixture) {
             download_queue.push(mock_download(i, http::request::download(get_data("some_binary"))));
         download_queue();
         for (auto download : download_queue) {
-            check_file_type(download.file_name, get_data("binary_file_type"));
+            check_file_type(download.file_name, get_data("binary_mime_type"));
             remove(download.file_name.c_str());
         }
     }

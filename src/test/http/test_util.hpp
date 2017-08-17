@@ -16,6 +16,3 @@ inline void check_response(const http::response& response, unsigned int status, 
     BOOST_TEST(response.get_body().find(excerpt) != string::npos);
 }
 
-inline void check_file_type(const string& file_name, const string& file_type) {
-    BOOST_TEST(util::platform::exec(string("file ") + file_name).find(file_type) != string::npos);
-}
