@@ -57,6 +57,9 @@ namespace aggregators {
             throw exception("directory \"" + directory_name + "\" does not exist");
 
         vector<string> changes = aggregators::rename_files(_series, directory_name, pattern_str, false);
+        if (app::instance().is_testing())
+            return;
+        
         if (changes.size() == 0)
             cerr << "No renameable files could be found in \"" << directory_name << "\"." << endl;
         else {

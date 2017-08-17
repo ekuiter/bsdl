@@ -30,6 +30,10 @@ namespace aggregators {
         file(series& _series, const string& _old_file_name, string pattern_str = "");
         static void rename_files(series& _series, string directory_name, string pattern_str = "");
 
+        const episode* get_episode() const {
+            return _episode;
+        }
+        
         virtual string get_id() const {
             string format_string = string("%0") + to_string(get_season_digits()) + "d.%02d";
             return boost::str(boost::format(format_string) % _episode->get_season_number() % _episode->get_number());

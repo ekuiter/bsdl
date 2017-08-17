@@ -27,6 +27,7 @@ namespace aggregators {
 
             try {
                 download_request = preferred_video_file->get_download_request();
+                video_file = preferred_video_file;
                 break;
             } catch (providers::provider::not_found) {}
         }

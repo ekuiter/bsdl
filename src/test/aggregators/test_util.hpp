@@ -14,7 +14,7 @@
 inline aggregators::series& get_series_from_results(const vector<aggregators::series*>& search_results,
                                                     const string& series_search, const string& aggregator) {
     BOOST_TEST_REQUIRE(search_results.size() > 0,
-                       string("could not find series") + series_search + " for aggregator " + aggregator + ", check data.json");
+                       string("could not find series ") + series_search + " for aggregator " + aggregator + ", check data.json");
     mock_app& mock_app = mock_app::instance();
     mock_app.series_search = series_search;
     return *(mock_app.current_series = *search_results.begin());

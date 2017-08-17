@@ -21,6 +21,7 @@ namespace aggregators {
         string message;
         refresh_callback _refresh_callback;
         shared_ptr<file> _file;
+        const aggregators::video_file* video_file = nullptr;
 
     public:
         download(const episode& episode, refresh_callback refresh_callback = [](download&) {}):
@@ -59,6 +60,10 @@ namespace aggregators {
         void set_abort(bool _abort) {
             if ((abort = _abort))
                 set_message("Aborted");
+        }
+
+        const aggregators::video_file* get_video_file() {
+            return video_file;
         }
 
         bool operator==(const download& other) {
