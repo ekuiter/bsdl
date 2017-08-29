@@ -1,10 +1,22 @@
 #include "option.hpp"
 #include "settings.hpp"
+#include "app.hpp"
+#include "curses/terminal.hpp"
+#include "curses/widgets.hpp"
 
-#define HANDLERS(on_validate, on_process, params)             [&settings] params { on_validate; }, [&settings] params { on_process; }
-#define OPTION_ARG0(key, on_validate, on_process)             { #key, {}, HANDLERS(on_validate, on_process, (string, string)) }
-#define OPTION_ARG1(key, arg1, on_validate, on_process)       { #key, { #arg1 }, HANDLERS(on_validate, on_process, (string arg1, string)) }
-#define OPTION_ARG2(key, arg1, arg2, on_validate, on_process) { #key, { #arg1, #arg2 }, HANDLERS(on_validate, on_process, (string arg1, string arg2)) }
+using namespace curses;
+
+#define HANDLERS(on_validate, on_process, params)                       \
+    [&settings] params { on_validate; }, [&settings] params { on_process; }
+#define MODIFIABLE_OPTION_ARG0(key, on_validate, on_process, on_modify, description) \
+    { #key, {}, HANDLERS(on_validate, on_process, (string, string)), on_modify, description }
+#define MODIFIABLE_OPTION_ARG1(key, arg1, on_validate, on_process, on_modify, description) \
+    { #key, { #arg1 }, HANDLERS(on_validate, on_process, (string arg1, string)), on_modify, description }
+#define MODIFIABLE_OPTION_ARG2(key, arg1, arg2, on_validate, on_process, on_modify, description) \
+    { #key, { #arg1, #arg2 }, HANDLERS(on_validate, on_process, (string arg1, string arg2)), on_modify, description }
+#define OPTION_ARG0(key, on_validate, on_process) MODIFIABLE_OPTION_ARG0(key, on_validate, on_process, nullptr, "")
+#define OPTION_ARG1(key, arg1, on_validate, on_process) MODIFIABLE_OPTION_ARG1(key, arg1, on_validate, on_process, nullptr, "")
+#define OPTION_ARG2(key, arg1, arg2, on_validate, on_process) MODIFIABLE_OPTION_ARG2(key, arg1, arg2, on_validate, on_process, nullptr, "")
 
 #define DOWNLOAD_OPTION(var, single_selector, selector_range) {         \
         auto& download_selection = settings._download_selection;        \
@@ -19,11 +31,61 @@
             throw runtime_error("illegal option, see bsdl --help");     \
     }
 
+#define MODIFY_BOUNDS app::instance().get_centered_bounds(-1, 8)
+
+#define MODIFY_PREFERRED(name, setter, exception)               \
+    [&settings]() {                                             \
+        modify_setting(#name, "\nEnter preferred " #name ":");  \
+        try {                                                   \
+            settings.update_preferred_##name(true);             \
+            setter(settings.get_preferred_##name());            \
+        } catch (exception e) {                                 \
+            cerr << e.what() << endl;                           \
+        }                                                       \
+    }
+
 vector<option> option::options;
+
+static string modify_setting(const string& setting, const string& prompt, bool retry = true) {
+    settings& settings = settings::instance();
+    do {
+        {
+            window::framed input_window(MODIFY_BOUNDS);
+            settings[setting] = input_dialog::run(input_window, prompt, "Save", color::get_accent_color(),
+                                                  settings[setting], nullptr, true);
+        }
+        boost::trim(settings[setting]);
+        if (retry && !settings.is_set(setting))
+            cerr << "Please enter something." << endl;
+    } while (retry && !settings.is_set(setting));
+    return settings[setting];
+};
 
 void option::setup_options() {
     settings& settings = settings::instance();
-    
+
+    auto modify_output_files = [&settings](){
+        modify_setting("output_files_directory", string(COLS >= 82 ? "\n" : "") + "Enter output directory for episodes:");
+        cout << "Episodes will be saved to " << color::get_accent_color() <<
+        settings["output_files_directory"] << color::previous << "." << endl;
+    };
+
+    auto modify_rename_files = [&settings]() {
+        modify_setting("rename_files_directory", string(COLS >= 89 ? "\n" : "") + "Enter directory with episodes to rename:", false);
+        modify_setting("rename_files_pattern", "\nEnter renaming pattern:", false);
+        if (!settings.is_set("rename_files_directory"))
+            cout << "No episodes will be renamed." << endl;
+        else
+            cout << "Episodes in " << color::get_accent_color() << settings["rename_files_directory"] << color::previous <<
+                " will be renamed using the pattern " << color::get_accent_color() <<
+                (settings["rename_files_pattern"] == "" ? "default" : settings["rename_files_pattern"]) <<
+                color::previous << "." << endl;
+    };
+
+    auto modify_aggregators = MODIFY_PREFERRED(aggregators, aggregators::aggregator::set_preferred_aggregators, aggregators::exception);
+    auto modify_providers = MODIFY_PREFERRED(providers, providers::provider::set_preferred_providers, providers::provider::exception);
+    auto modify_subtitles = MODIFY_PREFERRED(subtitles, aggregators::subtitle::set_preferred_subtitles, aggregators::exception);
+
     options = {
         OPTION_ARG2(download, season, episode, {},
                     DOWNLOAD_OPTION(episode,
@@ -38,15 +100,18 @@ void option::setup_options() {
                         }, download_selection.add(new aggregators::download_selector::season(i)))),
         OPTION_ARG0(download, {}, settings._download_selection.add(new aggregators::download_selector::series)),
         
-        OPTION_ARG1(aggregator, aggregator, {}, settings.preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator))),
-        OPTION_ARG1(provider, provider, {}, settings.preferred_providers.push_back(&providers::provider::instance(provider, true))),
-        OPTION_ARG1(subtitle, subtitle, {}, settings.preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle))),
+        MODIFIABLE_OPTION_ARG1(aggregator, aggregator, {}, settings.preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator)),
+                               modify_aggregators, "Preferred aggregators"),
+        MODIFIABLE_OPTION_ARG1(provider, provider, {}, settings.preferred_providers.push_back(&providers::provider::instance(provider, true)),
+                               modify_providers, "Preferred providers"),
+        MODIFIABLE_OPTION_ARG1(subtitle, subtitle, {}, settings.preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle)),
+                               modify_subtitles, "Preferred subtitles"),
         
-        OPTION_ARG1(output-files, directory, {}, settings["output_files_directory"] = directory),
-        OPTION_ARG2(rename-files, directory, pattern, {}, {
+        MODIFIABLE_OPTION_ARG1(output-files, directory, {}, settings["output_files_directory"] = directory, modify_output_files, "Output directory"),
+        MODIFIABLE_OPTION_ARG2(rename-files, directory, pattern, {}, {
                 settings["rename_files_directory"] = directory;
                 settings["rename_files_pattern"] = pattern;
-            }),
+            }, modify_rename_files, "Rename files"),
         OPTION_ARG1(rename-files, directory, {}, settings["rename_files_directory"] = directory),
         OPTION_ARG0(rename-files, {}, settings["rename_files_directory"] = "."),
         
@@ -58,4 +123,8 @@ void option::setup_options() {
         OPTION_ARG1(test, tests, {}, settings["action"] = tests),
         OPTION_ARG0(test, {}, settings["action"] = "test")
     };
+}
+
+ostream& operator<<(ostream& stream, const option& option) {
+    return stream << option.get_description();
 }

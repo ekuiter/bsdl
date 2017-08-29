@@ -41,6 +41,27 @@ static vector<string> build_vector(const string& setting, vector<T*>& vector) {
     return elements;
 }
 
+void settings_base::update_preferred_aggregators(bool clear_vector) {
+    if (clear_vector)
+        preferred_aggregators.clear();
+    for (auto& aggregator : build_vector("aggregators", preferred_aggregators))
+        preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator));
+}
+
+void settings_base::update_preferred_providers(bool clear_vector) {
+    if (clear_vector)
+        preferred_providers.clear();
+    for (auto& provider : build_vector("providers", preferred_providers))
+        preferred_providers.push_back(&providers::provider::instance(provider, true));
+}
+
+void settings_base::update_preferred_subtitles(bool clear_vector) {
+    if (clear_vector)
+        preferred_subtitles.clear();
+    for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
+        preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
+}
+
 ostream& operator<<(ostream& stream, settings_base& settings) {
     stream << "download_selection = " << settings.get_download_selection() << endl;
     stream << "preferred_aggregators = ";
@@ -123,12 +144,9 @@ void settings_base::read(const vector<string>& args) {
         (*this)["series_search"] = args[1];
     process_args(args, i, first_arg, is_arg, next_arg);
 
-    for (auto& aggregator : build_vector("aggregators", preferred_aggregators))
-        preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator));
-    for (auto& provider : build_vector("providers", preferred_providers))
-        preferred_providers.push_back(&providers::provider::instance(provider, true));
-    for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
-        preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
+    update_preferred_aggregators();
+    update_preferred_providers();
+    update_preferred_subtitles();
 
     if (!is_set("output_files_directory"))
         (*this)["output_files_directory"] = ".";

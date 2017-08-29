@@ -31,6 +31,9 @@ private:
     static set<string> allowed_settings;
     typedef util::with_range<settings_base> settings_with_range;
     static unique_ptr<settings_with_range> _instance;
+    void update_preferred_aggregators(bool clear_vector = false);
+    void update_preferred_providers(bool clear_vector = false);
+    void update_preferred_subtitles(bool clear_vector = false);
     
 protected:
     container_type& get_container() const {

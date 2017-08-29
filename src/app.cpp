@@ -69,7 +69,7 @@ void main_app::help_message() {
     message_dialog::run(message_window, [](stream& _stream) {
             _stream << "usage: bsdl [series]";
             for (auto& option : option::get_options())
-                _stream << " [" << option.usage() << "]";
+                _stream << " [" << option.get_usage() << "]";
         }, "Okay");
 }
 
@@ -185,7 +185,7 @@ string main_app::run_start_window(const rectangle& bounds) {
     
     auto make_button = [&start_window, &_stream, &x, &text_box, &button_wrappers, &buttons]
         (const string& action, function<void ()> fn) {
-        int row = 3, button_width = action.length() + (COLS >= 88 ? 4 : 2);
+        int row = 3, button_width = action.length() + 4;
         window::sub* button_wrapper = new window::sub(start_window, rectangle(x, row, button_width, 3));
         button_wrappers.push_back(button_wrapper);
         buttons.push_back(new button(*button_wrapper, action));
@@ -203,43 +203,21 @@ string main_app::run_start_window(const rectangle& bounds) {
 		}));
     };
 
-    make_button(COLS >= 112 ? "Output directory" : "Output dir", [this, &bounds]() {
-        do {
-            {
-                window::framed input_window(bounds);
-                settings["output_files_directory"] = input_dialog::run(input_window,
-                    string(COLS >= 82 ? "\n" : "") + "Enter output directory for episodes:",
-                    "Save", color::get_accent_color(), settings["output_files_directory"]);
+    make_button("Options", [this]() {
+            auto modifiable_options = option::get_modifiable_options();
+            option break_option("break", {}, nullptr, nullptr, nullptr, "(Back to main menu)");
+            modifiable_options.insert(modifiable_options.begin(), &break_option);
+            option* last_option = &break_option;
+            while (1) {
+                window::framed options_window(get_centered_bounds());
+                option* option = menu_dialog::run(options_window, "Choose an option to modify:", modifiable_options, last_option, "Choose");
+                if (option == &break_option)
+                    break;
+                if (option)
+                    option->modify();
+                last_option = option;
             }
-            boost::trim(settings["output_files_directory"]);
-            if (!settings.is_set("output_files_directory"))
-                cerr << "Please enter an output directory." << endl;
-        } while (!settings.is_set("output_files_directory"));
-        cout << "Episodes will be saved to " << color::get_accent_color() <<
-                settings["output_files_directory"] << color::previous << "." << endl;
-    });
-    
-    make_button(COLS >= 100 ? "Rename files" : "Rename", [this, &bounds]() {
-        {
-            window::framed input_window(bounds);
-            settings["rename_files_directory"] = input_dialog::run(input_window,
-                    string(COLS >= 89 ? "\n" : "") + "Enter directory with episodes to rename:",
-                    "Continue", color::get_accent_color(), settings["rename_files_directory"]);
-            boost::trim(settings["rename_files_directory"]);
-        }
-        {
-            window::framed input_window(bounds);
-            settings["rename_files_pattern"] = input_dialog::run(input_window, "\nEnter renaming pattern:",
-                    "Save", color::get_accent_color(), settings["rename_files_pattern"]);
-        }
-        if (!settings.is_set("rename_files_directory"))
-            cout << "No episodes will be renamed." << endl;
-        else
-            cout << "Episodes in " << color::get_accent_color() << settings["rename_files_directory"] << color::previous <<
-                    " will be renamed using the pattern " << color::get_accent_color() <<
-                    (settings["rename_files_pattern"] == "" ? "default" : settings["rename_files_pattern"]) <<
-                    color::previous << "." << endl;
-    });
+        });
     
     make_button("Info", bind(&main_app::version_message, this));
     

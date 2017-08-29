@@ -58,6 +58,12 @@ namespace curses {
 			platform::curs_set(1);
         }
 
+        void clear() {
+            text = "";
+            cursor = 0;
+            refresh();
+        }
+
         const string& get_text() {
             return text;
         }
