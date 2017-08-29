@@ -1,0 +1,17 @@
+-/.git_old/
+-/.idea/
+-/bin_macos/
+-/bin_win32/
+-/bin_linux/
+-/lib
+-/src/legacy/
+-/CMakeFiles/
+-/cmake_install.cmake
+-/CMakeCache.txt
+-/Makefile
+-/*.o
+-/*.lo
+-/nbproject/
+-/static/
+-/*.log
+-.DS_Store

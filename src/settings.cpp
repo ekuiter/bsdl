@@ -1,4 +1,5 @@
 #include "settings.hpp"
+#include "option.hpp"
 #include "app.hpp"
 #include "util/platform.hpp"
 #include <fstream>
@@ -55,27 +56,16 @@ ostream& operator<<(ostream& stream, settings_base& settings) {
     return stream;
 }
 
-template<typename T, typename U, typename V>
-void settings_base::validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U skip_arg, V next_arg) {
+template<typename T, typename U>
+void settings_base::validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg) {
     for (i = first_arg; i < args.size(); i++) {
-        if (is_arg("--download", 2) || is_arg("-d", 2))          skip_arg(2);
-        else if (is_arg("--download", 1) || is_arg("-d", 1))     skip_arg();
-        else if (is_arg("--download") || is_arg("-d"));
-        else if (is_arg("--aggregator", 1) || is_arg("-a", 1))   skip_arg();
-        else if (is_arg("--provider", 1) || is_arg("-p", 1))     skip_arg();
-        else if (is_arg("--subtitle", 1) || is_arg("-s", 1))     skip_arg();
-        else if (is_arg("--output-files", 1) || is_arg("-o", 1)) skip_arg();
-        else if (is_arg("--rename-files", 2) || is_arg("-r", 2)) skip_arg(2);
-        else if (is_arg("--rename-files", 1) || is_arg("-r", 1)) skip_arg();
-        else if (is_arg("--rename-files") || is_arg("-r"));
-        else if (is_arg("--log-file", 1) || is_arg("-l", 1))     skip_arg();
-        else if (is_arg("--config-file", 1) || is_arg("-c", 1))
-            (*this)["config_file"] = next_arg();
-        else if (is_arg("--help") || is_arg("-h"));
-        else if (is_arg("--version") || is_arg("-v"));
-        else if (is_arg("--test", 1) || is_arg("-t", 1))         skip_arg();
-        else if (is_arg("--test") || is_arg("-t"));
-        else
+        bool valid = false;
+        for (auto& option : option::get_options())
+            if (option.validate(is_arg, next_arg)) {
+                valid = true;
+                break;
+            }
+        if (!valid)
             throw runtime_error("illegal option, see bsdl --help");
     }
 }
@@ -106,66 +96,15 @@ void settings_base::read_config_file() {
 
 template<typename T, typename U>
 void settings_base::process_args(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg) {
-    vector<string> parts;
-    for (i = first_arg; i < args.size(); i++) {
-        if (is_arg("--download", 2) || is_arg("-d", 2)) {
-            string season_number = next_arg(), number = next_arg();
-            boost::split(parts, number, boost::is_any_of("-"));
-            if (parts.size() == 1)
-                _download_selection.add(new aggregators::download_selector::episode(stoi(season_number), stoi(number)));
-            else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
-                for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
-                    _download_selection.add(new aggregators::download_selector::episode(stoi(season_number), i));
-            else
-                throw runtime_error("illegal option, see bsdl --help");
-        } else if (is_arg("--download", 1) || is_arg("-d", 1)) {
-            string season_number = next_arg();
-            boost::split(parts, season_number, boost::is_any_of("-"));
-            if (parts.size() == 1) {
-                if (season_number == "latest")
-                    _download_selection.add(new aggregators::download_selector::latest_episode);
-                else
-                    _download_selection.add(new aggregators::download_selector::season(stoi(season_number)));
-            } else if (parts.size() == 2 && stoi(parts[0]) <= stoi(parts[1]))
-                for (int i = stoi(parts[0]); i <= stoi(parts[1]); i++)
-                    _download_selection.add(new aggregators::download_selector::season(i));
-            else
-                throw runtime_error("illegal option, see bsdl --help");
-        } else if (is_arg("--download") || is_arg("-d"))
-            _download_selection.add(new aggregators::download_selector::series);
-        else if (is_arg("--aggregator", 1) || is_arg("-a", 1))
-            preferred_aggregators.push_back(&aggregators::aggregator::instance(next_arg()));
-        else if (is_arg("--provider", 1) || is_arg("-p", 1))
-            preferred_providers.push_back(&providers::provider::instance(next_arg(), true));
-        else if (is_arg("--subtitle", 1) || is_arg("-s", 1))
-            preferred_subtitles.push_back(&aggregators::subtitle::instance(next_arg()));
-        else if (is_arg("--output-files", 1) || is_arg("-o", 1))
-            (*this)["output_files_directory"] = next_arg();
-        else if (is_arg("--rename-files", 2) || is_arg("-r", 2))
-            (*this)["rename_files_directory"] = next_arg(), (*this)["rename_files_pattern"] = next_arg();
-        else if (is_arg("--rename-files", 1) || is_arg("-r", 1))
-            (*this)["rename_files_directory"] = next_arg();
-        else if (is_arg("--rename-files") || is_arg("-r"))
-            (*this)["rename_files_directory"] = ".";
-        else if (is_arg("--log-file", 1) || is_arg("-l", 1))
-            (*this)["log_file"] = next_arg();
-        else if (is_arg("--config-file", 1) || is_arg("-c", 1))
-            (*this)["config_file"] = next_arg();
-        else if (is_arg("--help") || is_arg("-h"))
-            (*this)["action"] = "help";
-        else if (is_arg("--version") || is_arg("-v"))
-            (*this)["action"] = "version";
-        else if (is_arg("--test", 1) || is_arg("-t", 1))
-            (*this)["action"] = next_arg();
-        else if (is_arg("--test") || is_arg("-t"))
-            (*this)["action"] = "test";
-    }
+    for (i = first_arg; i < args.size(); i++)
+        for (auto& option : option::get_options())
+            if (option.process(is_arg, next_arg))
+                break;
 }
 
 void settings_base::read(const vector<string>& args) {
     int first_arg = args.size() >= 2 && args[1][0] != '-' ? 2 : 1, i;
     auto next_arg = [&args, &i]() { return args[++i]; };
-    auto skip_arg = [&next_arg](int num = 1) { while (num-- > 0) next_arg(); };
     auto is_arg = [&](string arg, int additional_args = 0) {
         if (i + additional_args >= args.size())
             return false;
@@ -175,7 +114,8 @@ void settings_base::read(const vector<string>& args) {
         return ret;
     };
 
-    validate_usage(args, i, first_arg, is_arg, skip_arg, next_arg);
+    option::setup_options();
+    validate_usage(args, i, first_arg, is_arg, next_arg);
     if (!is_set("config_file"))
         (*this)["config_file"] = default_config_file(args);
     read_config_file();

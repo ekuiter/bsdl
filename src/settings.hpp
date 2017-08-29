@@ -79,8 +79,8 @@ public:
         return preferred_subtitles;
     }
 
-    template<typename T, typename U, typename V>
-    void validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U skip_arg, V next_arg);
+    template<typename T, typename U>
+    void validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg);
     void read_config_file();
     template<typename T, typename U>
     void process_args(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg);
@@ -90,6 +90,7 @@ public:
     string default_log_file(const vector<string>& args);
     
     friend ostream& operator<<(ostream& stream, settings_base& settings);
+    friend class option;
 };
 
 typedef util::with_range<settings_base> settings;

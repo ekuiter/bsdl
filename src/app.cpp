@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "option.hpp"
 #include "util/platform.hpp"
 #include "aggregators/episode_download.hpp"
 #include "curses/platform.hpp"
@@ -65,18 +66,18 @@ void main_app::initialize() {
 
 void main_app::help_message() {
     window::framed message_window(get_centered_bounds());
-    message_dialog::run(message_window,
-        "usage: bsdl [series] [--download [season [episode]]] [--aggregator aggregator] "
-                "[--provider provider] [--subtitle subtitle] [--output-files dir] "
-                "[--rename-files [dir [pattern]]] [--log-file [file]] [--config-file file] "
-                "[--version] [--help] [--test [test]]", "Okay");
+    message_dialog::run(message_window, [](stream& _stream) {
+            _stream << "usage: bsdl [series]";
+            for (auto& option : option::get_options())
+                _stream << " [" << option.usage() << "]";
+        }, "Okay");
 }
 
 void main_app::version_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window, [&message_window](stream& _stream) {
         _stream.set_wrap(false);
-        _stream << "bsdl 1.9" << endl <<
+        _stream << "bsdl 1.10" << endl <<
                 stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                 "Source code: https://github.com/ekuiter/bsdl" << endl;
         _stream.set_wrap(true);
