@@ -17,7 +17,8 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src", "aggregator_pr",
     "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
     "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
-    "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers", "timeout"};
+    "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
+    "timeout", "app"};
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>
@@ -135,6 +136,10 @@ void settings_base::read(const vector<string>& args) {
         return ret;
     };
 
+    (*this)["app"] = "main";
+    (*this)["output_files_directory"] = ".";
+    (*this)["log_file"] = default_log_file(args);
+
     option::setup_options();
     validate_usage(args, i, first_arg, is_arg, next_arg);
     if (!is_set("config_file"))
@@ -147,11 +152,6 @@ void settings_base::read(const vector<string>& args) {
     update_preferred_aggregators();
     update_preferred_providers();
     update_preferred_subtitles();
-
-    if (!is_set("output_files_directory"))
-        (*this)["output_files_directory"] = ".";
-    if (!is_set("log_file"))
-        (*this)["log_file"] = default_log_file(args);
 }
 
 string settings_base::resource_file(const vector<string>& args, const string& filename) {

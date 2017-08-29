@@ -18,9 +18,10 @@ struct mock_terminal : public terminal {
         return *_instance;
     }
 
-    MOCK_THROW(void, run, (function<void (terminal& terminal)> fn));
+    MOCK_THROW(void, run, (function<void ()> fn));
     MOCK_THROW(input&, get_input, ());
     MOCK_THROW(char*, get_locale, ());
+    MOCK_THROW(void, with_output, (ostream& _stream, function<void ()> fn));
 
     stream& get_stream(ostream& s) override {
         return _stream;

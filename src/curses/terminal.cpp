@@ -24,11 +24,11 @@ namespace curses {
         refresh();
     }
 
-    void main_terminal::run(function<void (terminal& terminal)> fn) {
+    void main_terminal::run(function<void ()> fn) {
         try {
             if (COLS < 80 || LINES < 15)
                 throw exception("the terminal is too small, please resize your window!");
-            fn(*this);
+            fn();
         } catch (const std::exception& e) {
             window::plain screen_window(rectangle::get_screen());
             window::framed error_window(rectangle(COLS / 3 * 2, LINES / 3 * 2).center(rectangle::get_screen()));

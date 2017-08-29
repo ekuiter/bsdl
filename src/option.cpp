@@ -119,7 +119,8 @@ void option::setup_options() {
         OPTION_ARG0(help, {}, settings["action"] = "help"),
         OPTION_ARG0(version, {}, settings["action"] = "version"),
         OPTION_ARG1(test, tests, {}, settings["action"] = tests),
-        OPTION_ARG0(test, {}, settings["action"] = "test")
+        OPTION_ARG0(test, {}, settings["action"] = "test"),
+        OPTION_ARG0(json, {}, settings["app"] = "json")
     };
 }
 
