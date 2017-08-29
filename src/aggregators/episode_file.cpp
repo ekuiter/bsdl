@@ -42,8 +42,8 @@ namespace aggregators {
                     changes.push_back(old_file_name + " => " + new_file_name);
 
                     if (do_rename) {
-                        cout << "Renaming " << color::get_accent_color() << old_file_name << color::previous <<
-                                " to " << color::get_accent_color() << new_file_name << color::previous << "." << endl;
+                        cout << "Renaming " << stream::colored(old_file_name) <<
+                            " to " << stream::colored(new_file_name) << "." << endl;
                         path new_path = it->path();
                         rename(it->path(), new_path.remove_filename() /= new_file_name);
                     }

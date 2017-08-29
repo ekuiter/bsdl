@@ -190,7 +190,7 @@ namespace curses {
             }
         }
     };
-
+    
     class stream::write_attribute : public modifier {
         chtype attribute;
         color _color;
@@ -202,6 +202,19 @@ namespace curses {
 
         void operator()(window* window, stream* stream = nullptr) const override {
             wchgat(window::dereference(window), length, attribute, _color.get_id(), nullptr);
+        }
+    };
+
+    class stream::colored : public modifier {
+        string text;
+        color color;
+
+    public:
+        colored(const string& _text, const class color& _color = color::get_accent_color()): text(_text), color(_color) {}
+
+        void operator()(window* window, stream* stream) const override {
+            if (stream)
+                *stream << color << text << color::previous;
         }
     };
 

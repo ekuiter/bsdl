@@ -28,8 +28,7 @@ namespace aggregators {
         }
         
         static vector<series*> search(string series_search) {
-            cout << "Searching for series " << curses::color::get_accent_color() <<
-                    series_search << curses::color::previous << "." << endl;
+            cout << "Searching for series " << curses::stream::colored(series_search) << "." << endl;
             boost::to_lower(series_search);
             vector<series*> search_results;
             for (auto& preferred_aggregator : preferred_aggregators) {

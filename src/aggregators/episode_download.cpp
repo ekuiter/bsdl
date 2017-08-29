@@ -32,9 +32,8 @@ namespace aggregators {
             } catch (providers::provider::not_found) {}
         }
 
-        cout << "Downloading " << color::get_accent_color() << _episode.get_description() <<
-                color::previous << " from " << color::get_accent_color() <<
-                provider->get_name() << color::previous << "." << endl;
+        cout << "Downloading " << stream::colored(_episode.get_description()) << " from "
+             << stream::colored(provider->get_name()) << "." << endl;
 
         using namespace placeholders;
         download_request

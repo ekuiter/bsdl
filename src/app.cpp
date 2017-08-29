@@ -81,11 +81,10 @@ void main_app::version_message() {
                 stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                 "Source code: https://github.com/ekuiter/bsdl" << endl;
         _stream.set_wrap(true);
-        _stream << "Made with " << color(COLOR_RED) << "<3" << color::previous <<
+        _stream << "Made with " << stream::colored("<3", color(COLOR_RED)) <<
                 " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json)." << endl <<
-                                        "Compiled for " << color::get_accent_color() << util::platform::get_name() <<
-                                        color::previous << " on " << color::get_accent_color() <<
-                                        __DATE__ << " " << __TIME__ << color::previous << ".";
+                "Compiled for " << stream::colored(util::platform::get_name()) <<
+                " on " << stream::colored(string(__DATE__) + " " + __TIME__) << ".";
     }, "Okay");
 }
 
@@ -256,8 +255,7 @@ vector<aggregators::series*> main_app::search_series() {
         if (search_results.size() == 0) {
             window::framed message_window(centered_bounds);
             message_dialog::run(message_window, [this](stream& _stream) {
-                _stream << "Nothing was found for " << color::get_accent_color() <<
-                        series_search << color::previous << ".";
+                    _stream << "Nothing was found for " << stream::colored(series_search) << ".";
             }, "Try again");
             series_search = "";
         }

@@ -22,6 +22,7 @@ namespace curses {
         class write_centered;
         class write_truncated;
         class write_attribute;
+        class colored;
         class allow_wrap;
         class attribute;
         class refresh;

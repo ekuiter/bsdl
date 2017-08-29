@@ -24,8 +24,7 @@ namespace aggregators {
             
             for (auto& _video_file : json::parse(script)) {
                 if (_video_file["type"] == "message") {
-                    cout << curses::color::get_accent_color() << "Note" <<
-                        curses::color::previous << ": " << _video_file["code"].get<string>() << endl;
+                    cout << stream::colored("Note") << ": " << _video_file["code"].get<string>() << endl;
                     continue;
                 }
                 providers::provider& provider = providers::provider::instance(_video_file["name"]);

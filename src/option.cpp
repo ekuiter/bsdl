@@ -66,20 +66,18 @@ void option::setup_options() {
 
     auto modify_output_files = [&settings](){
         modify_setting("output_files_directory", string(COLS >= 82 ? "\n" : "") + "Enter output directory for episodes:");
-        cout << "Episodes will be saved to " << color::get_accent_color() <<
-        settings["output_files_directory"] << color::previous << "." << endl;
+        cout << "Episodes will be saved to " << stream::colored(settings["output_files_directory"]) << "." << endl;
     };
 
     auto modify_rename_files = [&settings]() {
         modify_setting("rename_files_directory", string(COLS >= 89 ? "\n" : "") + "Enter directory with episodes to rename:", false);
         modify_setting("rename_files_pattern", "\nEnter renaming pattern:", false);
+        string pattern = settings["rename_files_pattern"] == "" ? "default" : settings["rename_files_pattern"];
         if (!settings.is_set("rename_files_directory"))
             cout << "No episodes will be renamed." << endl;
         else
-            cout << "Episodes in " << color::get_accent_color() << settings["rename_files_directory"] << color::previous <<
-                " will be renamed using the pattern " << color::get_accent_color() <<
-                (settings["rename_files_pattern"] == "" ? "default" : settings["rename_files_pattern"]) <<
-                color::previous << "." << endl;
+            cout << "Episodes in " << stream::colored(settings["rename_files_directory"]) <<
+                " will be renamed using the pattern " << stream::colored(pattern) << "." << endl;
     };
 
     auto modify_aggregators = MODIFY_PREFERRED(aggregators, aggregators::aggregator::set_preferred_aggregators, aggregators::exception);
