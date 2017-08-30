@@ -20,40 +20,30 @@ namespace util {
 #endif
 	}
 
-	boost::filesystem::path platform::executable_path_fallback(const string& argv0) {
-		if (argv0 == "")
-			return "";
-		boost::system::error_code ec;
-		boost::filesystem::path p(
-			boost::filesystem::canonical(
-				argv0, boost::filesystem::current_path(), ec));
-		return p.make_preferred();
-	}
-
 #ifdef __MINGW32__
-	boost::filesystem::path platform::executable_path(const string& argv0) {
+	boost::filesystem::path platform::executable_path() {
 		char buf[1024] = { 0 };
 		DWORD ret = GetModuleFileNameA(NULL, buf, sizeof(buf));
 		if (ret == 0 || ret == sizeof(buf))
-			return executable_path_fallback(argv0);
+                    @TODO
 		return boost::filesystem::path(buf);
 	}
 
 #elif defined (__APPLE__)
-	boost::filesystem::path platform::executable_path(const string& argv0) {
+	boost::filesystem::path platform::executable_path() {
 		char buf[1024] = { 0 };
 		uint32_t size = sizeof(buf);
 		int ret = _NSGetExecutablePath(buf, &size);
 		if (ret)
-			return executable_path_fallback(argv0);
+                    throw runtime_error("could not get executable path");
 		boost::system::error_code ec;
 		boost::filesystem::path p(
 			boost::filesystem::canonical(buf, boost::filesystem::current_path(), ec));
 		return p.make_preferred();
 	}
 #else
-	boost::filesystem::path platform::executable_path(const string& argv0) {
-		return executable_path_fallback(argv0);
+	boost::filesystem::path platform::executable_path() {
+            @TODO
 	}
 #endif
 

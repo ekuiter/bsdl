@@ -138,12 +138,12 @@ void settings_base::read(const vector<string>& args) {
 
     (*this)["app"] = "main";
     (*this)["output_files_directory"] = ".";
-    (*this)["log_file"] = default_log_file(args);
+    (*this)["log_file"] = default_log_file();
 
     option::setup_options();
     validate_usage(args, i, first_arg, is_arg, next_arg);
     if (!is_set("config_file"))
-        (*this)["config_file"] = default_config_file(args);
+        (*this)["config_file"] = default_config_file();
     read_config_file();
     if (first_arg == 2)
         (*this)["series_search"] = args[1];
@@ -154,14 +154,14 @@ void settings_base::read(const vector<string>& args) {
     update_preferred_subtitles();
 }
 
-string settings_base::resource_file(const vector<string>& args, const string& filename) {
-    return (util::platform::executable_path(args[0]).remove_filename() /= filename).string();
+string settings_base::resource_file(const string& filename) {
+    return (util::platform::executable_path().remove_filename() /= filename).string();
 }
 
-string settings_base::default_config_file(const vector<string>& args) {
-    return resource_file(args, "bsdl.cfg");
+string settings_base::default_config_file() {
+    return resource_file("bsdl.cfg");
 }
 
-string settings_base::default_log_file(const vector<string>& args) {
-    return resource_file(args, "bsdl.log");
+string settings_base::default_log_file() {
+    return resource_file("bsdl.log");
 }

@@ -8,12 +8,11 @@ using namespace std;
 
 namespace util {
     class platform {
-    	static boost::filesystem::path executable_path_fallback(const string& argv0);
         static string utf8_to_latin1(const string& in_str);
 
     public:
         static string get_name();
-    	static boost::filesystem::path executable_path(const string& argv0);
+    	static boost::filesystem::path executable_path();
     	static void sleep(const chrono::seconds& cooldown);
     	static string encode(const string& str);
     	static string strip_chars(string str);        

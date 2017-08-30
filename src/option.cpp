@@ -44,6 +44,11 @@ using namespace curses;
         }                                                       \
     }
 
+#define IN_BATCH_MODE(code) {                   \
+        settings["app"] = "batch";              \
+        code;                                   \
+    }
+
 vector<option> option::options;
 
 static string modify_setting(const string& setting, const string& prompt, bool retry = true) {
@@ -112,15 +117,16 @@ void option::setup_options() {
             }, modify_rename_files, "Rename files"),
         OPTION_ARG1(rename-files, directory, {}, settings["rename_files_directory"] = directory),
         OPTION_ARG0(rename-files, {}, settings["rename_files_directory"] = "."),
-        
+
         OPTION_ARG1(log-file, file, {}, settings["log_file"] = file),
+        OPTION_ARG0(log-file, {}, IN_BATCH_MODE(settings["action"] = "show-log")),
         OPTION_ARG1(config-file, file, settings["config_file"] = file, {}),
         
-        OPTION_ARG0(help, {}, settings["action"] = "help"),
+        OPTION_ARG0(help, {}, IN_BATCH_MODE(settings["action"] = "help")),
         OPTION_ARG0(version, {}, settings["action"] = "version"),
-        OPTION_ARG1(test, tests, {}, settings["action"] = tests),
-        OPTION_ARG0(test, {}, settings["action"] = "test"),
-        OPTION_ARG0(json, {}, settings["app"] = "json")
+        OPTION_ARG0(batch, {}, IN_BATCH_MODE()),
+        OPTION_ARG1(test, tests, {}, IN_BATCH_MODE(settings["action"] = tests)),
+        OPTION_ARG0(test, {}, IN_BATCH_MODE(settings["action"] = "test"))
     };
 }
 

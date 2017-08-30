@@ -10,6 +10,11 @@
 #include "curses/widgets.hpp"
 #include "util/with_range.hpp"
 
+#define THROW_UNIMPLEMENTED(return_type, fn, signature)         \
+    return_type fn signature override {                         \
+        throw runtime_error("calling unimplemented " #fn);      \
+    }
+
 using namespace std;
 using namespace curses;
 
@@ -85,9 +90,7 @@ public:
     }
     
     void initialize() override;
-    void help_message() override;
     void version_message() override;
-    void run_tests();
     void set_title(const string& title, bool set_notice = false, string notice = "") override;
     string run_start_window(const rectangle& bounds) override;
     vector<aggregators::series*> search_series() override;
@@ -95,27 +98,24 @@ public:
        const string& prompt = "The following series were found:", const string& action = "Choose") override;
     void display_series(aggregators::series& series) override;
     void download_episodes(aggregators::download_selection& download_selection) override;
+    
+    THROW_UNIMPLEMENTED(void, help_message, ());
 };
 
-#define JSON_THROW(return_type, fn, signature)                  \
-    return_type fn signature override {                         \
-        throw runtime_error("calling unimplemented " #fn);      \
-    }
-
-class json_app : public app {
+class batch_app : public app {
     terminal& terminal;
     settings& settings;
     string series_search;
     aggregators::series* current_series = nullptr;
     ofstream log_file;
     
-    json_app(): terminal(terminal::instance()), settings(settings::instance()) {}
+    batch_app(): terminal(terminal::instance()), settings(settings::instance()) {}
 
 public:
-    static json_app& instance() {
+    static batch_app& instance() {
         if (!_instance)
-            _instance.reset(new json_app());
-        return dynamic_cast<json_app&>(*_instance);
+            _instance.reset(new batch_app());
+        return dynamic_cast<batch_app&>(*_instance);
     }
 
     bool is_testing() override {
@@ -135,15 +135,17 @@ public:
     }
 
     void initialize() override;
+    void help_message() override;
+    void show_log();
+    void run_tests();
     void set_title(const string& title, bool set_notice = false, string notice = "") override;
     aggregators::series& choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) override;
     vector<aggregators::series*> search_series() override;
     void display_series(aggregators::series& series) override;
 
-    JSON_THROW(const vector<aggregators::series*>&, get_search_results, () const);
-    JSON_THROW(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));
-    JSON_THROW(void, help_message, ());
-    JSON_THROW(void, version_message, ());
-    JSON_THROW(string, run_start_window, (const rectangle& bounds));
-    JSON_THROW(void, download_episodes, (aggregators::download_selection& download_selection));
+    THROW_UNIMPLEMENTED(const vector<aggregators::series*>&, get_search_results, () const);
+    THROW_UNIMPLEMENTED(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));
+    THROW_UNIMPLEMENTED(void, version_message, ());
+    THROW_UNIMPLEMENTED(string, run_start_window, (const rectangle& bounds));
+    THROW_UNIMPLEMENTED(void, download_episodes, (aggregators::download_selection& download_selection));
 };

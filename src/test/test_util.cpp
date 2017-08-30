@@ -7,7 +7,7 @@ string executable_file() {
 }
 
 string resource_file(const string& resource) {
-    return settings::instance().resource_file({ executable_file() }, resource);
+    return settings::instance().resource_file(resource);
 }
 
 vector<string> test_arguments() {

@@ -88,9 +88,9 @@ public:
     template<typename T, typename U>
     void process_args(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg);
     void read(const vector<string>& args);
-    string resource_file(const vector<string>& args, const string& filename);
-    string default_config_file(const vector<string>& args);
-    string default_log_file(const vector<string>& args);
+    string resource_file(const string& filename);
+    string default_config_file();
+    string default_log_file();
     
     friend ostream& operator<<(ostream& stream, settings_base& settings);
     friend class option;

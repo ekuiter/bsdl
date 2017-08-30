@@ -50,27 +50,16 @@ main_app::main_app():
 void main_app::initialize() {
     if (settings.is_set("action")) {
         window::framed message_window(get_centered_bounds());
-        if (settings["action"] == "help")
-            help_message();
-        else if (settings["action"] == "version")
+        if (settings["action"] == "version")
             version_message();
         else
-            run_tests();
+            throw runtime_error(settings["action"] + " is only available in batch mode");
         exit(EXIT_SUCCESS);
     }
 
     aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
     aggregators::subtitle::set_preferred_subtitles(settings.get_preferred_subtitles());
-}
-
-void main_app::help_message() {
-    window::framed message_window(get_centered_bounds());
-    message_dialog::run(message_window, [](stream& _stream) {
-            _stream << "usage: bsdl [series]";
-            for (auto& option : option::get_options())
-                _stream << " [" << option.get_usage() << "]";
-        }, "Okay");
 }
 
 void main_app::version_message() {
@@ -86,29 +75,6 @@ void main_app::version_message() {
                 "Compiled for " << stream::colored(util::platform::get_name()) <<
                 " on " << stream::colored(string(__DATE__) + " " + __TIME__) << ".";
     }, "Okay");
-}
-
-void main_app::run_tests() {
-    terminal.~terminal();
-    char buffer[128];
-    string args = settings["action"] == "test" ? "" :
-        string(" --run_test=") + (settings["action"] == "quick" ? "!@long_running" : settings["action"]);
-    if (settings["action"] == "list")
-        args = " --list_content";
-    FILE* pipe = popen((settings::instance().resource_file({ "bsdl" }, "bsdltest") + args).c_str(), "r");
-    if (!pipe) {
-        fprintf(stderr, "popen failed");
-        exit(EXIT_FAILURE);
-    }
-    try {
-        while (!feof(pipe))
-            if (fgets(buffer, 128, pipe) != NULL)
-                fprintf(stderr, "%s", buffer);
-    } catch (...) {
-        fprintf(stderr, "reading pipe failed");
-        exit(EXIT_FAILURE);
-    }
-    exit(pclose(pipe) / 256);
 }
 
 void main_app::set_title(const string& _title, bool set_notice, string notice) {
