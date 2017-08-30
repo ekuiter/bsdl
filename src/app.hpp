@@ -105,6 +105,7 @@ public:
 class batch_app : public app {
     terminal& terminal;
     settings& settings;
+    vector<aggregators::series*> search_results;
     string series_search;
     aggregators::series* current_series = nullptr;
     ofstream log_file;
@@ -120,6 +121,10 @@ public:
 
     bool is_testing() override {
         return false;
+    }
+
+    const vector<aggregators::series*>& get_search_results() const override {
+        return search_results;
     }
 
     const string& get_series_search() const override {
@@ -143,7 +148,6 @@ public:
     vector<aggregators::series*> search_series() override;
     void display_series(aggregators::series& series) override;
 
-    THROW_UNIMPLEMENTED(const vector<aggregators::series*>&, get_search_results, () const);
     THROW_UNIMPLEMENTED(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));
     THROW_UNIMPLEMENTED(void, version_message, ());
     THROW_UNIMPLEMENTED(string, run_start_window, (const rectangle& bounds));

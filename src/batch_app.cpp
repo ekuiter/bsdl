@@ -1,5 +1,6 @@
 #include "app.hpp"
 #include "option.hpp"
+#include "util/bsdl_uri.hpp"
 
 using namespace nlohmann;
 
@@ -81,10 +82,11 @@ void batch_app::set_title(const string& title, bool set_notice, string notice) {
 
 vector<aggregators::series*> batch_app::search_series() {
     set_title("Search series");
-    series_search = settings["series_search"];
-    if (series_search == "")
+    util::search_query query(settings["series_search"]);
+    series_search = query.get_search_string();
+    if (query.is_empty())
         throw runtime_error("no series given to search, run 'bsdl <series> ...'");
-    vector<aggregators::series*> search_results = aggregators::aggregator::search(series_search);
+    search_results = query.check_unambiguous(query.fetch_results());
     if (search_results.size() == 0)
         throw runtime_error(string("no series found for '") + series_search + "'");
     return search_results;
@@ -92,7 +94,7 @@ vector<aggregators::series*> batch_app::search_series() {
 
 aggregators::series& batch_app::choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) {
     set_title("Choose series");
-    return *search_results[0]; // TODO
+    return *search_results[0];
 }
 
 void batch_app::display_series(aggregators::series& series) {

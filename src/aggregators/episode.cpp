@@ -1,5 +1,7 @@
 #include "episode.hpp"
 #include "episode_download.hpp"
+#include "../app.hpp"
+#include "../util/bsdl_uri.hpp"
 
 namespace aggregators {
     int episode::max_id_width = 13;
@@ -14,6 +16,11 @@ namespace aggregators {
     }
 
     nlohmann::json episode::get_json() const {
-        return {{ "series_title", series_title }, { "season_number", season_number }, { "number", number }};
+        return {
+            { "series_title", series_title },
+            { "season_number", season_number },
+            { "number", number },
+            { "bsdl_uri", util::bsdl_uri(*app::instance().get_current_series()).get_uri() }
+        };
     }
 }

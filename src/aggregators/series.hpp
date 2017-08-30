@@ -47,6 +47,10 @@ namespace aggregators {
             return title;
         }
 
+        const http::request& get_request() const noexcept {
+            return request;
+        }
+
         int season_number() const {
             load();
             return seasons.size();

@@ -1,5 +1,6 @@
 #include "app.hpp"
 #include "option.hpp"
+#include "util/bsdl_uri.hpp"
 #include "util/platform.hpp"
 #include "aggregators/episode_download.hpp"
 #include "curses/platform.hpp"
@@ -201,21 +202,31 @@ vector<aggregators::series*> main_app::search_series() {
     rectangle centered_bounds = get_centered_bounds(-1, 8);
     series_search = settings["series_search"];
 
+    auto show_message = [&centered_bounds](const string& msg){
+        window::framed message_window(centered_bounds);
+        message_dialog::run(message_window, msg);
+    };
+
     do {
-        while (series_search == "") {
+        util::search_query query(series_search);
+        
+        while (query.is_empty()) {
             series_search = run_start_window(centered_bounds);
-            boost::trim(series_search);
-            if (series_search == "") {
-                window::framed message_window(centered_bounds);
-                message_dialog::run(message_window, "Please enter a series title.");
+            try {
+                query = util::search_query(series_search);
+                if (query.is_empty())
+                    show_message("Please enter a series title.");
+            } catch (util::uri_error e) {
+                show_message(e.what());
             }
         }
 
         {
             window::plain loading_window(get_centered_bounds(-1, -1));
             stream _stream(loading_window, color::get_accent_color());
+            series_search = query.get_search_string();
             _stream << stream::write_centered(string("Searching for series ") + series_search + " ...") << stream::refresh();
-            search_results = aggregators::aggregator::search(series_search);
+            search_results = query.fetch_results();
         }
 
         if (search_results.size() == 0) {

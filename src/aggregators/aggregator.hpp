@@ -37,6 +37,12 @@ namespace aggregators {
             }
             return search_results;
         }
+
+        vector<series*> search_single(string series_search) {
+            cout << "Searching for series " << curses::stream::colored(series_search) << "." << endl;
+            boost::to_lower(series_search);
+            return search_internal(series_search);
+        }
         
         virtual vector<series*> search_internal(const string& series_search) const = 0;
     };
