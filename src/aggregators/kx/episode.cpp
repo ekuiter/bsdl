@@ -41,5 +41,11 @@ namespace aggregators {
         unique_ptr<aggregators::episode::file> episode::get_file() const {
             return unique_ptr<aggregators::episode::file>(new episode::file(*this));
         }
+
+        nlohmann::json episode::get_json() const {
+            if (bs_episode)
+                return bs_episode->get_json();
+            return aggregators::episode::get_json();
+        }
     }
 }

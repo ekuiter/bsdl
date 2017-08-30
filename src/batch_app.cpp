@@ -1,6 +1,8 @@
 #include "app.hpp"
 #include "option.hpp"
 
+using namespace nlohmann;
+
 void batch_app::initialize() {
     if (settings.is_set("log_file") && settings["action"] != "show-log") {
         log_file.open(settings["log_file"]);
@@ -97,14 +99,17 @@ void batch_app::display_series(aggregators::series& series) {
     set_title(series.get_title());
     if (settings.is_set("rename_files_directory"))
         throw runtime_error("renaming files is not available in batch mode");
-    
+
     auto& download_selection = settings.get_download_selection();
-    if (download_selection.size() > 0) {
-        auto episodes = download_selection.get_episodes(*current_series);
-        terminal.with_output(cout, [this, &series, &episodes]() {
-                cout << series.get_title() << endl;
-                for (auto episode : episodes)
-                    cout << *episode << endl; // TODO
-            });
-    }
+    auto episodes = download_selection.get_episodes(*current_series);
+    auto _json = "[]"_json;
+    transform(episodes.begin(), episodes.end(), back_inserter(_json), [](aggregators::episode* episode) {
+            return episode->get_json();
+        });
+    
+    terminal.with_output(cout, [&_json, &download_selection]() {
+            if (download_selection.size() == 0)
+                throw runtime_error("no download selectors given, use --download option");
+            cout << _json << endl;
+        });
 }

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "video_file.hpp"
+#include <json.hpp>
 
 using namespace std;
 
@@ -81,6 +82,7 @@ namespace aggregators {
         virtual ostream& print(ostream& stream) const = 0;
         virtual unique_ptr<file> get_file() const = 0;
         unique_ptr<download> get_download(function<void (download&)> _refresh_callback = [](download&) {}) const;
+        virtual nlohmann::json get_json() const;
         
         friend ostream& operator<<(ostream& stream, const episode& episode) {
             return episode.print(stream);
