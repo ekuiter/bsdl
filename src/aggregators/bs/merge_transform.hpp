@@ -1,14 +1,31 @@
 #pragma once
 
 #include <iostream>
+#include "series.hpp"
+#include "season.hpp"
 #include "episode.hpp"
 #include "../season_transform.hpp"
-#include "season.hpp"
 
 using namespace std;
 
 namespace aggregators {    
     namespace bs {
+        class mergeable_series : public aggregators::series {
+        protected:
+            ::aggregators::bs::series* bs_series = nullptr;
+
+        public:
+            using aggregators::series::series;
+            
+            const ::aggregators::bs::series* get_bs_series() const {
+                return bs_series;
+            }
+                    
+            void set_bs_series(::aggregators::bs::series* _bs_series) {
+                bs_series = _bs_series;
+            }
+        };
+
         class mergeable_episode : public aggregators::episode {
         protected:
             ::aggregators::bs::episode* bs_episode = nullptr;
@@ -26,9 +43,9 @@ namespace aggregators {
         };
         
         class merge_transform : public aggregators::season_transform {
-            aggregators::series* src_series;
+            aggregators::bs::series* src_series = nullptr;
             
-            merge_transform(): aggregators::season_transform(nullptr, nullptr), src_series(nullptr) {}
+            merge_transform(): aggregators::season_transform(nullptr, nullptr) {}
             
         public:
             static merge_transform& instance() {
@@ -36,8 +53,10 @@ namespace aggregators {
                 return instance;
             }
             
-            void fetch_source_series();            
+            void fetch_source_series(const mergeable_series* dst_series);            
             void operator()(aggregators::season* _dst_season);
         };
+
+        string empty_series_title();
     }
 }

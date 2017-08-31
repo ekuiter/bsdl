@@ -26,14 +26,48 @@ namespace util {
     
     class bsdl_uri {
         aggregators::aggregator* aggregator = nullptr;
-        string uri, search_string, request_url;
+        string uri, search_string, series_url, bs_series_url;
+
+        void filter_search_results(vector<aggregators::series*>& search_results, const string& url) const {
+            auto predicate = [&url](aggregators::series* series) {
+                return series->get_request().get_url() != url;
+            };
+            search_results.erase(remove_if(search_results.begin(), search_results.end(), predicate), search_results.end());
+        }
+
+        vector<aggregators::series*> fetch_and_filter_series(aggregators::aggregator& aggregator,
+                                                             const string& filter_url, const string& series_type) const {
+            vector<aggregators::series*> search_results = aggregator.search_single(search_string);
+            if (filter_url != "")
+                filter_search_results(search_results, filter_url);
+            if (search_results.size() == 0)
+                throw uri_error(string("no ") + series_type + " at URI " + uri);
+            return util::check_unambiguous(string("ambiguous ") + series_type + " at URI " + uri + ": ", search_results);
+        }
+
+        aggregators::bs::series* fetch_bs_series(aggregators::bs::mergeable_series* mergeable_series) const {
+            auto empty_series = new aggregators::bs::series(aggregators::bs::bs::instance(), aggregators::bs::empty_series_title());
+            
+            if (bs_series_url == "")
+                return empty_series;
+            else {
+                auto search_results = fetch_and_filter_series(aggregators::bs::bs::instance(), bs_series_url, "bs series");
+                aggregators::series* bs_series = search_results[0];
+                bs_series->load();
+                return dynamic_cast<aggregators::bs::series*>(bs_series);
+            }
+        }
         
     public:
         bsdl_uri(const aggregators::series& series):
             aggregator(const_cast<aggregators::aggregator*>(&series.get_aggregator())), search_string(app::instance().get_series_search()) {
             uri = string("bsdl://") + aggregator->get_name() +
                 "/" + encode_uri(search_string) +
-                "?" + encode_uri(series.get_request().get_url());
+                "/" + encode_uri(series.get_request().get_url());
+            auto mergeable_series = dynamic_cast<aggregators::bs::mergeable_series*>(const_cast<aggregators::series*>(&series));
+            if (mergeable_series && mergeable_series->get_bs_series() &&
+                mergeable_series->get_bs_series()->get_title() != aggregators::bs::empty_series_title())
+                uri += "/" + encode_uri(mergeable_series->get_bs_series()->get_request().get_url());
         }
         
         bsdl_uri(const string& _uri): uri(_uri) {
@@ -47,12 +81,17 @@ namespace util {
             } catch (aggregators::exception& e) {
                 throw uri_error(string("URI ") + uri + " has invalid aggregator " + (string) results[1]);
             }
-            search_string = results[3];
-            boost::trim_left_if(search_string, boost::is_any_of("/"));
-            search_string = decode_uri(search_string);
+            string path = results[3];
+            boost::trim_left_if(path, boost::is_any_of("/"));
+            vector<string> path_parts;
+            boost::split(path_parts, path, boost::is_any_of("/"));
+            search_string = decode_uri(path_parts[0]);
             if (search_string == "")
                 throw uri_error(string("URI ") + uri + " doesn't have a series title");
-            request_url = decode_uri(results[4]);
+            if (path_parts.size() > 1)
+                series_url = decode_uri(path_parts[1]);
+            if (path_parts.size() > 2)
+                bs_series_url = decode_uri(path_parts[2]);
         }
 
         aggregators::aggregator& get_aggregator() const {
@@ -68,17 +107,14 @@ namespace util {
         }
 
         aggregators::series& fetch_series() const {
-            vector<aggregators::series*> search_results = aggregator->search_single(search_string);
-            if (request_url != "") {
-                auto predicate = [this](aggregators::series* series) {
-                    return series->get_request().get_url() != request_url;
-                };
-                search_results.erase(remove_if(search_results.begin(), search_results.end(), predicate), search_results.end());
-            }
-            if (search_results.size() == 0)
-                throw uri_error(string("no series at URI ") + uri);
-            util::check_unambiguous(string("ambiguous series at URI ") + uri + ": ", search_results);
-            return *search_results[0];
+            auto search_results = fetch_and_filter_series(*aggregator, series_url, "series");
+            aggregators::series* series = search_results[0];
+            auto mergeable_series = dynamic_cast<aggregators::bs::mergeable_series*>(series);
+            if (mergeable_series)
+                mergeable_series->set_bs_series(fetch_bs_series(mergeable_series));
+            else if (bs_series_url != "")
+                throw uri_error(string("no mergeable series at URI ") + uri);;
+            return *series;
         }
     };
 

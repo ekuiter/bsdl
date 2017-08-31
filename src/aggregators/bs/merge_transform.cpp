@@ -6,9 +6,19 @@
 
 namespace aggregators {    
     namespace bs {
-        void merge_transform::fetch_source_series() {
+        string empty_series_title() {
+            return "(No episode titles)";
+        }
+        
+        void merge_transform::fetch_source_series(const mergeable_series* _dst_series) {
+            auto dst_series = const_cast<mergeable_series*>(_dst_series);
+            if (dst_series->get_bs_series()) {
+                src_series = const_cast<series*>(dst_series->get_bs_series());
+                dynamic_cast<aggregators::series*>(src_series)->load();
+                return;
+            }
+            
             curses::terminal::instance().get_stream(cout).set_visible(false);
-
             vector<aggregators::series*> search_results;
             if (!app::instance().is_testing()) {
                 search_results = app::instance().get_search_results();
@@ -18,11 +28,12 @@ namespace aggregators {
             }
             if (search_results.size() == 0)
                 search_results = bs::instance().search_internal(app::instance().get_series_search());
-            search_results.insert(search_results.begin(), new series(bs::instance(), "(No episode titles)"));
+            search_results.insert(search_results.begin(), new series(bs::instance(), empty_series_title()));
 
-            if (search_results.size() > 0)
-                (src_series = &app::instance().choose_series(
-                        search_results, "Use episode titles from:", "Choose"))->load();
+            aggregators::series* _src_series = &app::instance().choose_series(search_results, "Use episode titles from:");
+            _src_series->load();
+            src_series = dynamic_cast<series*>(_src_series);
+            dst_series->set_bs_series(src_series);
             curses::terminal::instance().get_stream(cout).set_visible(true);
         }
         

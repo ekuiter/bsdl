@@ -8,6 +8,7 @@
 #include "season.hpp"
 #include "../bs/merge_transform.hpp"
 #include "../../util/platform.hpp"
+#include "../bs/merge_transform.hpp"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ namespace aggregators {
     class aggregator;
     
     namespace kx {
-        class series : public aggregators::series {            
+        class series : public bs::mergeable_series {
         private:
             void load(const http::response& response) const override;
             string language;
@@ -29,7 +30,7 @@ namespace aggregators {
             }
             
             series(const aggregator& aggregator, const string& _title, const string& _language, const http::request& _request):
-                aggregators::series(aggregator, _title, _request) {
+                bs::mergeable_series(aggregator, _title, _request) {
                 language = _language;
                 title = util::platform::encode(title);
             }
