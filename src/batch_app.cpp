@@ -17,7 +17,7 @@ void batch_app::initialize() {
     clog << "bsdl initialized in batch mode." << endl
          << endl << "Settings:" << endl << settings << endl;
     
-    if (settings.is_set("action")) {
+    if (settings.is_set("action") && settings["action"] != "uri") {
         if (settings["action"] == "version")
             throw runtime_error("version is not available in batch mode");
         else if (settings["action"] == "help")
@@ -86,10 +86,21 @@ vector<aggregators::series*> batch_app::search_series() {
     series_search = query.get_search_string();
     if (query.is_empty())
         throw runtime_error("no series given to search, run 'bsdl <series> ...'");
-    search_results = query.check_unambiguous(query.fetch_results());
-    if (search_results.size() == 0)
+    vector<aggregators::series*> _search_results = query.fetch_results();
+    if (_search_results.size() == 0)
         throw runtime_error(string("no series found for '") + series_search + "'");
-    return search_results;
+
+    if (settings["action"] == "uri") {
+        terminal.with_output(cout, [&_search_results]() {
+                for (auto series : _search_results) {
+                    cout << util::platform::strip_chars(series->get_title()) << endl
+                         << '\t' << util::bsdl_uri(*series).get_uri() << endl;
+                }
+            });
+        exit(EXIT_SUCCESS);
+    }
+    
+    return search_results = query.check_unambiguous(_search_results);
 }
 
 aggregators::series& batch_app::choose_series(vector<aggregators::series*>& search_results, const string& prompt, const string& action) {

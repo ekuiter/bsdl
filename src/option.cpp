@@ -125,7 +125,8 @@ void option::setup_options() {
         OPTION_ARG0(version, {}, settings["action"] = "version"),
         OPTION_ARG0(batch, {}, IN_BATCH_MODE()),
         OPTION_ARG1(test, tests, {}, IN_BATCH_MODE(settings["action"] = tests)),
-        OPTION_ARG0(test, {}, IN_BATCH_MODE(settings["action"] = "test"))
+        OPTION_ARG0(test, {}, IN_BATCH_MODE(settings["action"] = "test")),
+        OPTION_ARG0(uri, {}, IN_BATCH_MODE(settings["action"] = "uri"))
     };
 }
 

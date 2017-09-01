@@ -72,6 +72,8 @@ namespace util {
             return series->get_request().get_url() != url;
         };
         search_results.erase(remove_if(search_results.begin(), search_results.end(), predicate), search_results.end());
+        if (search_results.size() > 1) // in case results have the same link but different aliases, just keep the first alias
+            search_results.erase(search_results.begin() + 1, search_results.end());
     }
 
     vector<aggregators::series*> bsdl_uri::fetch_and_filter_series(aggregators::aggregator& aggregator,

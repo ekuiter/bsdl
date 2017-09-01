@@ -18,6 +18,7 @@ namespace util {
     	static string strip_chars(string str);        
     	static string exec(string cmd, bool has_output = false);
         static void browse(const string& url);
+        static void copy(string str);
         
         struct exec_failed : exception {
             int exit_code;

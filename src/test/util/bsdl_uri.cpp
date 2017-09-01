@@ -1,5 +1,6 @@
 #define private public
 #include "../test_util.hpp"
+#include "../mock_app.hpp"
 #include "../../util/bsdl_uri.hpp"
 
 struct bsdl_uri_fixture : public settings_and_data_fixture {
@@ -72,9 +73,20 @@ BOOST_AUTO_TEST_CASE(params_empty) { BOOST_TEST(complex_uri_obj.params["provider
 BOOST_AUTO_TEST_SUITE_END()
 
 LONG_RUNNING_TEST_SUITE(AUTO, * utf::timeout(30))
-BOOST_AUTO_TEST_CASE(fetch_series_valid) { get_data_uri("valid_bsdl_uri").fetch_series(); }
-BOOST_AUTO_TEST_CASE(fetch_series_invalid_none) { BOOST_CHECK_EXCEPTION(get_data_uri("invalid_bsdl_uri_none").fetch_series(), util::uri_error, is_none_uri); }
-BOOST_AUTO_TEST_CASE(fetch_series_invalid_ambiguous) { BOOST_CHECK_EXCEPTION(get_data_uri("invalid_bsdl_uri_ambiguous").fetch_series(), util::uri_error, is_ambiguous_uri); }
+
+BOOST_AUTO_TEST_CASE(fetch_series_valid) {
+    mock_app::instance().series_search = get_data_uri("valid_bsdl_uri").get_search_string();
+    BOOST_TEST(util::bsdl_uri(get_data_uri("valid_bsdl_uri").fetch_series()).get_uri() == get_data("valid_bsdl_uri"));
+}
+
+BOOST_AUTO_TEST_CASE(fetch_series_invalid_none) {
+    BOOST_CHECK_EXCEPTION(get_data_uri("invalid_bsdl_uri_none").fetch_series(), util::uri_error, is_none_uri);
+}
+
+BOOST_AUTO_TEST_CASE(fetch_series_invalid_ambiguous) {
+    BOOST_CHECK_EXCEPTION(get_data_uri("invalid_bsdl_uri_ambiguous").fetch_series(), util::uri_error, is_ambiguous_uri);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()

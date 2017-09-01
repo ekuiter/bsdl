@@ -156,4 +156,15 @@ namespace util {
 	@TODO
 #endif
     }
+
+    void platform::copy(string str) {
+#ifdef __MINGW32__
+	@TODO
+#elif defined (__APPLE__)
+        boost::replace_all(str, "'", "'\\''");
+	exec(string("printf %s '") + str + "' | pbcopy");
+#else
+	@TODO
+#endif
+    }
 }
