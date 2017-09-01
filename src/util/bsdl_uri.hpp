@@ -11,24 +11,10 @@
 namespace util {
     string encode_uri(const string &input);
     string decode_uri(const string &input);
-    
-    namespace {
-        inline vector<aggregators::series*> check_unambiguous(string msg, vector<aggregators::series*> search_results) {
-            if (search_results.size() > 1) {
-                for (int i = 0, n = search_results.size(); i < n; i++)
-                    msg += search_results[i]->get_title() + (i == n - 1 ? "" : ", ");
-                throw runtime_error(msg);
-            }
-            return search_results;
-        }
-    }
-    
-    class uri_error : public runtime_error {
-    public:
-        uri_error(const string& msg): runtime_error(msg) {}
-    };
+    vector<aggregators::series*> check_unambiguous(string msg, vector<aggregators::series*> search_results);
     
     class bsdl_uri {
+    private:
         aggregators::aggregator* aggregator = nullptr;
         string uri, search_string, series_url, bs_series_url;
         unordered_map<string, string> params;
@@ -55,6 +41,12 @@ namespace util {
         const string& get_search_string() const {
             return search_string;
         }        
+    };
+
+    class uri_error : public runtime_error {
+    public:
+        uri_error(const string& msg): runtime_error(msg) {}
+        uri_error(const bsdl_uri& uri, const string& msg): runtime_error(string("URI ") + uri.get_uri() + " " + msg) {}
     };
 
     class search_query {

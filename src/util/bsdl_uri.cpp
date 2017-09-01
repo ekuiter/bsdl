@@ -5,6 +5,15 @@
 using namespace std;
 
 namespace util {
+    vector<aggregators::series*> check_unambiguous(string msg, vector<aggregators::series*> search_results) {
+        if (search_results.size() > 1) {
+            for (int i = 0, n = search_results.size(); i < n; i++)
+                msg += search_results[i]->get_title() + (i == n - 1 ? "" : ", ");
+            throw uri_error(msg);
+        }
+        return search_results;
+    }
+    
     vector<string> bsdl_uri::split(string str, const string& delimiter) {
         vector<string> parts;
         boost::trim_left_if(str, boost::is_any_of(delimiter));
@@ -16,7 +25,7 @@ namespace util {
         try {
             aggregator = &aggregators::aggregator::instance(host);
         } catch (aggregators::exception& e) {
-            throw uri_error(string("URI ") + uri + " has invalid aggregator " + host);
+            throw uri_error(*this, "has invalid aggregator " + host);
         }
     }
         
@@ -24,11 +33,13 @@ namespace util {
         vector<string> path_parts = split(path, "/");
         search_string = decode_uri(path_parts[0]);
         if (search_string == "")
-            throw uri_error(string("URI ") + uri + " doesn't have a series title");
+            throw uri_error(*this, "doesn't have a series title");
         if (path_parts.size() > 1)
             series_url = decode_uri(path_parts[1]);
         if (path_parts.size() > 2)
             bs_series_url = decode_uri(path_parts[2]);
+        if (path_parts.size() > 3)
+            throw uri_error(*this, "has invalid path");
     }
 
     void bsdl_uri::parse_query(const string& query) {
@@ -36,10 +47,10 @@ namespace util {
         for (auto pair : split(query, "&")) {
             vector<string> pair_parts = split(pair, "=");
             if (pair_parts.size() != 2 || pair_parts[0] == "" || pair_parts[1] == "")
-                throw uri_error(string("URI ") + uri + " has invalid key-value pair '" + pair + "'");
+                throw uri_error(*this, "has invalid key-value pair '" + pair + "'");
             string key = decode_uri(pair_parts[0]), value = decode_uri(pair_parts[1]);
             if (find(allowed_keys.begin(), allowed_keys.end(), key) == allowed_keys.end())
-                throw uri_error(string("URI ") + uri + " has invalid key '" + key + "'");
+                throw uri_error(*this, "has invalid key '" + key + "'");
             params[key] = value;
         }
     }
@@ -102,7 +113,7 @@ namespace util {
         regex uri_pattern("bsdl://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)");
         smatch results;
         if(!regex_search(uri, results, uri_pattern))
-            throw uri_error(string("URI ") + uri + " is invalid");
+            throw uri_error(*this, "is invalid");
         string host = results[1], port = results[2], path = results[3],
             query = results[4], fragment = results[5];
         parse_host(host);
@@ -119,7 +130,7 @@ namespace util {
         if (mergeable_series)
             mergeable_series->set_bs_series(fetch_bs_series(mergeable_series));
         else if (bs_series_url != "")
-            throw uri_error(string("no mergeable series at URI ") + uri);;
+            throw uri_error(string("no mergeable series at URI ") + uri);
         return *series;
     }
 }
