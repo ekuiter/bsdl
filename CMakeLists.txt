@@ -86,7 +86,8 @@ set_target_properties(aggregators PROPERTIES OUTPUT_NAME "bsdl_aggregators")
 target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 
 add_library(core STATIC src/main_app.cpp src/batch_app.cpp src/option.cpp src/settings.cpp
-  src/util/platform.cpp src/util/bsdl_uri.cpp src/util/string_similarity.cpp src/providers/provider.cpp)
+  src/util/platform.cpp src/util/string_similarity.cpp src/providers/provider.cpp
+  src/util/uri.cpp src/util/bsdl_uri.cpp)
 set_target_properties(core PROPERTIES OUTPUT_NAME "bsdl_core")
 target_link_libraries(core http curses aggregators)
 
@@ -103,7 +104,7 @@ add_executable(bsdltest src/test/test_util.cpp src/test/mock_app.cpp src/test/mo
   src/test/http/download_queue.cpp src/test/aggregators/aggregator.cpp src/test/aggregators/download_selection.cpp
   src/test/aggregators/series.cpp src/test/aggregators/season.cpp src/test/aggregators/episode.cpp
   src/test/aggregators/video_file.cpp src/test/aggregators/subtitle.cpp src/test/aggregators/episode_file.cpp
-  src/test/aggregators/episode_download.cpp)
+  src/test/aggregators/episode_download.cpp src/test/util/bsdl_uri.cpp)
 target_link_libraries(bsdltest ${BOOST_LIBRARIES} ${TEST_LIBRARY} http curses aggregators bs kx mk pr core)
 add_custom_target(check ./bsdltest WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)
 add_custom_target(check-quick ./bsdltest --run_test=\!@long_running WORKING_DIRECTORY ${EXECUTABLE_PATH} DEPENDS bsdltest)

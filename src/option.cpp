@@ -37,8 +37,7 @@ using namespace curses;
     [&settings]() {                                             \
         modify_setting(#name, "\nEnter preferred " #name ":");  \
         try {                                                   \
-            settings.update_preferred_##name(true);             \
-            setter(settings.get_preferred_##name());            \
+            setter(settings.update_preferred_##name(true));     \
         } catch (exception e) {                                 \
             cerr << e.what() << endl;                           \
         }                                                       \

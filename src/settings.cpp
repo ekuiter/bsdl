@@ -42,25 +42,28 @@ static vector<string> build_vector(const string& setting, vector<T*>& vector) {
     return elements;
 }
 
-void settings_base::update_preferred_aggregators(bool clear_vector) {
+vector<aggregators::aggregator*> settings_base::update_preferred_aggregators(bool clear_vector) {
     if (clear_vector)
         preferred_aggregators.clear();
     for (auto& aggregator : build_vector("aggregators", preferred_aggregators))
         preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator));
+    return preferred_aggregators;
 }
 
-void settings_base::update_preferred_providers(bool clear_vector) {
+vector<providers::provider*> settings_base::update_preferred_providers(bool clear_vector) {
     if (clear_vector)
         preferred_providers.clear();
     for (auto& provider : build_vector("providers", preferred_providers))
         preferred_providers.push_back(&providers::provider::instance(provider, true));
+    return preferred_providers;
 }
 
-void settings_base::update_preferred_subtitles(bool clear_vector) {
+vector<aggregators::subtitle*> settings_base::update_preferred_subtitles(bool clear_vector) {
     if (clear_vector)
         preferred_subtitles.clear();
     for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
         preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
+    return preferred_subtitles;
 }
 
 ostream& operator<<(ostream& stream, settings_base& settings) {

@@ -9,6 +9,10 @@
 
 using namespace std;
 
+namespace util {
+    class bsdl_uri;
+}
+
 class settings_base {
 protected:
     typedef map<string, string> container_type;
@@ -31,9 +35,9 @@ private:
     static set<string> allowed_settings;
     typedef util::with_range<settings_base> settings_with_range;
     static unique_ptr<settings_with_range> _instance;
-    void update_preferred_aggregators(bool clear_vector = false);
-    void update_preferred_providers(bool clear_vector = false);
-    void update_preferred_subtitles(bool clear_vector = false);
+    vector<aggregators::aggregator*> update_preferred_aggregators(bool clear_vector = false);
+    vector<providers::provider*> update_preferred_providers(bool clear_vector = false);
+    vector<aggregators::subtitle*> update_preferred_subtitles(bool clear_vector = false);
     
 protected:
     container_type& get_container() const {
@@ -94,6 +98,7 @@ public:
     
     friend ostream& operator<<(ostream& stream, settings_base& settings);
     friend class option;
+    friend class util::bsdl_uri;
 };
 
 typedef util::with_range<settings_base> settings;
