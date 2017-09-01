@@ -43,8 +43,8 @@ using namespace curses;
         }                                                       \
     }
 
-#define IN_BATCH_MODE(code) {                   \
-        settings["app"] = "batch";              \
+#define IN_MODE(mode, code) {                   \
+        settings["app"] = #mode;                \
         code;                                   \
     }
 
@@ -118,15 +118,16 @@ void option::setup_options() {
         OPTION_ARG0(rename-files, {}, settings["rename_files_directory"] = "."),
 
         OPTION_ARG1(log-file, file, {}, settings["log_file"] = file),
-        OPTION_ARG0(log-file, {}, IN_BATCH_MODE(settings["action"] = "show-log")),
+        OPTION_ARG0(log-file, {}, IN_MODE(json, settings["action"] = "show-log")),
         OPTION_ARG1(config-file, file, settings["config_file"] = file, {}),
         
-        OPTION_ARG0(help, {}, IN_BATCH_MODE(settings["action"] = "help")),
+        OPTION_ARG0(help, {}, IN_MODE(json, settings["action"] = "help")),
         OPTION_ARG0(version, {}, settings["action"] = "version"),
-        OPTION_ARG0(batch, {}, IN_BATCH_MODE()),
-        OPTION_ARG1(test, tests, {}, IN_BATCH_MODE(settings["action"] = tests)),
-        OPTION_ARG0(test, {}, IN_BATCH_MODE(settings["action"] = "test")),
-        OPTION_ARG0(uri, {}, IN_BATCH_MODE(settings["action"] = "uri"))
+        OPTION_ARG0(json, {}, IN_MODE(json,)),
+        OPTION_ARG0(batch, {}, IN_MODE(batch,)),
+        OPTION_ARG1(test, tests, {}, IN_MODE(json, settings["action"] = tests)),
+        OPTION_ARG0(test, {}, IN_MODE(json, settings["action"] = "test")),
+        OPTION_ARG0(uri, {}, IN_MODE(json, settings["action"] = "uri"))
     };
 }
 

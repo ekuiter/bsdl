@@ -39,10 +39,7 @@ struct mock_app : public app {
     MOCK_THROW(void, set_current_series, (aggregators::series& series));
     MOCK_THROW(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));
     MOCK_THROW(void, initialize, ());
-    MOCK_THROW(void, help_message, ());
-    MOCK_THROW(void, version_message, ());
     MOCK_EMPTY(void, set_title, (const string& title, bool set_notice = false, string notice = ""));
-    MOCK_THROW(string, run_start_window, (const rectangle& bounds));
     MOCK_THROW(vector<aggregators::series*>, search_series, ());
     MOCK_THROW(void, display_series, (aggregators::series& series));
     MOCK_THROW(void, download_episodes, (aggregators::download_selection& download_selection));

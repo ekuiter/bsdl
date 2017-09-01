@@ -17,12 +17,6 @@ namespace aggregators {
         mutable string file_name;
         const episode* _episode;
         
-        int get_season_digits() const {
-            int num = get_number_of_seasons(), digits = 0;
-            for (; num != 0; num /= 10, digits++);
-            return digits;
-        }
-        
         static bool similar_file_exists(const string& file_name);
 
     public:
@@ -34,12 +28,13 @@ namespace aggregators {
             return _episode;
         }
         
-        virtual string get_id() const {
-            string format_string = string("%0") + to_string(get_season_digits()) + "d.%02d";
-            return boost::str(boost::format(format_string) % _episode->get_season_number() % _episode->get_number());
-        }
-        
         virtual string get_file_name() const = 0;
         static int get_number_of_seasons();
+
+        static int get_season_digits() {
+            int num = get_number_of_seasons(), digits = 0;
+            for (; num != 0; num /= 10, digits++);
+            return digits;
+        }
     };
 }

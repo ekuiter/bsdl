@@ -104,15 +104,14 @@ namespace util {
         uri = string("bsdl://") + aggregator->get_name() +
             "/" + encode_uri(search_string) +
             "/" + encode_uri(series.get_request().get_url());
-        auto mergeable_series = dynamic_cast<aggregators::bs::mergeable_series*>(const_cast<aggregators::series*>(&series));
-        if (mergeable_series && mergeable_series->get_bs_series() &&
-            mergeable_series->get_bs_series()->get_title() != aggregators::bs::empty_series_title())
-            uri += "/" + encode_uri(mergeable_series->get_bs_series()->get_request().get_url());
+        auto bs_series = aggregators::bs::try_to_get_bs_series(const_cast<aggregators::series&>(series));
+        if (bs_series)
+            uri += "/" + encode_uri(bs_series->get_request().get_url());
     }
         
     bsdl_uri::bsdl_uri(const string& _uri): uri(_uri) {
         // see stackoverflow.com/q/2616011
-        regex uri_pattern("bsdl://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)");
+        regex uri_pattern("bsdl://([^/:]+):?([^/]*)(/?[^#?]*)\\x3f?([^#]*)#?([^]*)");
         smatch results;
         if(!regex_search(uri, results, uri_pattern))
             throw uri_error(*this, "is invalid");

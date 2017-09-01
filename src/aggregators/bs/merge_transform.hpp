@@ -58,5 +58,6 @@ namespace aggregators {
         };
 
         string empty_series_title();
+        const series* try_to_get_bs_series(aggregators::series& series);
     }
 }

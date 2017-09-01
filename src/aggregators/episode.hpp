@@ -19,6 +19,7 @@ namespace aggregators {
         mutable bool error_logged;
         http::request request;
         mutable bool loaded;
+        mutable string id;
         static int max_id_width;
         
         virtual void load(const http::response& response) const = 0;
@@ -76,9 +77,9 @@ namespace aggregators {
             }
             return new video_file::unavailable();
         }
-        
+
+        virtual string get_id() const;        
         void load() const;
-        virtual string get_id() const = 0;
         virtual ostream& print(ostream& stream) const = 0;
         virtual unique_ptr<file> get_file() const = 0;
         unique_ptr<download> get_download(function<void (download&)> _refresh_callback = [](download&) {}) const;

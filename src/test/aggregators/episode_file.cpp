@@ -18,9 +18,6 @@ BOOST_AUTO_TEST_SUITE(episode_file_suite)
 LONG_RUNNING_TEST_SUITE(FIXTURE, episode_file_fixture, * utf::timeout(30))
 
 BOOST_AUTO_TEST_CASE(episode_file_test) {
-    BOOST_TEST_CHECKPOINT("episode_file_get_id");
-    BOOST_TEST(episode_file->get_id() != "");
-
     BOOST_TEST_CHECKPOINT("episode_file_get_file_name");
     BOOST_TEST(episode_file->get_file_name() != "");
 

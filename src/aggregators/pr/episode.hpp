@@ -26,7 +26,11 @@ namespace aggregators {
             episode(const string& _series_title, const int _season_number, const int _number, const http::request& _request):
                 aggregators::episode(_series_title, _season_number, _number, video_file_map(), _request) {}
 
-            string get_id() const override;
+            virtual string get_id() const override {
+                string format_string = string("%02d");
+                return boost::str(boost::format(format_string) % get_number());
+            }
+            
             ostream& print(ostream& stream) const override;
             unique_ptr<aggregators::episode::file> get_file() const override;
         };

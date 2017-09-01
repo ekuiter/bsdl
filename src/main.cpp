@@ -1,12 +1,14 @@
 #include <iostream>
-#include "app.hpp"
+#include "main_app.hpp"
+#include "json_app.hpp"
+#include "batch_app.hpp"
 
 using namespace std;
 
 static terminal& choose_terminal() {
-    if (settings::get("app") == "main")
+    if (settings::get("app") == "main" || settings::get("app") == "batch")
         return curses::main_terminal::reset_instance(setlocale(LC_ALL, ""));
-    else if (settings::get("app") == "batch")
+    else if (settings::get("app") == "json")
         return curses::terminal::instance();
     else
         throw runtime_error("invalid app type");
@@ -15,6 +17,8 @@ static terminal& choose_terminal() {
 static app& choose_app() {
     if (settings::get("app") == "main")
         return app::instance();
+    else if (settings::get("app") == "json")
+        return json_app::instance();
     else if (settings::get("app") == "batch")
         return batch_app::instance();
     else

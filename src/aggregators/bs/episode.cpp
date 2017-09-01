@@ -8,11 +8,7 @@ namespace aggregators {
         void episode::load(const http::response& response) const {
             loaded = true;
         }
-        
-        string episode::get_id() const {
-            return file(*this).get_id();
-        }
-        
+
         ostream& episode::print(ostream& stream) const {
             curses::window* window = curses::terminal::instance().get_stream(stream).get_window();
             int width = window ? window->get_bounds().width : COLS;

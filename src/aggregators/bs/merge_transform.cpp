@@ -9,6 +9,15 @@ namespace aggregators {
         string empty_series_title() {
             return "(No episode titles)";
         }
+
+        const series* try_to_get_bs_series(aggregators::series& series) {
+            auto _mergeable_series = dynamic_cast<mergeable_series*>(&series);
+            if (_mergeable_series && _mergeable_series->get_bs_series() &&
+                _mergeable_series->get_bs_series()->get_title() != aggregators::bs::empty_series_title())
+                return _mergeable_series->get_bs_series();
+            else
+                return nullptr;
+        }
         
         void merge_transform::fetch_source_series(const mergeable_series* _dst_series) {
             auto dst_series = const_cast<mergeable_series*>(_dst_series);

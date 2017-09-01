@@ -1,4 +1,4 @@
-#include "app.hpp"
+#include "main_app.hpp"
 #include "option.hpp"
 #include "util/bsdl_uri.hpp"
 #include "util/platform.hpp"
@@ -50,11 +50,10 @@ main_app::main_app():
 
 void main_app::initialize() {
     if (settings.is_set("action")) {
-        window::framed message_window(get_centered_bounds());
         if (settings["action"] == "version")
             version_message();
         else
-            throw runtime_error(settings["action"] + " is only available in batch mode");
+            throw runtime_error(settings["action"] + " is not available in app mode");
         exit(EXIT_SUCCESS);
     }
 

@@ -38,10 +38,6 @@ namespace aggregators {
             loaded = true;
         }
         
-        string episode::get_id() const {
-            return file(*this).get_id();
-        }
-        
         ostream& episode::print(ostream& stream) const {
             return stream << "Episode " << number;
         }

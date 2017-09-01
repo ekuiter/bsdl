@@ -17,11 +17,6 @@ namespace aggregators {
             using aggregators::episode::file::file;
 
             string get_file_name() const override;
-
-            virtual string get_id() const override {
-                string format_string = string("%02d");
-                return boost::str(boost::format(format_string) % _episode->get_number());
-            }
         };
     }
 }
