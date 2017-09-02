@@ -4,9 +4,9 @@
 #include <vector>
 #include <tuple>
 
-#define SINGLE_BUTTON(window, name, corner, height, highlight_color, action, keyboard_callback, mouse_callback) \
+#define SINGLE_BUTTON(_window, name, corner, height, highlight_color, action, keyboard_callback, mouse_callback) \
     curses::button_group::button_descriptor name = { action, keyboard_callback, mouse_callback }; \
-    curses::window::sub name##_wrapper(window, window.corner##_rectangle(curses::button_group::get_width({ name }), height)); \
+    curses::window::sub name##_wrapper(_window, _window.corner##_rectangle(curses::button_group::get_width({ name }), height)); \
     button_group name##_group(name##_wrapper, { name }, highlight_color);
 
 using namespace std;

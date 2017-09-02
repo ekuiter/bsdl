@@ -87,7 +87,7 @@ target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 
 add_library(core STATIC src/main_app.cpp src/json_app.cpp src/option.cpp src/settings.cpp
   src/util/platform.cpp src/util/string_similarity.cpp src/providers/provider.cpp
-  src/util/uri.cpp src/util/bsdl_uri.cpp src/batch_app.cpp)
+  src/util/uri.cpp src/util/bsdl_uri.cpp src/batch_app.cpp src/curses_app.cpp)
 set_target_properties(core PROPERTIES OUTPUT_NAME "bsdl_core")
 target_link_libraries(core http curses aggregators)
 

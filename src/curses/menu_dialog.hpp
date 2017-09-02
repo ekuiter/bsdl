@@ -30,7 +30,9 @@ namespace curses {
                           input::instance().keyboard_event('\n'),
                           input::instance().mouse_event(BUTTON1_PRESSED));
 
-            window::sub menu_wrapper(window, window.top_left_rectangle(0, -button_height));
+            rectangle _rectangle = window.top_left_rectangle(0, -button_height - 1);
+            _rectangle.p.y++;
+            window::sub menu_wrapper(window, _rectangle);
             menu::vertical<T> menu(menu_wrapper, pointers, selected_ptr, highlight_color);
 
             input::instance().wait();
