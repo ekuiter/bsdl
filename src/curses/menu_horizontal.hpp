@@ -49,7 +49,7 @@ namespace curses {
                     point p;
                     this->_stream << content_window << stream::get(p, stream::get::coord::BEG);
                     unique_ptr<window::plain> tab_content_window(
-                            new window::plain(rectangle(p + point(1, 0), content_window.get_dimensions() - point(2, 1)))
+                            new window::plain(rectangle(p + point(2, 0), content_window.get_dimensions() - point(4, 1)))
                     );
                     tab_content_window->override_layer(this->_window.get_paneled_window().get_layer());
                     this->pointer_from(item)->create_view(*tab_content_window);

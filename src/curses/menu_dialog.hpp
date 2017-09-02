@@ -25,15 +25,13 @@ namespace curses {
             stream stream(window);
             stream << prompt << endl;
 
-            int button_width = action.length() + 4, button_height = 3;
-            window::sub button_wrapper(window, rectangle(
-                    window.get_dimensions() - point(button_width, button_height), button_width, button_height)),
-                    menu_wrapper(window, rectangle(0, 1, window.get_dimensions() - point(0, button_height + 1)));
-            button button(button_wrapper, action, highlight_color);
-            menu::vertical<T> menu(menu_wrapper, pointers, selected_ptr, highlight_color);
+            int button_height = 3;
+            SINGLE_BUTTON(window, button, bottom_right, button_height, highlight_color, action,
+                          input::instance().keyboard_event('\n'),
+                          input::instance().mouse_event(BUTTON1_PRESSED));
 
-            window.set_keyboard_callback(input::instance().keyboard_event('\n'));
-            button_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED));
+            window::sub menu_wrapper(window, window.top_left_rectangle(0, -button_height));
+            menu::vertical<T> menu(menu_wrapper, pointers, selected_ptr, highlight_color);
 
             input::instance().wait();
             return menu.get_selected_pointer();

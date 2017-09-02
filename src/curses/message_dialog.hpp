@@ -6,7 +6,7 @@
 #include "input.hpp"
 #include "window.hpp"
 #include "window_sub.hpp"
-#include "button.hpp"
+#include "button_group.hpp"
 #include <iostream>
 #include <functional>
 
@@ -22,13 +22,9 @@ namespace curses {
             if (fn)
                 fn(stream);
 
-            int button_width = action.length() + 4, button_height = 3;
-            window::sub button_wrapper(window, rectangle(
-                    window.get_dimensions() - point(button_width, button_height), button_width, button_height));
-            button button(button_wrapper, action, highlight_color);
-
-            window.set_keyboard_callback(input::instance().keyboard_event('\n'));
-            button_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED));
+            SINGLE_BUTTON(window, button, bottom_right, 3, highlight_color, action,
+                          input::instance().keyboard_event('\n'),
+                          input::instance().mouse_event(BUTTON1_PRESSED));
 
             input::instance().wait();
         }

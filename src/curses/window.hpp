@@ -73,6 +73,11 @@ namespace curses {
         static WINDOW* dereference(window* window) {
             return window ? window->get() : stdscr;
         }
+
+        rectangle top_left_rectangle(int rectangle_width = 0, int rectangle_height = 0);
+        rectangle top_right_rectangle(int rectangle_width = 0, int rectangle_height = 0);
+        rectangle bottom_left_rectangle(int rectangle_width = 0, int rectangle_height = 0);
+        rectangle bottom_right_rectangle(int rectangle_width = 0, int rectangle_height = 0);
     };
 
     ostream& operator<<(ostream& stream, window& window);

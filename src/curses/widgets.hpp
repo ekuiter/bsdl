@@ -7,6 +7,7 @@
 #include "menu_horizontal.hpp"
 #include "text_box.hpp"
 #include "button.hpp"
+#include "button_group.hpp"
 #include "input_dialog.hpp"
 #include "message_dialog.hpp"
 #include "menu_dialog.hpp"

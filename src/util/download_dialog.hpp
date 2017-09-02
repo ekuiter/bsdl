@@ -23,36 +23,34 @@ namespace util {
             for (auto& downloadable : downloadables)
                 download_queue.push(*downloadable->get_download(refresh_callback));
 
-            string abort_all_action = "Abort all",
-                    abort_selected_action = "Abort selected";
-            int abort_all_width = abort_all_action.length() + 4,
-                    abort_selected_width = abort_selected_action.length() + 4,
-                    button_height = 3;
-            point abort_all_pos = window.get_dimensions() - point(abort_all_width, button_height),
-                    abort_selected_pos = abort_all_pos - point(abort_selected_width, 0);
-
-            window::sub menu_wrapper(window, rectangle(0, 0, window.get_dimensions() - point(0, button_height)));
-            window::sub abort_all_wrapper(window, rectangle(abort_all_pos, abort_all_width, button_height));
-            window::sub abort_selected_wrapper(window, rectangle(abort_selected_pos, abort_selected_width, button_height));
-            button abort_all(abort_all_wrapper, abort_all_action);
-            button abort_selected(abort_selected_wrapper, abort_selected_action);
+            int button_height = 3;
             auto download_queue_addressed = download_queue.addressed();
+            
+            window::sub menu_wrapper(window, window.top_left_rectangle(0, -button_height));
             menu::vertical<typename http::download_queue<T2>::addressed_type>
                 menu(menu_wrapper, download_queue_addressed, nullptr, highlight_color);
             menu_ptr = &menu;
 
-            abort_all_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&download_queue]() {
-                for (auto& download : download_queue)
-                    download_queue.abort(download);
-                return true;
-            }));
+            auto make_button_descriptor = [](const string& action, function<bool ()> fn) {
+                return button_group::button_descriptor(action, nullptr, input::instance().mouse_event(BUTTON1_PRESSED, fn));
+            };
 
-            abort_selected_wrapper.set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [&menu, &download_queue]() {
-                T2* selected_download = menu.get_selected_pointer();
-                if (selected_download)
-                    download_queue.abort(*selected_download);
-                return true;
-            }));
+            auto button_descriptors = {
+                make_button_descriptor("Abort all", [&download_queue]() {
+                        for (auto& download : download_queue)
+                            download_queue.abort(download);
+                        return true;
+                    }),
+                make_button_descriptor("Abort selected", [&menu, &download_queue]() {
+                        T2* selected_download = menu.get_selected_pointer();
+                        if (selected_download)
+                            download_queue.abort(*selected_download);
+                        return true;
+                    })
+            };
+            
+            window::sub buttons_wrapper(window, window.bottom_right_rectangle(button_group::get_width(button_descriptors), button_height));
+            button_group buttons(buttons_wrapper, button_descriptors);
 
             input::instance().set_blocking(false);
             download_queue();

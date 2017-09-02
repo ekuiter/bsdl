@@ -143,57 +143,42 @@ string main_app::run_start_window(const rectangle& bounds) {
     stream _stream(start_window);
     _stream << color::get_accent_color() << "Welcome to bsdl!";
     window::sub search_dialog(start_window, rectangle(0, 1, bounds.width - 4, 5));
-    int x = 0;
-    vector<window::sub*> button_wrappers;
-    vector<button*> buttons;
     text_box* text_box;
-    
-    auto make_button = [&start_window, &_stream, &x, &text_box, &button_wrappers, &buttons]
-        (const string& action, function<void ()> fn) {
-        int row = 3, button_width = action.length() + 4;
-        window::sub* button_wrapper = new window::sub(start_window, rectangle(x, row, button_width, 3));
-        button_wrappers.push_back(button_wrapper);
-        buttons.push_back(new button(*button_wrapper, action));
-        if (x > 0)
-            _stream << color(COLOR_WHITE) <<
-                    stream::move(point(x, row))     << stream::ext_char(ACS_TTEE) <<
-                    stream::move(point(x, row + 2)) << stream::ext_char(ACS_BTEE) << stream::refresh();
-        x += button_width - 1;
-		button_wrapper->set_mouse_callback(input::instance().mouse_event(BUTTON1_PRESSED, [fn, &text_box]() {
-			platform::curs_set(0);
-			fn();
-			text_box->refresh();
-			platform::curs_set(1);
-			return true;
-		}));
-    };
 
-    make_button("Options", [this]() {
-            auto modifiable_options = option::get_modifiable_options();
-            option break_option("break", {}, nullptr, nullptr, nullptr, "(Back to main menu)");
-            modifiable_options.insert(modifiable_options.begin(), &break_option);
-            option* last_option = &break_option;
-            while (1) {
-                window::framed options_window(get_centered_bounds());
-                option* option = menu_dialog::run(options_window, "Choose an option to modify:", modifiable_options, last_option, "Choose");
-                if (option == &break_option)
-                    break;
-                if (option)
-                    option->modify();
-                last_option = option;
-            }
-        });
+    auto make_mouse_callback = [&text_box](function<void ()> fn) {
+        return input::instance().mouse_event(BUTTON1_PRESSED, [&text_box, &fn]() {
+                platform::curs_set(0);
+                fn();
+                text_box->refresh();
+                platform::curs_set(1);
+                return true;
+            });
+    };
     
-    make_button("Info", bind(&main_app::version_message, this));
+    button_group::button_descriptor options_button = {
+        "Options", nullptr, make_mouse_callback([this]() {
+                auto modifiable_options = option::get_modifiable_options();
+                option break_option("break", {}, nullptr, nullptr, nullptr, "(Back to main menu)");
+                modifiable_options.insert(modifiable_options.begin(), &break_option);
+                option* last_option = &break_option;
+                while (1) {
+                    window::framed options_window(get_centered_bounds());
+                    option* option = menu_dialog::run(options_window, "Choose an option to modify:", modifiable_options, last_option, "Choose");
+                    if (option == &break_option)
+                        break;
+                    if (option)
+                        option->modify();
+                    last_option = option;
+                }
+            })
+    }, info_button = {
+        "Info", nullptr, make_mouse_callback(bind(&main_app::version_message, this))
+    };
     
-    string series_search = input_dialog::run(search_dialog, "Enter series to search:", "Search",
-            color::get_accent_color(), "", &text_box);
+    window::sub buttons_window(start_window, start_window.bottom_left_rectangle(0, 3));
+    button_group buttons(buttons_window, { options_button, info_button });
     
-    for (auto button : buttons)
-        delete button;
-    for (auto button_wrapper : button_wrappers)
-        delete button_wrapper;
-    return series_search;
+    return input_dialog::run(search_dialog, "Enter series to search:", "Search", color::get_accent_color(), "", &text_box);
 }
 
 vector<aggregators::series*> main_app::search_series() {
