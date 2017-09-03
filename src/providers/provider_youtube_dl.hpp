@@ -15,40 +15,12 @@ namespace providers {
         static void install_youtube_dl() {
             if (youtube_dl_installed)
                 return;
-            
-            try {
-                string version = util::platform::exec("youtube-dl --version");
-                boost::trim(version);
-                cout << "youtube-dl is installed (" << version << ")." << endl;
-            } catch (util::platform::exec_failed) {
+
+            if (!util::platform::print_version("youtube-dl")) {
 #ifdef __MINGW32__
-				throw runtime_error("youtube-dl was not found, install it manually.");
+                throw runtime_error("youtube-dl was not found, install it manually.");
 #elif defined(__APPLE__)
-				try {
-					cout << "Installing youtube-dl ..." << endl;
-					util::platform::exec("brew install youtube-dl");
-				}
-				catch (util::platform::exec_failed) {
-					try {
-						cout << "Installing Homebrew ..." << endl;
-						util::platform::exec("/usr/bin/ruby -e \"$(curl -fsSL "
-							"https://raw.githubusercontent.com/Homebrew/install/master/install)\"");
-						cout << "Homebrew has been installed." << endl;
-						try {
-							cout << "Installing youtube-dl ..." << endl;
-							util::platform::exec("brew install youtube-dl");
-						}
-						catch (util::platform::exec_failed) {
-							throw runtime_error("youtube-dl could not be installed.\nTry again or install it manually.");
-						}
-					}
-					catch (util::platform::exec_failed) {
-						throw runtime_error("Homebrew could not be installed.\nTry again or install it manually.");
-					}
-				}
-                string version = util::platform::exec("youtube-dl --version");
-                boost::trim(version);
-                cout << "youtube-dl has been installed (" << version << ")." << endl;
+                util::platform::brew_install("youtube-dl");
 #else
                 try {
                     cout << "Installing youtube-dl ..." << endl;
@@ -100,7 +72,7 @@ namespace providers {
             install_youtube_dl();
             try {
                 return request::download(
-                    util::platform::exec(string("youtube-dl --get-url ") + _request.get_url())
+                    util::platform::exec(string("youtube-dl --get-url \"") + _request.get_url() + "\"")
                 );
             } catch (util::platform::exec_failed) {
                 update_youtube_dl(_request);

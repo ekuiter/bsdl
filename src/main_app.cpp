@@ -36,12 +36,12 @@ void main_app::version_message() {
     window::framed message_window(get_centered_bounds());
     message_dialog::run(message_window, [&message_window](stream& _stream) {
         _stream.set_wrap(false);
-        _stream << "bsdl 1.10" << endl <<
+        _stream << "bsdl 1.11" << endl <<
                 stream::write(stream::ext_char(ACS_HLINE), message_window.get_bounds().width) <<
                 "Source code: https://github.com/ekuiter/bsdl" << endl;
         _stream.set_wrap(true);
         _stream << "Made with " << stream::colored("<3", color(COLOR_RED)) <<
-                " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json)." << endl <<
+                " (and Boost, curses, curl, curlcpp, gumbo-query, gumbo-parser, nlohmann/json, youtube-dl, PhantomJS)." << endl <<
                 "Compiled for " << stream::colored(util::platform::get_name()) <<
                 " on " << stream::colored(string(__DATE__) + " " + __TIME__) << ".";
     }, "Okay");

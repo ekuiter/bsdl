@@ -22,6 +22,12 @@ namespace http {
         class implementation_base;
         class implementation;
         class download;
+
+        class hook {
+        public:
+            virtual void operator() (request& request) = 0;
+            virtual response operator()(request request, response response) = 0;
+        };
         
         static request idle;
 

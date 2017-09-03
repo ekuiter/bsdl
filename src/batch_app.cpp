@@ -55,7 +55,7 @@ json batch_app::read_json(const string& str) {
     json _json;
     try {
         _json = json::parse(settings["series_search"]);
-        if (!_json.is_array())
+        if (!_json.is_array() || _json.size() == 0)
             throw invalid_json();        
     } catch (std::exception e) {
         throw invalid_json();

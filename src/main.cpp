@@ -2,6 +2,8 @@
 #include "main_app.hpp"
 #include "json_app.hpp"
 #include "batch_app.hpp"
+#include "http/client.hpp"
+#include "util/cloudflare_hook.hpp"
 
 using namespace std;
 
@@ -38,6 +40,11 @@ int main(int argc, char* argv[]) {
     choose_terminal().run([argc, argv, &error]() {
         if (error != "")
             throw runtime_error(error);
+
+        http::client::instance().
+            set_timeout(stoi(settings::get("timeout"))).
+            add_hook(&util::cloudflare_hook::instance());
+        
         app& app = choose_app();
         app.initialize();
         vector<aggregators::series*> search_results = app.search_series();

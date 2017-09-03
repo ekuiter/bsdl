@@ -14,6 +14,7 @@ using namespace std;
 namespace http {
     class client {
         request::callback _callback;
+        vector<request::hook*> hooks;
         bool verbose;
         int timeout = 60;
 
@@ -43,6 +44,15 @@ namespace http {
 
         client& set_timeout(int _timeout) {
             timeout = _timeout;
+            return *this;
+        }
+
+        vector<request::hook*>& get_hooks() {
+            return hooks;
+        }
+
+        client& add_hook(request::hook* hook) {
+            hooks.push_back(hook);
             return *this;
         }
 

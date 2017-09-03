@@ -44,10 +44,14 @@ namespace http {
     response request::operator()() const {
         if (host == "<idle>")
             return response();
+        for (auto hook : client::instance().get_hooks())
+            (*hook)(const_cast<request&>(*this));
         log();
         create_implementation().perform();
         response _response = _implementation->read_response();
         destroy_implementation();
+        for (auto hook : client::instance().get_hooks())
+            _response = (*hook)(*this, _response);
         return _response;
     }
 

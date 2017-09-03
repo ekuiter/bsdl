@@ -27,11 +27,6 @@ namespace http {
             curl.add<CURLOPT_TIMEOUT>(timeout);
         }
 
-        curl_header header;
-        for (auto& header_pair : _request.get_headers())
-            header.add(header_pair.first + ": " + header_pair.second);
-        curl.add<CURLOPT_HTTPHEADER>(header.get());
-
         if (_request.get_method() == request::method::POST)
             curl.add<CURLOPT_COPYPOSTFIELDS>(static_cast<string>(_request.get_fields()).c_str());
     }
@@ -39,6 +34,11 @@ namespace http {
     bool client::perform(const request& _request) const {
         curl_easy& curl = _request.get_implementation().get_curl();
         request::callback _callback = _request.get_callback();
+
+        curl_header header;
+        for (auto& header_pair : _request.get_headers())
+            header.add(header_pair.first + ": " + header_pair.second);
+        curl.add<CURLOPT_HTTPHEADER>(header.get());
 
         try {
             _callback(request::status::BEGIN, _request, 0, 0, nullptr);

@@ -18,7 +18,7 @@ set<string> settings_base::allowed_settings = {"series_search", "output_files_di
     "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
     "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
     "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
-    "timeout", "app"};
+    "timeout", "app", "cloudflare_sel", "cloudflare_user_agent"};
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>

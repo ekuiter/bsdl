@@ -167,4 +167,49 @@ namespace util {
 	@TODO
 #endif
     }
+
+    bool platform::print_version(const string& formula) {
+        try {
+            string version = exec(formula + " --version");
+            boost::trim(version);
+            cout << formula << " is installed (" << version << ")." << endl;
+            return true;
+        } catch (exec_failed) {
+            return false;
+        }
+    }
+
+    void platform::brew_install(const string& formula) {
+#ifdef __MINGW32__
+            throw runtime_error("homebrew is only available on macOS");
+#elif defined(__APPLE__)
+            try {
+                cout << "Installing " << formula << " ..." << endl;
+                exec(string("brew install ") + formula);
+            }
+            catch (exec_failed) {
+                try {
+                    cout << "Installing Homebrew ..." << endl;
+                    exec("/usr/bin/ruby -e \"$(curl -fsSL "
+                                         "https://raw.githubusercontent.com/Homebrew/install/master/install)\"");
+                    cout << "Homebrew has been installed." << endl;
+                    try {
+                        cout << "Installing " << formula << " ..." << endl;
+                        exec(string("brew install ") + formula);
+                    }
+                    catch (exec_failed) {
+                        throw runtime_error(formula + " could not be installed.\nTry again or install it manually.");
+                    }
+                }
+                catch (exec_failed) {
+                    throw runtime_error("Homebrew could not be installed.\nTry again or install it manually.");
+                }
+            }
+            string version = exec(formula + " --version");
+            boost::trim(version);
+            cout << formula << " is installed (" << version << ")." << endl;
+#else
+            throw runtime_error("homebrew is only available on macOS");
+#endif
+    }
 }

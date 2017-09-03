@@ -34,7 +34,7 @@ namespace util {
                     menu_ptr->toggle_all();
                     return true;
                 }));
-        button_descriptors.push_back(make_button_descriptor("Start download", 's', [menu_ptr, &fn]() {
+        button_descriptors.push_back(make_button_descriptor("Start download", 's', [menu_ptr, fn]() {
                     return fn(menu_ptr->get_marked_pointers());
                 }));
         

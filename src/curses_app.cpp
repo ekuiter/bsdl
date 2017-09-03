@@ -22,8 +22,7 @@ curses_app::curses_app():
 
     using namespace placeholders;
     terminal.get_input().register_keyboard_callback(bind(&curses_app::keyboard_callback, this, _1));
-    http::client::instance().set_callback(bind(&curses_app::http_callback, this, _1, _2, _3, _4, _5)).
-        set_timeout(stoi(settings::get("timeout")));
+    http::client::instance().set_callback(bind(&curses_app::http_callback, this, _1, _2, _3, _4, _5));
 
     set_title("bsdl");
     cout << "bsdl initialized (" << terminal.get_locale() << ")." << endl;

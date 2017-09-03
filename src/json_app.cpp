@@ -12,7 +12,6 @@ void json_app::initialize() {
         terminal.get_stream(clog).set_log_file(&log_file);
     }
 
-    http::client::instance().set_timeout(stoi(settings::get("timeout")));
     set_title("bsdl");
     clog << "bsdl initialized in json mode." << endl
          << endl << "Settings:" << endl << settings << endl;

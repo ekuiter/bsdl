@@ -8,14 +8,7 @@
 
 using namespace curses;
 
-namespace aggregators {
-    static bool start_download(const vector<episode*>& episodes) {
-        aggregators::download_selection _download_selection;
-        _download_selection.add(episodes);
-        app::instance().download_episodes(_download_selection);
-        return true;
-    }
-    
+namespace aggregators {    
     season_view::season_view(season& _season, window& window) {
         stringstream s;
         s << "Loading " << _season << " ...";
@@ -23,6 +16,13 @@ namespace aggregators {
         _stream << stream::write_centered(s.str()) << stream::refresh();
         _season.load();
         _stream << stream::clear();
+
+        auto start_download = [](const vector<episode*>& episodes) {
+            aggregators::download_selection _download_selection;
+            _download_selection.add(episodes);
+            app::instance().download_episodes(_download_selection);
+            return true;
+        };
 
         util::make_download_menu(window, menu_wrapper, buttons_wrapper, menu, buttons, _season, start_download, {
                 util::make_button_descriptor("Copy URI", 'u', []() {
