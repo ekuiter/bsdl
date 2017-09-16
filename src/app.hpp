@@ -37,4 +37,8 @@ public:
     virtual void display_series(aggregators::series& series) = 0;
     virtual void download_episodes(aggregators::download_selection& download_selection) = 0;
     virtual bool is_testing() = 0;
+    
+    virtual bool confirm(const string&, bool result) {
+        return result;
+    }
 };

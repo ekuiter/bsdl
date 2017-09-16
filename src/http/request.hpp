@@ -25,7 +25,7 @@ namespace http {
 
         class hook {
         public:
-            virtual void operator() (request& request) = 0;
+            virtual void operator()(request& request) = 0;
             virtual response operator()(request request, response response) = 0;
         };
         
@@ -69,7 +69,7 @@ namespace http {
             return *this;
         }
 
-        const bool get_https() const noexcept {
+        bool get_https() const noexcept {
             return https;
         }
 
@@ -78,7 +78,7 @@ namespace http {
             return *this;
         }
 
-        const method get_method() const noexcept {
+        method get_method() const noexcept {
             return _method;
         }
 

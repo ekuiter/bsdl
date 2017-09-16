@@ -19,14 +19,14 @@ namespace curses {
 
             if (read_mouse && ch == KEY_MOUSE) {
                 MEVENT e;
-				platform::getmouse(&e);
+                platform::getmouse(&e);
                 for (auto& callback_pair : get_enabled_callbacks(mouse_callbacks))
                     result = result ? process_mouse_event(callback_pair, e) : false;
             } else if (ch != KEY_MOUSE) {
                 for (auto& callback_pair : get_enabled_callbacks(keyboard_callbacks))
                     result = result ? callback_pair.second(ch) : false;
-                if (keyboard_callbacks[nullptr])
-                    result = result ? keyboard_callbacks[nullptr](ch) : false;
+                for (auto& callback : global_keyboard_callbacks)
+                    result = result ? callback(ch) : false;
             }
 
             return result;

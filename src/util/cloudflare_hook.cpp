@@ -1,6 +1,7 @@
 #include "cloudflare_hook.hpp"
 #include "platform.hpp"
 #include "../settings.hpp"
+#include "../app.hpp"
 
 namespace util {
     static bool install_phantomjs() {
@@ -31,8 +32,10 @@ namespace util {
     
     string cloudflare_hook::fetch_clearance(http::request& request) {
         if (!has_clearance(request)) {
+            if (!app::instance().confirm("Cloudflare protection detected, bypass it?", true))
+                return "";
+            
             if (install_phantomjs()) {
-                cout << "Cloudflare protection detected, wait a few seconds ..." << endl;
                 try {
                     string script_file_name = settings::instance().resource_file("cloudflare_hook.js");
                     if (!boost::filesystem::exists(script_file_name))
@@ -66,7 +69,7 @@ namespace util {
             if (is_running_hook) {
                 cerr << "Cloudflare challenge failed." << endl;
                 return response;
-            }
+            }            
             modify_request(request);
             if (has_clearance(request)) {
                 is_running_hook = true;

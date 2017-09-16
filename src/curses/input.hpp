@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 #include <functional>
 #include <curses.h>
 #include "exception.hpp"
@@ -23,6 +24,7 @@ namespace curses {
 
         keyboard_callback_map keyboard_callbacks;
         mouse_callback_map mouse_callbacks;
+        vector<keyboard_callback> global_keyboard_callbacks;
         bool blocking;
 
         input(): blocking(true) {}
@@ -39,9 +41,7 @@ namespace curses {
         }
 
         void register_keyboard_callback(keyboard_callback _keyboard_callback) {
-            if (keyboard_callbacks[nullptr])
-                throw exception("only one global keyboard callback allowed");
-            keyboard_callbacks[nullptr] = _keyboard_callback;
+            global_keyboard_callbacks.push_back(_keyboard_callback);
         }
 
         void register_keyboard_callback(window& window, keyboard_callback _keyboard_callback) {

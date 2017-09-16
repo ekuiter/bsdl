@@ -27,7 +27,7 @@ namespace curses {
     public:
         get(point& _p, coord coord = coord::STD): p(_p), _coord(coord) {}
 
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             if (_coord == coord::STD)
                 getyx(window::dereference(window), p.y, p.x);
             if (_coord == coord::BEG)
@@ -62,7 +62,7 @@ namespace curses {
     public:
         back(int length = 1): step_modifier(length) {}
 
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             modify(window,
                    [](const rectangle& bounds) {
                        return bounds.p.x - 1 >= 0 ? bounds.p.x - 1 : bounds.width - 1;
@@ -76,7 +76,7 @@ namespace curses {
     public:
         advance(int length = 1): step_modifier(length) {}
 
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             modify(window,
                    [](const rectangle& bounds) {
                        return bounds.p.x + 1 < bounds.width ? bounds.p.x + 1 : 0;
@@ -93,7 +93,7 @@ namespace curses {
     public:
         move(const point& _p): p(_p) {}
 
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             if (p.y == -1) {
                 point tmp_p;
                 get((point&) tmp_p)(window);
@@ -109,7 +109,7 @@ namespace curses {
     public:
         ext_char(chtype _c): c(_c) {}
 
-        void operator()(window* window, stream* stream) const override {
+        void operator()(window*, stream* stream) const override {
             if (stream)
                 stream->dstbuf.print(c);
         }
@@ -200,7 +200,7 @@ namespace curses {
         write_attribute(chtype _attribute, const color& color, int _length = -1):
                 attribute(_attribute), _color(color), length(_length) {}
 
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             wchgat(window::dereference(window), length, attribute, _color.get_id(), nullptr);
         }
     };
@@ -212,7 +212,7 @@ namespace curses {
     public:
         colored(const string& _text, const class color& _color = color::get_accent_color()): text(_text), color(_color) {}
 
-        void operator()(window* window, stream* stream) const override {
+        void operator()(window*, stream* stream) const override {
             if (stream)
                 *stream << color << text << color::previous;
         }
@@ -220,7 +220,7 @@ namespace curses {
 
     class stream::allow_wrap : public modifier {
     public:
-        void operator()(window* window, stream* stream) const override {
+        void operator()(window*, stream* stream) const override {
             if (stream)
                 stream->dstbuf.allow_wrap();
         }
@@ -232,7 +232,7 @@ namespace curses {
     public:
         attribute(chtype attribute): _attribute(attribute) {}
 
-        void operator()(window* window, stream* stream) const override {
+        void operator()(window*, stream* stream) const override {
             if (stream)
                 stream->set_attribute(_attribute);
         }
@@ -240,14 +240,14 @@ namespace curses {
 
     class stream::refresh : public modifier {
     public:
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             wrefresh(window::dereference(window));
         }
     };
 
     class stream::clear : public modifier {
     public:
-        void operator()(window* window, stream* stream = nullptr) const override {
+        void operator()(window* window, stream* = nullptr) const override {
             wclear(window::dereference(window));
         }
     };

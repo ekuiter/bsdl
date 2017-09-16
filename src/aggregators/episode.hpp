@@ -26,8 +26,8 @@ namespace aggregators {
         
         episode(const string& _series_title, const int _season_number, const int _number, const video_file_map& _video_files,
                     const http::request& _request):
-                    series_title(_series_title), season_number(_season_number), number(_number), skipped_video_files(0),
-                    video_files(_video_files), error_logged(false), request(_request), loaded(false) {}
+                    video_files(_video_files), series_title(_series_title), season_number(_season_number), number(_number),
+                    skipped_video_files(0), error_logged(false), request(_request), loaded(false) {}
         
     public:
         class download;

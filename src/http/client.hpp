@@ -19,7 +19,7 @@ namespace http {
         int timeout = 60;
 
         client():
-                _callback([](request::status, const request&, curl_off_t, curl_off_t, curl::curl_easy_exception* e) { return 0; }),
+                _callback([](request::status, const request&, curl_off_t, curl_off_t, curl::curl_easy_exception*) { return 0; }),
                 verbose(false) {}
 
     public:

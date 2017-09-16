@@ -79,7 +79,7 @@ namespace providers {
             return "unknown";
         }
 
-        http::request::download fetch(const http::request& request) const override {
+        http::request::download fetch(const http::request&) const override {
             log_error();
             return http::request::download();
         }

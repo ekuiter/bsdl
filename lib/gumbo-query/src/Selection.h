@@ -47,14 +47,14 @@ class CSelection: public CObject
 
 		size_t nodeNum();
 
-		CSelection assertNum(const int num, const std::string& file, int line) {
+		CSelection assertNum(size_t num, const std::string& file, int line) {
 			if (nodeNum() != num)
 				throw std::runtime_error(std::string("selection has ") + std::to_string(nodeNum()) +
                                                          " nodes instead of " + std::to_string(num) + " at " + file + ":" + std::to_string(line));
 			return *this;
 		}
 
-		CSelection assertAtLeast(const int num, const std::string& file, int line) {
+		CSelection assertAtLeast(size_t num, const std::string& file, int line) {
 			if (nodeNum() < num)
 				throw std::runtime_error(std::string("selection has ") + std::to_string(nodeNum()) +
                                                          " nodes instead of at least " + std::to_string(num) + " at " + file + ":" + std::to_string(line));

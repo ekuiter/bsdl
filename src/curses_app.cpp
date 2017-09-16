@@ -89,3 +89,15 @@ int curses_app::http_callback(http::request::status status, const http::request&
     terminal.get_stream(cout).set_visible(old_visible);
     return 0;
 }
+
+bool curses_app::confirm(const string& msg, bool result) {
+    cout << msg << " (press " << stream::colored("y") << " or " << stream::colored("n") << ")" << endl;
+    while (curses::input::instance().read([&result](int ch) {
+                if (ch == 'y' || ch == 'n') {
+                    result = ch == 'y';
+                    return false;
+                }
+                return true;
+            }));
+    return result;
+}

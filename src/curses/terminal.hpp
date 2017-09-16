@@ -67,7 +67,7 @@ namespace curses {
             return locale;
         }
 
-        void with_output(ostream& _stream, function<void ()> fn) override {
+        void with_output(ostream&, function<void ()>) override {
             throw runtime_error("calling unimplemented main_terminal::with_output");
         }
     };

@@ -29,4 +29,6 @@ public:
         return rectangle(width == -1 ? (COLS - status_width) * quarters / 4 : width,
                   height == -1 ? LINES * quarters / 4 : height).center(rectangle::get_screen(), status_width);
     }
+
+    bool confirm(const string& msg, bool result) override;
 };
