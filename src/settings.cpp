@@ -81,6 +81,12 @@ ostream& operator<<(ostream& stream, settings_base& settings) {
     return stream;
 }
 
+void settings_base::set(const string& key, const string& value) {
+    if ((key == "output_files_directory" || key == "rename_files_directory") && !boost::filesystem::exists(value))
+        throw runtime_error(string("directory \"") + value + "\" does not exist");
+    (*this)[key] = value;
+}
+
 template<typename T, typename U>
 void settings_base::validate_usage(const vector<string>& args, int& i, int first_arg, T is_arg, U next_arg) {
     for (i = first_arg; i < args.size(); i++) {
@@ -140,7 +146,7 @@ void settings_base::read(const vector<string>& args) {
     };
 
     (*this)["app"] = "main";
-    (*this)["output_files_directory"] = ".";
+    set("output_files_directory", ".");
     (*this)["log_file"] = default_log_file();
 
     option::setup_options();
@@ -151,6 +157,11 @@ void settings_base::read(const vector<string>& args) {
     if (first_arg == 2)
         (*this)["series_search"] = args[1];
     process_args(args, i, first_arg, is_arg, next_arg);
+
+    if ((*this)["output_files_directory"] != "")
+        set("output_files_directory", (*this)["output_files_directory"]);
+    if ((*this)["rename_files_directory"] != "")
+        set("rename_files_directory", (*this)["rename_files_directory"]);
 
     update_preferred_aggregators();
     update_preferred_providers();

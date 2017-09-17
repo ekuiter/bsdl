@@ -66,6 +66,8 @@ public:
         return settings_map[key];
     }
 
+    void set(const string& key, const string& value);
+
     bool is_set(const string& key) {
         return settings_map[key] != "";
     }

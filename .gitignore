@@ -14,3 +14,4 @@ Makefile
 nbproject/
 static/
 *.log
+src/.dir-locals.el

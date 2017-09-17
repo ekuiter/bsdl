@@ -55,8 +55,12 @@ static string modify_setting(const string& setting, const string& prompt, bool r
     do {
         {
             window::framed input_window(MODIFY_BOUNDS);
-            settings[setting] = input_dialog::run(input_window, prompt, "Save", color::get_accent_color(),
-                                                  settings[setting], nullptr, true);
+            try {
+                settings.set(setting, input_dialog::run(input_window, prompt, "Save", color::get_accent_color(),
+                                                        settings[setting], nullptr, true));
+            } catch (runtime_error e) {
+                cerr << e.what() << endl;
+            }
         }
         boost::trim(settings[setting]);
         if (retry && !settings.is_set(setting))
@@ -109,13 +113,13 @@ void option::setup_options() {
         MODIFIABLE_OPTION_ARG1(subtitle, subtitle, {}, settings.preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle)),
                                modify_subtitles, "Preferred subtitles"),
         
-        MODIFIABLE_OPTION_ARG1(output-files, directory, {}, settings["output_files_directory"] = directory, modify_output_files, "Output directory"),
+        MODIFIABLE_OPTION_ARG1(output-files, directory, {}, settings.set("output_files_directory", directory), modify_output_files, "Output directory"),
         MODIFIABLE_OPTION_ARG2(rename-files, directory, pattern, {}, {
-                settings["rename_files_directory"] = directory;
+                settings.set("rename_files_directory", directory);
                 settings["rename_files_pattern"] = pattern;
             }, modify_rename_files, "Rename files"),
-        OPTION_ARG1(rename-files, directory, {}, settings["rename_files_directory"] = directory),
-        OPTION_ARG0(rename-files, {}, settings["rename_files_directory"] = "."),
+        OPTION_ARG1(rename-files, directory, {}, settings.set("rename_files_directory", directory)),
+        OPTION_ARG0(rename-files, {}, settings.set("rename_files_directory", ".")),
 
         OPTION_ARG1(log-file, file, {}, settings["log_file"] = file),
         OPTION_ARG0(log-file, {}, IN_MODE(json, settings["action"] = "show-log")),
