@@ -15,6 +15,7 @@ namespace aggregators {
         class episode::file : public aggregators::episode::file {
         public:
             using aggregators::episode::file::file;
+            file(series& _series, const string& _old_file_name, string pattern_str);
 
             string get_file_name() const override;
         };

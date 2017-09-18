@@ -15,9 +15,10 @@ namespace aggregators {
     protected:
         string old_file_name;
         mutable string file_name;
-        const episode* _episode;
+        const episode* _episode = nullptr;
         
-        static bool similar_file_exists(const string& file_name);
+        static bool similar_file_exists(const string& file_name, const string& series_title);
+        file(const string& _old_file_name): old_file_name(_old_file_name) {}
 
     public:
         file(const episode& episode): _episode(&episode) {}

@@ -22,7 +22,7 @@ namespace aggregators {
                 file_name = bs_episode->get_series_title() + " " + bs_episode->get_id() + " " + title + counter;
                 for (auto special_char : "<>:\"/\\|?*")
                     replace(file_name.begin(), file_name.end(), special_char, '_');
-            } while (similar_file_exists(file_name));
+            } while (similar_file_exists(file_name, bs_episode->get_series_title()));
             
             return file_name;
         }

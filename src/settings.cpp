@@ -6,19 +6,20 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-set<string> settings_base::allowed_settings = {"series_search", "output_files_directory", "rename_files_directory",
-    "rename_files_pattern", "action", "log_file", "config_file", "bs_root_url", "bs_search_path",
-    "bs_series_sel", "bs_season_sel", "bs_episode_sel", "bs_video_file_sel", "bs_movies_text",
-    "kx_root_url", "kx_search_path", "kx_series_sel", "kx_title_sel", "kx_language_sel", "kx_season_sel",
-    "kx_mirror_by_episode_path", "kx_mirror_path", "kx_season_param", "kx_episode_param", "kx_video_file_sel",
-    "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx", "aggregator_mk",
-    "mk_root_url", "mk_search_path", "mk_series_sel", "mk_title_sel", "mk_language_sel", "mk_season_sel", "mk_episode_sel",
-    "mk_video_file_sel", "mk_video_file_title_sel", "mk_video_file_url_sel", "mk_video_file_script_sel", "mk_exclude_regex",
-    "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src", "aggregator_pr",
-    "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
-    "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
-    "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
-    "timeout", "app", "cloudflare_sel", "cloudflare_user_agent"};
+set<string> settings_base::allowed_settings =
+    {"series_search", "output_files_directory", "rename_files_directory",
+     "rename_files_pattern", "action", "log_file", "config_file", "bs_root_url", "bs_search_path",
+     "bs_series_sel", "bs_season_sel", "bs_episode_sel", "bs_video_file_sel", "bs_movies_text",
+     "kx_root_url", "kx_search_path", "kx_series_sel", "kx_title_sel", "kx_language_sel", "kx_season_sel",
+     "kx_mirror_by_episode_path", "kx_mirror_path", "kx_season_param", "kx_episode_param", "kx_video_file_sel",
+     "kx_stream_key", "kx_replacement_key", "providers", "aggregators", "aggregator_bs", "aggregator_kx", "aggregator_mk",
+     "mk_root_url", "mk_search_path", "mk_series_sel", "mk_title_sel", "mk_language_sel", "mk_season_sel", "mk_episode_sel",
+     "mk_video_file_sel", "mk_video_file_title_sel", "mk_video_file_url_sel", "mk_video_file_script_sel", "mk_exclude_regex",
+     "mk_video_file_script_regex", "mk_video_file_movie_regex", "mk_english_src", "mk_german_src", "aggregator_pr",
+     "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
+     "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
+     "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
+     "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode" };
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>
@@ -178,4 +179,15 @@ string settings_base::default_config_file() {
 
 string settings_base::default_log_file() {
     return resource_file("bsdl.log");
+}
+
+string settings_base::output_files_directory(const string& series_title) {
+    using namespace boost::filesystem;
+    path directory = (*this)["output_files_directory"];
+    if ((*this)["output_files_mode"] == "subdirectories" && series_title != "") {
+        directory /= series_title;
+        if (!exists(directory) && !create_directory(directory))
+            throw runtime_error(string("directory \"") + directory.string() + "\" could not be created");
+    }
+    return directory.string();
 }

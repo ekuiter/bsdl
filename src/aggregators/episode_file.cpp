@@ -9,9 +9,9 @@ namespace aggregators {
     episode::file::file(series& _series, const string& _old_file_name, string pattern_str):
             old_file_name(_old_file_name), _episode(nullptr) {
         if (pattern_str == "" || pattern_str == "default")
-            pattern_str = "(\\d+)\\.(\\d{2})";
+            pattern_str = " (\\d+)\\.(\\d+)";
         if (pattern_str == "SxxExx")
-            pattern_str = "S(\\d{2})E(\\d{2})";
+            pattern_str = " S(\\d+)E(\\d+)";
         regex pattern(pattern_str);
         smatch results;
 
@@ -22,9 +22,9 @@ namespace aggregators {
         _episode = (*_series[season_number])[number];
     }
     
-    bool episode::file::similar_file_exists(const string& file_name) {
+    bool episode::file::similar_file_exists(const string& file_name, const string& series_title) {
         directory_iterator end_it;
-        for (directory_iterator it(settings::get("output_files_directory")); it != end_it; it++)
+        for (directory_iterator it(settings::instance().output_files_directory(series_title)); it != end_it; it++)
             if (is_regular_file(it->status()) && it->path().filename().string().find(file_name) != string::npos)
                 return true;
         return false;

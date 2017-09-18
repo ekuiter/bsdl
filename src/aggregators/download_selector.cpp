@@ -67,7 +67,7 @@ namespace aggregators {
     }
 
     download_selector::episode_set download_selector::new_episodes::get_episodes(aggregators::series& _series) const {
-        download_selector::episode_set downloaded_episodes = get_downloaded_episodes(_series, settings::get("output_files_directory"));
+        download_selector::episode_set downloaded_episodes = get_downloaded_episodes(_series, settings::instance().output_files_directory(_series.get_title()));
         return get_new_episodes(_series, downloaded_episodes);
     }
 }

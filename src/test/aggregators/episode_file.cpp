@@ -1,9 +1,16 @@
 #include "test_util.hpp"
 
-struct episode_file_fixture : public series_fixture {
+struct episode_file_fixture : public aggregator_fixture {
+    aggregators::series& series;
     unique_ptr<aggregators::episode::file> episode_file;
+
+    episode_file_fixture(): series(any_series()), episode_file(any_episode_file()) {}
     
-    episode_file_fixture(): episode_file(any_episode_file()) {}
+    aggregators::series& any_series() {
+        string series_search;
+        vector<aggregators::series*> search_results = bs_aggregator().search_internal(series_search = bs_series());
+        return get_series_from_results(search_results, series_search, "bs");
+    }
     
     unique_ptr<aggregators::episode::file> any_episode_file() {
         for (aggregators::season* season : series)
