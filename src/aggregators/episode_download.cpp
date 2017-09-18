@@ -37,7 +37,7 @@ namespace aggregators {
 
         using namespace placeholders;
         download_request
-            .set_file_name(get_file_path(settings::instance().output_files_directory(_episode.get_series_title())) + "." + provider->get_file_format())
+            .set_file_name(get_file_path(settings::instance().output_files_directory(_episode.get_series_title(), true)) + "." + provider->get_file_format())
                 .set_callback(bind(&download::http_callback, this, _1, _2, _3, _4, _5));
         loaded = true;
         return download_request;

@@ -53,6 +53,9 @@ namespace aggregators {
         directory_iterator end_it;
         download_selector::episode_set downloaded_episodes;
         string title = _series.get_title();
+        if (!exists(directory))
+            return downloaded_episodes;
+        
         for (directory_iterator it(directory); it != end_it; it++)
             if (is_regular_file(it->status())) {
                 try {

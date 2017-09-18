@@ -24,7 +24,10 @@ namespace aggregators {
     
     bool episode::file::similar_file_exists(const string& file_name, const string& series_title) {
         directory_iterator end_it;
-        for (directory_iterator it(settings::instance().output_files_directory(series_title)); it != end_it; it++)
+        string directory = settings::instance().output_files_directory(series_title);
+        if (!exists(directory))
+            return false;
+        for (directory_iterator it(directory); it != end_it; it++)
             if (is_regular_file(it->status()) && it->path().filename().string().find(file_name) != string::npos)
                 return true;
         return false;

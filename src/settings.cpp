@@ -181,12 +181,12 @@ string settings_base::default_log_file() {
     return resource_file("bsdl.log");
 }
 
-string settings_base::output_files_directory(const string& series_title) {
+string settings_base::output_files_directory(const string& series_title, bool may_create) {
     using namespace boost::filesystem;
     path directory = (*this)["output_files_directory"];
     if ((*this)["output_files_mode"] == "subdirectories" && series_title != "") {
         directory /= series_title;
-        if (!exists(directory) && !create_directory(directory))
+        if (may_create && !exists(directory) && !create_directory(directory))
             throw runtime_error(string("directory \"") + directory.string() + "\" could not be created");
     }
     return directory.string();

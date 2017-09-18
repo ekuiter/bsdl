@@ -97,7 +97,7 @@ public:
     string resource_file(const string& filename);
     string default_config_file();
     string default_log_file();
-    string output_files_directory(const string& series_title);
+    string output_files_directory(const string& series_title, bool may_create = false);
     
     friend ostream& operator<<(ostream& stream, settings_base& settings);
     friend class option;
