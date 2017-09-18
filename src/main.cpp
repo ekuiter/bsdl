@@ -2,13 +2,14 @@
 #include "main_app.hpp"
 #include "json_app.hpp"
 #include "batch_app.hpp"
+#include "monitor_app.hpp"
 #include "http/client.hpp"
 #include "util/cloudflare_hook.hpp"
 
 using namespace std;
 
 static terminal& choose_terminal() {
-    if (settings::get("app") == "main" || settings::get("app") == "batch")
+    if (settings::get("app") == "main" || settings::get("app") == "batch" || settings::get("app") == "monitor")
         return curses::main_terminal::reset_instance(setlocale(LC_ALL, ""));
     else if (settings::get("app") == "json")
         return curses::terminal::instance();
@@ -23,6 +24,8 @@ static app& choose_app() {
         return json_app::instance();
     else if (settings::get("app") == "batch")
         return batch_app::instance();
+    else if (settings::get("app") == "monitor")
+        return monitor_app::instance();
     else
         throw runtime_error("invalid app type");
 }

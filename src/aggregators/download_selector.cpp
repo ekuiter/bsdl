@@ -38,14 +38,16 @@ namespace aggregators {
     static download_selector::episode_set get_new_episodes(aggregators::series& _series, download_selector::episode_set& downloaded_episodes) {
         download_selector::episode_set new_episodes;
         aggregators::episode* start_episode = downloaded_episodes.empty() ? nullptr : *downloaded_episodes.begin();
+        int start_season = start_episode ? start_episode->get_season_number() : 0;
         bool saw_start_episode = start_episode ? false : true;
         for (auto season : _series)
-            for (auto episode : *season) {
-                if (saw_start_episode && downloaded_episodes.find(episode) == downloaded_episodes.end())
-                    new_episodes.insert(episode);
-                if (episode == start_episode)
-                    saw_start_episode = true;
-            }
+            if (season->get_number() >= start_season)
+                for (auto episode : *season) {
+                    if (saw_start_episode && downloaded_episodes.find(episode) == downloaded_episodes.end())
+                        new_episodes.insert(episode);
+                    if (episode == start_episode)
+                        saw_start_episode = true;
+                }
         return new_episodes;
     }
 

@@ -19,7 +19,7 @@ set<string> settings_base::allowed_settings =
      "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
      "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
      "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
-     "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode" };
+     "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode", "monitor_file" };
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>
@@ -149,6 +149,7 @@ void settings_base::read(const vector<string>& args) {
     (*this)["app"] = "main";
     set("output_files_directory", ".");
     (*this)["log_file"] = default_log_file();
+    (*this)["monitor_file"] = default_monitor_file();
 
     option::setup_options();
     validate_usage(args, i, first_arg, is_arg, next_arg);
@@ -179,6 +180,10 @@ string settings_base::default_config_file() {
 
 string settings_base::default_log_file() {
     return resource_file("bsdl.log");
+}
+
+string settings_base::default_monitor_file() {
+    return resource_file("bsdlmon.cfg");
 }
 
 string settings_base::output_files_directory(const string& series_title, bool may_create) {

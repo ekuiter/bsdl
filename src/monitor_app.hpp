@@ -2,18 +2,17 @@
 
 #include "curses_app.hpp"
 
-class batch_app : public curses_app {
+class monitor_app : public curses_app {
     vector<aggregators::series*> search_results;
     aggregators::series* current_series = nullptr;
-    unordered_map<string, pair<aggregators::series*, aggregators::download_selection>> all_series;
     
-    batch_app() {}
+    monitor_app() {}
 
 public:
-    static batch_app& instance() {
+    static monitor_app& instance() {
         if (!_instance)
-            _instance.reset(new batch_app());
-        return dynamic_cast<batch_app&>(*_instance);
+            _instance.reset(new monitor_app());
+        return dynamic_cast<monitor_app&>(*_instance);
     }
 
     bool is_testing() override {
@@ -31,9 +30,8 @@ public:
     }
 
     void initialize() override;
-    nlohmann::json read_json(const string& str);
-    void fetch_all_series(nlohmann::json _json);
-    vector<aggregators::episode*> fetch_all_episodes();
+    vector<string> fetch_monitored_series(const string& monitor_file_name);
+    vector<aggregators::episode*> fetch_monitored_episodes(vector<string> monitored_series);
 
     THROW_UNIMPLEMENTED(vector<aggregators::series*>&, get_search_results, () const);
     THROW_UNIMPLEMENTED(string&, get_series_search, () const);

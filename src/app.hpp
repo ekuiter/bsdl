@@ -41,4 +41,7 @@ public:
     virtual bool confirm(const string&, bool result) {
         return result;
     }
+
+    void cache_ids(aggregators::series& series, vector<aggregators::episode*> episodes);
+    void download_menu_then_exit(vector<aggregators::episode*> episodes);
 };

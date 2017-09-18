@@ -131,6 +131,8 @@ void option::setup_options() {
         OPTION_ARG0(version, {}, settings["action"] = "version"),
         OPTION_ARG0(json, {}, IN_MODE(json,)),
         OPTION_ARG0(batch, {}, IN_MODE(batch,)),
+        OPTION_ARG1(monitor, file, {}, IN_MODE(monitor, settings["monitor_file"] = file)),
+        OPTION_ARG0(monitor, {}, IN_MODE(monitor,)),
         OPTION_ARG1(test, tests, {}, IN_MODE(json, settings["action"] = tests)),
         OPTION_ARG0(test, {}, IN_MODE(json, settings["action"] = "test")),
         OPTION_ARG0(uri, {}, IN_MODE(json, settings["action"] = "uri"))
