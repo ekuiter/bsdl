@@ -1,7 +1,6 @@
 #include "pr.hpp"
 #include "exception.hpp"
 #include "../../curses/terminal.hpp"
-#include "../../util/string_similarity.hpp"
 #include "../../settings.hpp"
 #include <algorithm>
 #include <functional>

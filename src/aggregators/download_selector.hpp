@@ -34,19 +34,14 @@ namespace aggregators {
         class season;
         class episode;
         class latest_episode;
+        class new_episodes;
     };
 
     class download_selector::series : public download_selector {
     public:
         series() {}
 
-        episode_set get_episodes(aggregators::series& _series) const override {
-            episode_set episodes;
-            for (auto season : _series)
-                for (auto episode : *season)
-                    episodes.insert(episode);
-            return episodes;
-        }
+        episode_set get_episodes(aggregators::series& _series) const override;
 
         operator string() const override {
             return "series";
@@ -59,12 +54,7 @@ namespace aggregators {
     public:
         season(int _season_number): season_number(_season_number) {}
 
-        episode_set get_episodes(aggregators::series& _series) const override {
-            episode_set episodes;
-            for (auto episode : *_series[season_number])
-                episodes.insert(episode);
-            return episodes;
-        }
+        episode_set get_episodes(aggregators::series& _series) const override;
 
         operator string() const override {
             return string("season(") + to_string(season_number) + ")";
@@ -78,9 +68,7 @@ namespace aggregators {
         episode(aggregators::episode* episode): season_number(episode->get_season_number()), number(episode->get_number()) {}
         episode(int _season_number, int _number): season_number(_season_number), number(_number) {}
 
-        episode_set get_episodes(aggregators::series& _series) const override {
-            return { (*_series[season_number])[number] };
-        }
+        episode_set get_episodes(aggregators::series& _series) const override;
 
         operator string() const override {
             return string("episode(") + to_string(season_number) + ", " + to_string(number) + ")";
@@ -91,18 +79,21 @@ namespace aggregators {
     public:
         latest_episode() {}
 
-        episode_set get_episodes(aggregators::series& _series) const override {
-            aggregators::season* last_season;
-            for (auto& season : _series)
-                last_season = season;
-            aggregators::episode* last_episode;
-            for (auto episode : *last_season)
-                last_episode = episode;
-            return { last_episode };
-        }
+        episode_set get_episodes(aggregators::series& _series) const override;
 
         operator string() const override {
             return "latest_episode";
+        }
+    };
+
+    class download_selector::new_episodes : public download_selector {
+    public:
+        new_episodes() {}
+
+        episode_set get_episodes(aggregators::series& _series) const override;
+
+        operator string() const override {
+            return "new_episodes";
         }
     };
 }

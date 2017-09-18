@@ -101,6 +101,8 @@ void option::setup_options() {
                     DOWNLOAD_OPTION(season, {
                             if (season == "latest")
                                 download_selection.add(new aggregators::download_selector::latest_episode);
+                            else if (season == "new")
+                                download_selection.add(new aggregators::download_selector::new_episodes);
                             else
                                 download_selection.add(new aggregators::download_selector::season(stoi(season)));
                         }, download_selection.add(new aggregators::download_selector::season(i)))),

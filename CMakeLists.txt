@@ -81,7 +81,7 @@ target_link_libraries(pr ${BOOST_LIBRARIES} http curses)
 add_library(aggregators STATIC src/aggregators/aggregator.cpp
   src/aggregators/season.cpp src/aggregators/season_view.cpp src/aggregators/series.cpp
   src/aggregators/episode_file.cpp src/aggregators/episode_download.cpp src/aggregators/episode.cpp
-  src/aggregators/subtitle.cpp)
+  src/aggregators/subtitle.cpp src/aggregators/download_selector.cpp)
 set_target_properties(aggregators PROPERTIES OUTPUT_NAME "bsdl_aggregators")
 target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 
