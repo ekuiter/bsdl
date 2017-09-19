@@ -157,12 +157,29 @@ namespace util {
 #endif
     }
 
+    static string escape(string str, bool double_quotes = false) {
+        boost::replace_all(str, "'", "'\\''");
+        if (double_quotes)
+            boost::replace_all(str, "\"", "\\\"");
+        return str;
+    }
+
     void platform::copy(string str) {
 #ifdef __MINGW32__
 	@TODO
 #elif defined (__APPLE__)
-        boost::replace_all(str, "'", "'\\''");
-	exec(string("printf %s '") + str + "' | pbcopy");
+        exec(string("printf %s '") + escape(str) + "' | pbcopy");
+#else
+	@TODO
+#endif
+    }
+
+    void platform::notify(const string& title, const string& subtitle, const string& msg) {
+#ifdef __MINGW32__
+	@TODO
+#elif defined (__APPLE__)
+        exec(string("osascript -e 'display notification \"") + escape(msg, true) +
+             "\" with title \"" + escape(title, true) + "\" subtitle \"" + escape(subtitle, true) + "\"'");
 #else
 	@TODO
 #endif

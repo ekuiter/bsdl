@@ -1,5 +1,4 @@
 #include "batch_app.hpp"
-#include "../option.hpp"
 #include "../util/bsdl_uri.hpp"
 
 using namespace nlohmann;
@@ -32,7 +31,7 @@ void batch_app::initialize() {
 json batch_app::read_json(const string& str) {
     json _json;
     try {
-        _json = json::parse(settings["series_search"]);
+        _json = json::parse(str);
         if (!_json.is_array() || _json.size() == 0)
             throw invalid_json();        
     } catch (std::exception e) {

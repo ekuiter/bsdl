@@ -4,18 +4,7 @@
 
 using namespace nlohmann;
 
-void json_app::initialize() {
-    if (settings.is_set("log_file") && settings["action"] != "show-log") {
-        log_file.open(settings["log_file"]);
-        terminal.get_stream(cout).set_log_file(&log_file);
-        terminal.get_stream(cerr).set_log_file(&log_file);
-        terminal.get_stream(clog).set_log_file(&log_file);
-    }
-
-    set_title("bsdl");
-    clog << "bsdl initialized in json mode." << endl
-         << endl << "Settings:" << endl << settings << endl;
-    
+void json_app::initialize() {    
     if (settings.is_set("action") && settings["action"] != "uri") {
         if (settings["action"] == "version")
             throw runtime_error("version is not available in json mode");
@@ -72,11 +61,6 @@ void json_app::run_tests() {
                     cout << buffer;
         });
     exit(pclose(pipe) / 256);
-}
-
-void json_app::set_title(const string& title, bool set_notice, string notice) {
-    if (!set_notice)
-        clog << endl << title << endl << stream::write("-", title.length()) << endl;
 }
 
 vector<aggregators::series*> json_app::search_series() {

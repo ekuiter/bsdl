@@ -88,7 +88,8 @@ target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 add_library(core STATIC src/apps/main_app.cpp src/apps/json_app.cpp src/option.cpp src/settings.cpp
   src/util/platform.cpp src/util/string_similarity.cpp src/providers/provider.cpp
   src/util/uri.cpp src/util/bsdl_uri.cpp src/util/cloudflare_hook.cpp src/apps/batch_app.cpp
-  src/apps/curses_app.cpp src/apps/monitor_app.cpp src/app.cpp)
+  src/apps/curses_app.cpp src/apps/monitor_app.cpp src/apps/notifier_app.cpp src/apps/plain_app.cpp
+  src/app.cpp)
 set_target_properties(core PROPERTIES OUTPUT_NAME "bsdl_core")
 target_link_libraries(core http curses aggregators)
 

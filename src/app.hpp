@@ -37,11 +37,10 @@ public:
     virtual void display_series(aggregators::series& series) = 0;
     virtual void download_episodes(aggregators::download_selection& download_selection) = 0;
     virtual bool is_testing() = 0;
-    
-    virtual bool confirm(const string&, bool result) {
-        return result;
-    }
+    virtual bool confirm(const string&, bool result) = 0;
 
     void cache_ids(aggregators::series& series, vector<aggregators::episode*> episodes);
     void download_menu_then_exit(vector<aggregators::episode*> episodes);
+    vector<string> fetch_monitored_series(const string& monitor_file_name);
+    vector<aggregators::episode*> fetch_monitored_episodes(vector<string> monitored_series, stream* _stream);
 };

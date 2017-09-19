@@ -1,18 +1,17 @@
 #pragma once
 
-#include "curses_app.hpp"
+#include "plain_app.hpp"
 
-class batch_app : public curses_app {
+class notifier_app : public plain_app {
     aggregators::series* current_series = nullptr;
-    unordered_map<string, pair<aggregators::series*, aggregators::download_selection>> all_series;
     
-    batch_app() {}
+    notifier_app() {}
 
 public:
-    static batch_app& instance() {
+    static notifier_app& instance() {
         if (!_instance)
-            _instance.reset(new batch_app());
-        return dynamic_cast<batch_app&>(*_instance);
+            _instance.reset(new notifier_app());
+        return dynamic_cast<notifier_app&>(*_instance);
     }
 
     bool is_testing() override {
@@ -30,9 +29,6 @@ public:
     }
 
     void initialize() override;
-    nlohmann::json read_json(const string& str);
-    void fetch_all_series(nlohmann::json _json);
-    vector<aggregators::episode*> fetch_all_episodes();
 
     THROW_UNIMPLEMENTED(vector<aggregators::series*>&, get_search_results, () const);
     THROW_UNIMPLEMENTED(string&, get_series_search, () const);

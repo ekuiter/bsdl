@@ -19,6 +19,7 @@ namespace util {
     	static string exec(string cmd, bool has_output = false);
         static void browse(const string& url);
         static void copy(string str);
+        static void notify(const string& title, const string& subtitle, const string& msg);
         static bool print_version(const string& formula);
         static void brew_install(const string& formula);
         

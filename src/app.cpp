@@ -2,6 +2,7 @@
 #include "apps/main_app.hpp"
 #include "util/download_menu.hpp"
 #include "util/download_dialog.hpp"
+#include "util/bsdl_uri.hpp"
 
 unique_ptr<app> app::_instance = nullptr;
 
@@ -50,4 +51,50 @@ void app::download_menu_then_exit(vector<aggregators::episode*> episodes) {
     dynamic_cast<menu::vertical<vector<aggregators::episode*>>::multi&>(*menu).toggle_all();
     input::instance().wait();
     exit(EXIT_SUCCESS);
+}
+
+vector<string> app::fetch_monitored_series(const string& monitor_file_name) {
+    if (!boost::filesystem::exists(monitor_file_name))
+        throw runtime_error(string("monitor file \"") + monitor_file_name + "\" does not exist");
+    std::ifstream monitor_file;
+    monitor_file.open(monitor_file_name);
+    
+    vector<string> monitored_series;
+    regex pattern("(bsdl://.*?)(?:[\\s\\]]|$)"); // matches URIs anywhere in line
+    string line;
+    while (getline(monitor_file, line)) {
+        smatch results;
+        if (!regex_search(line, results, pattern))
+            continue;
+        monitored_series.push_back(results[1]);
+    }
+    return monitored_series;
+}
+
+static void write_loading(stream* _stream, const string& title) {
+    if (_stream)
+        *_stream << stream::clear() << stream::write_centered(string("Loading ") + title + " ...") << stream::refresh();
+}
+
+vector<aggregators::episode*> app::fetch_monitored_episodes(vector<string> monitored_series, stream* _stream) {
+    vector<aggregators::episode*> monitored_episodes;
+    if (monitored_series.empty())
+        throw runtime_error("no monitored series found, check monitor file");
+
+    aggregators::download_selection& download_selection = settings::instance().get_download_selection();
+    if (download_selection.size() == 0)
+        download_selection.add(new aggregators::download_selector::new_episodes);
+    
+    for (auto uri : monitored_series) {
+        write_loading(_stream, uri);
+        aggregators::series* series = &util::bsdl_uri(uri).fetch_series();
+        write_loading(_stream, series->get_title());
+        series->load();
+        
+        auto episodes = download_selection.get_episodes(*series);
+        cache_ids(*series, episodes);
+        monitored_episodes.insert(monitored_episodes.end(), episodes.begin(), episodes.end());
+    }
+    
+    return monitored_episodes;
 }

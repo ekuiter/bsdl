@@ -3,7 +3,6 @@
 #include "curses_app.hpp"
 
 class monitor_app : public curses_app {
-    vector<aggregators::series*> search_results;
     aggregators::series* current_series = nullptr;
     
     monitor_app() {}
@@ -30,8 +29,6 @@ public:
     }
 
     void initialize() override;
-    vector<string> fetch_monitored_series(const string& monitor_file_name);
-    vector<aggregators::episode*> fetch_monitored_episodes(vector<string> monitored_series);
 
     THROW_UNIMPLEMENTED(vector<aggregators::series*>&, get_search_results, () const);
     THROW_UNIMPLEMENTED(string&, get_series_search, () const);
