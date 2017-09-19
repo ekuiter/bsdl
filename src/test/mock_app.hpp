@@ -35,6 +35,10 @@ struct mock_app : public app {
         return *search_results[0];
     }
 
+    bool confirm(const string& msg, bool result) override {
+        return result;
+    }
+
     MOCK_THROW(const vector<aggregators::series*>&, get_search_results, () const);
     MOCK_THROW(void, set_current_series, (aggregators::series& series));
     MOCK_THROW(rectangle, get_centered_bounds, (int width = -1, int height = -1, int quarters = 3));

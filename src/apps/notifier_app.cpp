@@ -11,8 +11,21 @@ void notifier_app::initialize() {
     if (settings.is_set("series_search"))
         throw runtime_error("search is not available in notifier mode");
 
-    vector<aggregators::episode*> monitored_episodes =
-        fetch_monitored_episodes(fetch_monitored_series(settings::get("monitor_file")), nullptr);
+    if (settings.is_set("notifier_command") && settings.is_set("notifier_values")) {
+        string value = util::platform::exec(settings["notifier_command"]);
+        boost::trim(value);
+        vector<string> values = settings::build_vector<string>("notifier_values", nullptr);
+        if (find(values.begin(), values.end(), value) == values.end())
+            throw runtime_error(string("unexpected \"") + value + "\" from notifier command");
+    }
+
+    vector<aggregators::episode*> monitored_episodes;
+    try {
+        monitored_episodes = fetch_monitored_episodes(fetch_monitored_series(settings::get("monitor_file")), nullptr);
+    } catch (const std::exception& e) {
+        util::platform::notify("bsdl", typeid(e).name(), e.what());
+        exit(EXIT_FAILURE);
+    }
     current_series = nullptr;
 
     if (!monitored_episodes.empty()) {

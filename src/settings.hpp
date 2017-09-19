@@ -45,6 +45,17 @@ protected:
     }
 
 public:
+    template <typename T>
+    static vector<string> build_vector(const string& setting, vector<T*>* vector) {
+        std::vector<string> elements;
+        if (!vector || vector->size() == 0) {
+            boost::split(elements, get(setting), boost::is_any_of(","));
+            for (auto& element : elements)
+                boost::trim(element);
+        }
+        return elements;
+    }
+    
     static settings_with_range& instance() {
         return *_instance;
     }

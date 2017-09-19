@@ -19,7 +19,8 @@ set<string> settings_base::allowed_settings =
      "pr_root_url", "pr_search_path", "pr_series_sel", "pr_season_sel", "pr_episode_sel", "pr_video_file_sel",
      "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
      "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
-     "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode", "monitor_file" };
+     "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode", "monitor_file", "notifier_command",
+     "notifier_values"};
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>
@@ -32,21 +33,10 @@ static void print_vector(ostream& stream, vector<T*>& vector) {
     }
 }
 
-template <typename T>
-static vector<string> build_vector(const string& setting, vector<T*>& vector) {
-    std::vector<string> elements;
-    if (vector.size() == 0) {
-        boost::split(elements, settings::get(setting), boost::is_any_of(","));
-        for (auto& element : elements)
-            boost::trim(element);
-    }
-    return elements;
-}
-
 vector<aggregators::aggregator*> settings_base::update_preferred_aggregators(bool clear_vector) {
     if (clear_vector)
         preferred_aggregators.clear();
-    for (auto& aggregator : build_vector("aggregators", preferred_aggregators))
+    for (auto& aggregator : build_vector("aggregators", &preferred_aggregators))
         preferred_aggregators.push_back(&aggregators::aggregator::instance(aggregator));
     return preferred_aggregators;
 }
@@ -54,7 +44,7 @@ vector<aggregators::aggregator*> settings_base::update_preferred_aggregators(boo
 vector<providers::provider*> settings_base::update_preferred_providers(bool clear_vector) {
     if (clear_vector)
         preferred_providers.clear();
-    for (auto& provider : build_vector("providers", preferred_providers))
+    for (auto& provider : build_vector("providers", &preferred_providers))
         preferred_providers.push_back(&providers::provider::instance(provider, true));
     return preferred_providers;
 }
@@ -62,7 +52,7 @@ vector<providers::provider*> settings_base::update_preferred_providers(bool clea
 vector<aggregators::subtitle*> settings_base::update_preferred_subtitles(bool clear_vector) {
     if (clear_vector)
         preferred_subtitles.clear();
-    for (auto& subtitle : build_vector("subtitles", preferred_subtitles))
+    for (auto& subtitle : build_vector("subtitles", &preferred_subtitles))
         preferred_subtitles.push_back(&aggregators::subtitle::instance(subtitle));
     return preferred_subtitles;
 }
