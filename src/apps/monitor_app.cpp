@@ -1,6 +1,6 @@
 #include "monitor_app.hpp"
-#include "option.hpp"
-#include "util/bsdl_uri.hpp"
+#include "../option.hpp"
+#include "../util/bsdl_uri.hpp"
 
 void monitor_app::initialize() {    
     if (settings.is_set("action"))

@@ -1,6 +1,6 @@
 #include "json_app.hpp"
-#include "option.hpp"
-#include "util/bsdl_uri.hpp"
+#include "../option.hpp"
+#include "../util/bsdl_uri.hpp"
 
 using namespace nlohmann;
 

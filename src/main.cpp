@@ -1,8 +1,8 @@
 #include <iostream>
-#include "main_app.hpp"
-#include "json_app.hpp"
-#include "batch_app.hpp"
-#include "monitor_app.hpp"
+#include "apps/main_app.hpp"
+#include "apps/json_app.hpp"
+#include "apps/batch_app.hpp"
+#include "apps/monitor_app.hpp"
 #include "http/client.hpp"
 #include "util/cloudflare_hook.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app.hpp"
+#include "../app.hpp"
 
 class json_app : public app {
     terminal& terminal;

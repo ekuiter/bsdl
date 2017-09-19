@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app.hpp"
+#include "../app.hpp"
 
 class curses_app : public app {
     friend class app;

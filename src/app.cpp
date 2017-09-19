@@ -1,6 +1,15 @@
 #include "app.hpp"
+#include "apps/main_app.hpp"
 #include "util/download_menu.hpp"
 #include "util/download_dialog.hpp"
+
+unique_ptr<app> app::_instance = nullptr;
+
+app& app::instance() {
+    if (!_instance)
+        _instance.reset(new main_app());
+    return *_instance;
+}
 
 void app::cache_ids(aggregators::series& series, vector<aggregators::episode*> episodes) {
     // cache id (and bs id) because it depends on get_current_series()

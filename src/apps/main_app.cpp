@@ -1,22 +1,14 @@
 #include "main_app.hpp"
-#include "option.hpp"
-#include "util/bsdl_uri.hpp"
-#include "util/platform.hpp"
-#include "aggregators/episode_download.hpp"
-#include "curses/platform.hpp"
-#include "util/download_dialog.hpp"
-#include "util/addressed.hpp"
+#include "../option.hpp"
+#include "../util/bsdl_uri.hpp"
+#include "../util/platform.hpp"
+#include "../aggregators/episode_download.hpp"
+#include "../curses/platform.hpp"
+#include "../util/download_dialog.hpp"
+#include "../util/addressed.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <fstream>
-
-unique_ptr<app> app::_instance = nullptr;
-
-app& app::instance() {
-    if (!_instance)
-        _instance.reset(new main_app());
-    return *_instance;
-}
 
 void main_app::initialize() {
     if (settings.is_set("action")) {

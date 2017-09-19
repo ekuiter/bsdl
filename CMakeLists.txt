@@ -85,10 +85,10 @@ add_library(aggregators STATIC src/aggregators/aggregator.cpp
 set_target_properties(aggregators PROPERTIES OUTPUT_NAME "bsdl_aggregators")
 target_link_libraries(aggregators ${BOOST_LIBRARIES} http curses bs kx mk pr)
 
-add_library(core STATIC src/main_app.cpp src/json_app.cpp src/option.cpp src/settings.cpp
+add_library(core STATIC src/apps/main_app.cpp src/apps/json_app.cpp src/option.cpp src/settings.cpp
   src/util/platform.cpp src/util/string_similarity.cpp src/providers/provider.cpp
-  src/util/uri.cpp src/util/bsdl_uri.cpp src/util/cloudflare_hook.cpp src/batch_app.cpp
-  src/curses_app.cpp src/monitor_app.cpp src/app.cpp)
+  src/util/uri.cpp src/util/bsdl_uri.cpp src/util/cloudflare_hook.cpp src/apps/batch_app.cpp
+  src/apps/curses_app.cpp src/apps/monitor_app.cpp src/app.cpp)
 set_target_properties(core PROPERTIES OUTPUT_NAME "bsdl_core")
 target_link_libraries(core http curses aggregators)
 
