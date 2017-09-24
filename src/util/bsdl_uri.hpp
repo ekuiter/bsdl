@@ -24,6 +24,7 @@ namespace util {
         void parse_path(const string& path);
         void parse_query(const string& query);
         void process_params();
+        void process_special(const string& fragment);
         void filter_search_results(vector<aggregators::series*>& search_results, const string& url) const;
         vector<aggregators::series*> fetch_and_filter_series(aggregators::aggregator& aggregator,
                                                              const string& filter_url, const string& series_type) const;
@@ -31,7 +32,7 @@ namespace util {
         
     public:
         bsdl_uri(const aggregators::series& series);
-        bsdl_uri(const string& _uri);
+        bsdl_uri(const string& _uri, bool only_special = false);
         aggregators::series& fetch_series() const;
         
         const string& get_uri() const {

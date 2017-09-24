@@ -67,6 +67,14 @@ namespace util {
         }
     }
 
+    void bsdl_uri::process_special(const string& fragment) {
+        settings& settings = settings::instance();
+        if (fragment == "monitor")
+            settings["app"] = "monitor";
+        else
+            throw uri_error(*this, "is not special");
+    }
+
     void bsdl_uri::filter_search_results(vector<aggregators::series*>& search_results, const string& url) const {
         auto predicate = [&url](aggregators::series* series) {
             return series->get_request().get_url() != url;
@@ -109,7 +117,7 @@ namespace util {
             uri += "/" + encode_uri(bs_series->get_request().get_url());
     }
         
-    bsdl_uri::bsdl_uri(const string& _uri): uri(_uri) {
+    bsdl_uri::bsdl_uri(const string& _uri, bool only_special): uri(_uri) {
         // see stackoverflow.com/q/2616011
         regex uri_pattern("bsdl://([^/:]+):?([^/]*)(/?[^#?]*)\\x3f?([^#]*)#?([^]*)");
         smatch results;
@@ -117,6 +125,12 @@ namespace util {
             throw uri_error(*this, "is invalid");
         string host = results[1], port = results[2], path = results[3],
             query = results[4], fragment = results[5];
+        if (only_special) {
+            if (fragment != "")
+                process_special(fragment);
+            else
+                process_special(host);
+        }
         parse_host(host);
         parse_path(path);
         if (query != "")

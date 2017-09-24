@@ -2,6 +2,7 @@
 #include "option.hpp"
 #include "app.hpp"
 #include "util/platform.hpp"
+#include "util/bsdl_uri.hpp"
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -154,6 +155,10 @@ void settings_base::read(const vector<string>& args) {
         set("output_files_directory", (*this)["output_files_directory"]);
     if ((*this)["rename_files_directory"] != "")
         set("rename_files_directory", (*this)["rename_files_directory"]);
+    if ((*this)["series_search"] != "")
+        try {
+            util::bsdl_uri((*this)["series_search"], true);
+        } catch (util::uri_error) {}
 
     update_preferred_aggregators();
     update_preferred_providers();

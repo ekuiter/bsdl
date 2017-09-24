@@ -8,9 +8,6 @@ void monitor_app::initialize() {
     providers::provider::set_preferred_providers(settings.get_preferred_providers());
     aggregators::subtitle::set_preferred_subtitles(settings.get_preferred_subtitles());
 
-    if (settings.is_set("series_search"))
-        throw runtime_error("search is not available in monitor mode");
-
     vector<aggregators::episode*> monitored_episodes;
     {
         window::plain loading_window(get_centered_bounds(-1, -1));
