@@ -47,6 +47,12 @@ namespace aggregators {
             return title;
         }
 
+        string& set_title(const string& _title) {
+            for (auto pair : seasons)
+                pair.second->set_series_title(_title);
+            return title = _title;
+        }
+
         const http::request& get_request() const noexcept {
             return request;
         }

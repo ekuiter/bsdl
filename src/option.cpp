@@ -9,14 +9,17 @@ using namespace curses;
 #define HANDLERS(on_validate, on_process, params)                       \
     [&settings] params { on_validate; }, [&settings] params { on_process; }
 #define MODIFIABLE_OPTION_ARG0(key, on_validate, on_process, on_modify, description) \
-    { #key, {}, HANDLERS(on_validate, on_process, (string, string)), on_modify, description }
+    { #key, {}, HANDLERS(on_validate, on_process, (string, string, string)), on_modify, description }
 #define MODIFIABLE_OPTION_ARG1(key, arg1, on_validate, on_process, on_modify, description) \
-    { #key, { #arg1 }, HANDLERS(on_validate, on_process, (string arg1, string)), on_modify, description }
+    { #key, { #arg1 }, HANDLERS(on_validate, on_process, (string arg1, string, string)), on_modify, description }
 #define MODIFIABLE_OPTION_ARG2(key, arg1, arg2, on_validate, on_process, on_modify, description) \
-    { #key, { #arg1, #arg2 }, HANDLERS(on_validate, on_process, (string arg1, string arg2)), on_modify, description }
+    { #key, { #arg1, #arg2 }, HANDLERS(on_validate, on_process, (string arg1, string arg2, string)), on_modify, description }
+#define MODIFIABLE_OPTION_ARG3(key, arg1, arg2, arg3, on_validate, on_process, on_modify, description) \
+    { #key, { #arg1, #arg2, #arg3 }, HANDLERS(on_validate, on_process, (string arg1, string arg2, string arg3)), on_modify, description }
 #define OPTION_ARG0(key, on_validate, on_process) MODIFIABLE_OPTION_ARG0(key, on_validate, on_process, nullptr, "")
 #define OPTION_ARG1(key, arg1, on_validate, on_process) MODIFIABLE_OPTION_ARG1(key, arg1, on_validate, on_process, nullptr, "")
 #define OPTION_ARG2(key, arg1, arg2, on_validate, on_process) MODIFIABLE_OPTION_ARG2(key, arg1, arg2, on_validate, on_process, nullptr, "")
+#define OPTION_ARG3(key, arg1, arg2, arg3, on_validate, on_process) MODIFIABLE_OPTION_ARG3(key, arg1, arg2, arg3, on_validate, on_process, nullptr, "")
 
 #define DOWNLOAD_OPTION(var, single_selector, selector_range) {         \
         auto& download_selection = settings._download_selection;        \
@@ -46,6 +49,11 @@ using namespace curses;
 #define IN_MODE(mode, code) {                   \
         settings["app"] = #mode;                \
         code;                                   \
+    }
+
+#define SET_RENAME_FILES(directory, pattern) {                  \
+        settings.set("rename_files_directory", directory);      \
+        settings["rename_files_pattern"] = pattern;             \
     }
 
 vector<option> option::options;
@@ -88,11 +96,19 @@ void option::setup_options() {
                 " will be renamed using the pattern " << stream::colored(pattern) << "." << endl;
     };
 
+    auto modify_override_title = [&settings](){
+        modify_setting("override_title", "\nEnter overriding title (if any):", false);
+        if (!settings.is_set("override_title"))
+            cout << "Will not override series title." << endl;
+        else
+            cout << "Will override series title with " << stream::colored(settings["override_title"]) << "." << endl;
+    };
+
     auto modify_aggregators = MODIFY_PREFERRED(aggregators, aggregators::aggregator::set_preferred_aggregators, aggregators::exception);
     auto modify_providers = MODIFY_PREFERRED(providers, providers::provider::set_preferred_providers, providers::provider::exception);
     auto modify_subtitles = MODIFY_PREFERRED(subtitles, aggregators::subtitle::set_preferred_subtitles, aggregators::exception);
 
-    options = {
+    options = { // unused abbreviations: e, f, g, i, k, x, y, z
         OPTION_ARG2(download, season, episode, {},
                     DOWNLOAD_OPTION(episode,
                                     download_selection.add(new aggregators::download_selector::episode(stoi(season), stoi(episode))),
@@ -116,12 +132,10 @@ void option::setup_options() {
                                modify_subtitles, "Preferred subtitles"),
         
         MODIFIABLE_OPTION_ARG1(output-files, directory, {}, settings.set("output_files_directory", directory), modify_output_files, "Output directory"),
-        MODIFIABLE_OPTION_ARG2(rename-files, directory, pattern, {}, {
-                settings.set("rename_files_directory", directory);
-                settings["rename_files_pattern"] = pattern;
-            }, modify_rename_files, "Rename files"),
-        OPTION_ARG1(rename-files, directory, {}, settings.set("rename_files_directory", directory)),
-        OPTION_ARG0(rename-files, {}, settings.set("rename_files_directory", ".")),
+        MODIFIABLE_OPTION_ARG2(rename-files, directory, pattern, {}, SET_RENAME_FILES(directory, pattern), modify_rename_files, "Rename files"),
+        OPTION_ARG1(rename-files, directory, {}, SET_RENAME_FILES(directory, "")),
+        OPTION_ARG0(rename-files, {}, SET_RENAME_FILES(".", "")),
+        MODIFIABLE_OPTION_ARG1(with-title, title, {}, settings["override_title"] = title, modify_override_title, "Override title"),
 
         OPTION_ARG1(log-file, file, {}, settings["log_file"] = file),
         OPTION_ARG0(log-file, {}, IN_MODE(json, settings["action"] = "show-log")),
@@ -129,6 +143,7 @@ void option::setup_options() {
         
         OPTION_ARG0(help, {}, IN_MODE(json, settings["action"] = "help")),
         OPTION_ARG0(version, {}, settings["action"] = "version"),
+        OPTION_ARG0(quiet, {}, settings["log_file"] = ""),
         OPTION_ARG0(json, {}, IN_MODE(json,)),
         OPTION_ARG0(batch, {}, IN_MODE(batch,)),
         OPTION_ARG1(monitor, file, {}, IN_MODE(monitor, settings["monitor_file"] = file)),

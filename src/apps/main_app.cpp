@@ -144,9 +144,9 @@ void main_app::display_series(aggregators::series& series) {
     series.load();
     
     _stream << stream::clear();
-    set_title(series.get_title());
+    set_series_title(series);
     menu::horizontal<aggregators::series> series_menu(series_window, series, *series.begin());
-        
+
     if (settings.is_set("rename_files_directory"))
         aggregators::episode::file::rename_files(series, settings["rename_files_directory"], settings["rename_files_pattern"]);
     if (settings.get_download_selection().size() > 0)

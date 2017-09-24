@@ -43,4 +43,5 @@ public:
     void download_menu_then_exit(vector<aggregators::episode*> episodes);
     vector<string> fetch_monitored_series(const string& monitor_file_name);
     vector<aggregators::episode*> fetch_monitored_episodes(vector<string> monitored_series, stream* _stream);
+    void set_series_title(aggregators::series& series);
 };

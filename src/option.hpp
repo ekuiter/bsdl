@@ -11,8 +11,8 @@ class option {
     static vector<option> options;
     string key;
     vector<string> arg_names;
-    int args, max_args = 2;
-    typedef function<void (string, string)> handler_func;
+    int args, max_args = 3;
+    typedef function<void (string, string, string)> handler_func;
     typedef function<void ()> modify_func;
     handler_func on_validate, on_process;
     modify_func on_modify;
@@ -34,14 +34,19 @@ class option {
     template<typename T>
     bool call_handler(handler_func handler, T next_arg) {
         if (args == 0)
-            handler("", "");
+            handler("", "", "");
         else if (args == 1) {
             string arg1 = next_arg();
-            handler(arg1, "");
+            handler(arg1, "", "");
         } else if (args == 2) {
             string arg1 = next_arg();
             string arg2 = next_arg();
-            handler(arg1, arg2);
+            handler(arg1, arg2, "");
+        } else if (args == 3) {
+            string arg1 = next_arg();
+            string arg2 = next_arg();
+            string arg3 = next_arg();
+            handler(arg1, arg2, arg3);
         } else
             throw runtime_error("invalid number of arguments");
         return true;

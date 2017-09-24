@@ -38,6 +38,12 @@ namespace aggregators {
             return series_title;
         }
 
+        void set_series_title(const string& _title) {
+            for (auto pair : episodes)
+                pair.second->set_series_title(_title);
+            series_title = _title;
+        }
+
         int get_number() const noexcept {
             return number;
         }

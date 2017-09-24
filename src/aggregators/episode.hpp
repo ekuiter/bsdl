@@ -37,6 +37,10 @@ namespace aggregators {
             return series_title;
         }
 
+        void set_series_title(const string& _title) {
+            series_title = _title;
+        }
+
         int get_season_number() const noexcept {
             return season_number;
         }

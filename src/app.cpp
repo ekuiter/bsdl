@@ -78,8 +78,6 @@ static void write_loading(stream* _stream, const string& title) {
 
 vector<aggregators::episode*> app::fetch_monitored_episodes(vector<string> monitored_series, stream* _stream) {
     vector<aggregators::episode*> monitored_episodes;
-    if (monitored_series.empty())
-        throw runtime_error("no monitored series found, check monitor file");
 
     aggregators::download_selection& download_selection = settings::instance().get_download_selection();
     if (download_selection.size() == 0)
@@ -97,4 +95,10 @@ vector<aggregators::episode*> app::fetch_monitored_episodes(vector<string> monit
     }
     
     return monitored_episodes;
+}
+
+void app::set_series_title(aggregators::series& series) {
+    set_title(settings::instance().is_set("override_title") ?
+              series.set_title(settings::instance()["override_title"]) :
+              series.get_title());
 }

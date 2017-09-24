@@ -92,7 +92,7 @@ aggregators::series& json_app::choose_series(vector<aggregators::series*>& searc
 }
 
 void json_app::display_series(aggregators::series& series) {
-    set_title(series.get_title());
+    set_series_title(series);
     if (settings.is_set("rename_files_directory"))
         throw runtime_error("renaming files is not available in json mode");
 
