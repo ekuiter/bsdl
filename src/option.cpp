@@ -108,7 +108,7 @@ void option::setup_options() {
     auto modify_providers = MODIFY_PREFERRED(providers, providers::provider::set_preferred_providers, providers::provider::exception);
     auto modify_subtitles = MODIFY_PREFERRED(subtitles, aggregators::subtitle::set_preferred_subtitles, aggregators::exception);
 
-    options = { // unused abbreviations: e, f, g, i, k, x, y, z
+    options = { // unused abbreviations: f, g, i, k, x, y, z
         OPTION_ARG2(download, season, episode, {},
                     DOWNLOAD_OPTION(episode,
                                     download_selection.add(new aggregators::download_selector::episode(stoi(season), stoi(episode))),
@@ -140,6 +140,7 @@ void option::setup_options() {
         OPTION_ARG1(log-file, file, {}, settings["log_file"] = file),
         OPTION_ARG0(log-file, {}, IN_MODE(json, settings["action"] = "show-log")),
         OPTION_ARG1(config-file, file, settings["config_file"] = file, {}),
+        OPTION_ARG0(edit-file, {}, IN_MODE(json, settings["action"] = "edit-file")),
         
         OPTION_ARG0(help, {}, IN_MODE(json, settings["action"] = "help")),
         OPTION_ARG0(version, {}, settings["action"] = "version"),

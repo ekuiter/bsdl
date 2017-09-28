@@ -1,8 +1,13 @@
 #include "monitor_app.hpp"
 
 void monitor_app::initialize() {    
-    if (settings.is_set("action"))
-        throw runtime_error(settings["action"] + " is not available in monitor mode");
+    if (settings.is_set("action")) {
+        if (settings["action"] == "edit-file")
+            util::platform::edit(settings["monitor_file"]);
+        else
+            throw runtime_error(settings["action"] + " is not available in monitor mode");
+        exit(EXIT_SUCCESS);
+    }
     
     aggregators::aggregator::set_preferred_aggregators(settings.get_preferred_aggregators());
     providers::provider::set_preferred_providers(settings.get_preferred_providers());

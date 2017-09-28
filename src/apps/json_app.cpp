@@ -12,6 +12,8 @@ void json_app::initialize() {
             help_message();
         else if (settings["action"] == "show-log")
             show_log();
+        else if (settings["action"] == "edit-file")
+            util::platform::edit(settings["config_file"]);
         else
             run_tests();
         exit(EXIT_SUCCESS);

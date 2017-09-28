@@ -174,6 +174,16 @@ namespace util {
 #endif
     }
 
+    void platform::edit(const string& file) {
+#ifdef __MINGW32__
+	@TODO
+#elif defined (__APPLE__)
+        exec(string("open '") + escape(file) + "'");
+#else
+	@TODO
+#endif  
+    }
+
     void platform::notify(const string& title, const string& subtitle, const string& msg) {
 #ifdef __MINGW32__
 	@TODO
