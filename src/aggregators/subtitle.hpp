@@ -11,7 +11,8 @@ namespace aggregators {
         static vector<subtitle*> preferred_subtitles;
         subtitle(const string& _name): name(_name) {}
         
-    public:        
+    public:
+        static vector<string> allowed_subtitles();
         static subtitle& instance(const string& name);
         static void set_preferred_subtitles(const vector<subtitle*>& _preferred_subtitles);
         static subtitle& get_preferred_subtitle(const vector<subtitle*>& subtitles);

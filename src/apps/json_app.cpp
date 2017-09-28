@@ -26,9 +26,12 @@ void json_app::initialize() {
 
 void json_app::help_message() {
     terminal.with_output(cout, []() {
-            cout << "usage: bsdl [series]" << endl;
+            auto bold_on = "\033[1m", bold_off = "\033[0m";
+            cout << bold_on << "USAGE" << bold_off << endl << "    bsdl [series] [options]" <<
+                endl << endl << bold_on << "OPTIONS" << bold_off << endl;
             for (auto& option : option::get_options())
-                cout << "\t[" << option.get_usage() << "]" << endl;
+                cout << "    " << bold_on << option.get_usage() << bold_off << endl <<
+                    "        " << option.get_details() << endl << endl;
         });
 }
 

@@ -14,8 +14,10 @@ class option {
     int args, max_args = 3;
     typedef function<void (string, string, string)> handler_func;
     typedef function<void ()> modify_func;
+    typedef function<string ()> details_func;
     handler_func on_validate, on_process;
     modify_func on_modify;
+    details_func details;
     string description;
 
     string detailed_switch() const {
@@ -68,9 +70,9 @@ public:
     }
     
     option(const string& _key, const vector<string>& _arg_names, handler_func _on_validate, handler_func _on_process,
-           modify_func _on_modify = nullptr, const string& _description = ""):
+           modify_func _on_modify = nullptr, const string& _description = "", details_func _details = nullptr):
         key(_key), arg_names(_arg_names), args(_arg_names.size()), on_validate(_on_validate), on_process(_on_process),
-        on_modify(_on_modify), description(_description) {
+        on_modify(_on_modify), details(_details), description(_description) {
         if (args > max_args)
             throw runtime_error("maximum number of arguments exceeded");
     }
@@ -91,7 +93,10 @@ public:
     }
 
     string get_usage() const {
-        string usage = detailed_switch();
+        string usage = abbreviated_switch();
+        for (auto arg_name : arg_names)
+            usage += " " + arg_name;
+        usage += ", " + detailed_switch();
         for (auto arg_name : arg_names)
             usage += " " + arg_name;
         return usage;
@@ -99,6 +104,10 @@ public:
 
     const string& get_description() const {
         return description == "" ? key : description;
+    }
+
+    string get_details() const {
+        return details ? details() : "";
     }
 };
 

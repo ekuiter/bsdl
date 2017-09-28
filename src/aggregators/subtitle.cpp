@@ -7,11 +7,15 @@
 
 namespace aggregators {
     vector<subtitle*> subtitle::preferred_subtitles;
+
+    vector<string> subtitle::allowed_subtitles() {
+        return { "GerDub", "EngDub", "GerSub", "EngSub" };
+    }
     
     subtitle& subtitle::instance(const string& name) {
         static map<string, subtitle> subtitles;
-        auto allowed_subtitles = { "GerDub", "EngDub", "GerSub", "EngSub" };
-        if (find(allowed_subtitles.begin(), allowed_subtitles.end(), name) != allowed_subtitles.end())
+        auto _allowed_subtitles = allowed_subtitles();
+        if (find(_allowed_subtitles.begin(), _allowed_subtitles.end(), name) != _allowed_subtitles.end())
             return subtitles.insert({ name, subtitle(name) }).first->second;
         else
             throw exception(string("unknown subtitle \"") + name + "\"");
