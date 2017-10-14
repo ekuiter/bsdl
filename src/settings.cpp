@@ -21,7 +21,7 @@ set<string> settings_base::allowed_settings =
      "pr_title_sel", "pr_language_sel", "pr_list_path", "subtitles", "pr_subtitle_sel", "pr_subtitle_key", "pr_episode_row_sel_1",
      "pr_episode_row_sel_2", "pr_episode_row_img", "pr_video_file_script_regex", "pr_captcha_sel", "parallel_transfers",
      "timeout", "app", "cloudflare_sel", "cloudflare_user_agent", "output_files_mode", "monitor_file", "notifier_command",
-     "notifier_values", "override_title"};
+     "notifier_values", "override_title", "bs_captcha_sel"};
 unique_ptr<settings> settings_base::_instance(new settings());
 
 template <typename T>

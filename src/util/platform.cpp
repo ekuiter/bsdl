@@ -239,4 +239,59 @@ namespace util {
             throw runtime_error("homebrew is only available on macOS");
 #endif
     }
+
+    bool platform::can_get_captcha_solution() {
+#ifdef __MINGW32__
+	return false;
+#elif defined (__APPLE__)
+        return true;
+#else
+        return false;
+#endif
+    }
+    
+    string platform::get_captcha_solution(const http::request& request, const providers::provider& provider) {
+#ifdef __MINGW32__
+	@TODO
+#elif defined (__APPLE__)
+        string solution;
+        try {
+            solution = exec(string(R"TEXT(osascript -e '
+tell application "System Events"
+	if not (exists application process "Google Chrome") then
+		return "<chrome>"
+	end if
+end tell
+
+tell application "Google Chrome"
+	repeat with theTab in every window'\''s tab
+		if theTab'\''s URL contains ")TEXT") + provider.get_name() + R"TEXT(" then
+			set theProviderUrl to theTab'\''s URL
+			go back theTab
+			if theTab'\''s URL is ")TEXT" + request.get_url() + R"TEXT(" then
+				close theTab
+				return theProviderUrl
+			else
+				go forward theTab
+			end if
+		end if
+	end repeat
+end tell
+
+return ""
+')TEXT");
+        } catch (exec_failed) {
+            cerr << "Error while solving the captcha." << endl;
+            return "";
+        }
+        boost::trim(solution);
+        if (solution == "<chrome>") {
+            cerr << "Solving the captcha requires Google Chrome!" << endl;
+            solution = "";
+        }
+        return solution;
+#else
+	@TODO
+#endif
+    }
 }

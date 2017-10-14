@@ -6,6 +6,14 @@
 
 using namespace std;
 
+namespace http {
+    class request;
+}
+
+namespace providers {
+    class provider;
+}
+
 namespace util {
     class platform {
         static string utf8_to_latin1(const string& in_str);
@@ -21,6 +29,8 @@ namespace util {
         static void copy(string str);
         static void edit(const string& file);
         static void notify(const string& title, const string& subtitle, const string& msg);
+        static bool can_get_captcha_solution();
+        static string get_captcha_solution(const http::request& request, const providers::provider& provider);
         static bool print_version(const string& formula);
         static void brew_install(const string& formula);
         
