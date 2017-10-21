@@ -22,7 +22,6 @@ namespace aggregators {
             }
 
             bool has_captcha(const http::response& response) {
-                clog << response << endl;
                 unique_ptr<CDocument> document = response.parse();
                 return document->find(settings::get("bs_captcha_sel")).nodeNum() > 0;
             }

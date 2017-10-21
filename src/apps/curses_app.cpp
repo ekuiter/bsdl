@@ -91,6 +91,9 @@ int curses_app::http_callback(http::request::status status, const http::request&
 }
 
 bool curses_app::confirm(const string& msg, bool result) {
+    if (settings::instance().is_set("auto_confirm"))
+        return result;
+    
     cout << msg << " (press " << stream::colored("y") << " or " << stream::colored("n") << ")" << endl;
     while (curses::input::instance().read([&result](int ch) {
                 if (ch == 'y' || ch == 'n') {
