@@ -23,8 +23,10 @@ namespace aggregators {
                 CSelection video_file_nodes = episode_row.nodeAt(2).find("a");
                 episode::video_file_map video_files;
                 for (auto& video_file_node : video_file_nodes) {
-                    string video_file_title = CNode(video_file_node).text(),
+                    string video_file_title = CNode(video_file_node).attribute("title"),
                             video_file_url = CNode(video_file_node).attribute("href");
+                    if (video_file_title.empty())
+                        throw exception("no video file title found");
                     providers::provider& provider = providers::provider::instance(video_file_title);
                     video_files.insert({&provider, new video_file(provider, bs::root().get_relative(video_file_url))});
                 }
